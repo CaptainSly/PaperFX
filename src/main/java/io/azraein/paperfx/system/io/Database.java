@@ -1,16 +1,13 @@
 package io.azraein.paperfx.system.io;
 
-import java.io.*;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
-
-import com.github.luben.zstd.Zstd;
 
 import io.azraein.paperfx.system.actors.Actor;
 import io.azraein.paperfx.system.actors.classes.CharacterClass;
 import io.azraein.paperfx.system.actors.classes.CharacterRace;
-import io.azraein.paperfx.system.exceptions.DatabaseCorruptionException;
-import io.azraein.paperfx.system.exceptions.IncompatibleDatabaseVersionException;
+import io.azraein.paperfx.system.actors.creatures.Creature;
 import io.azraein.paperfx.system.inventory.items.Item;
 import io.azraein.paperfx.system.locations.Location;
 import io.azraein.paperfx.system.locations.SubLocation;
@@ -19,30 +16,23 @@ public class Database implements Serializable {
 
 	private static final long serialVersionUID = -5878465281727704975L;
 
-	public static transient final String DATABASE_NAME = "PaperFX.pdb";
-	public static transient final String DATABASE_SAVE_VERSION = "1.0";
-	public static transient final String DATABASE_SAVE_IDENTIFIER = "PFXDB";
-
 	private Map<String, Object> globalList = new HashMap<>();
-
 	private Map<String, Item> itemList = new HashMap<>();
-
 	private Map<String, CharacterRace> raceList = new HashMap<>();
 	private Map<String, CharacterClass> charClassList = new HashMap<>();
-
 	private Map<String, Actor> actorList = new HashMap<>();
-
+	private Map<String, Creature> creatureList = new HashMap<>();
 	private Map<String, Location> locationList = new HashMap<>();
 	private Map<String, SubLocation> subLocationList = new HashMap<>();
 
 	public Item getItem(String itemId) {
 		return itemList.get(itemId);
 	}
-	
+
 	public void addItem(Item item) {
 		itemList.put(item.getItemId(), item);
 	}
-	
+
 	public Object getGlobal(String globalId) {
 		return globalList.get(globalId);
 	}
@@ -57,6 +47,14 @@ public class Database implements Serializable {
 
 	public void addCharacterRace(CharacterRace characterRace) {
 		raceList.put(characterRace.getCharacterRaceId(), characterRace);
+	}
+
+	public Creature getCreature(String creatureId) {
+		return creatureList.get(creatureId);
+	}
+
+	public void addCreature(Creature creature) {
+		creatureList.put(creature.getCreatureId(), creature);
 	}
 
 	public CharacterClass getCharacterClass(String charClassId) {
@@ -90,53 +88,48 @@ public class Database implements Serializable {
 	public void addActor(Actor actor) {
 		actorList.put(actor.getActorId(), actor);
 	}
-
-	public static void saveDatabase(Database database) {
-		String databaseJson = SaveSystem.SAVE_GSON.toJson(database);
-		byte[] uncompressedDatabase = databaseJson.getBytes();
-		int uncompressedDatabaseSize = uncompressedDatabase.length;
-		byte[] compressedDatabase = Zstd.compress(uncompressedDatabase);
-
-		try (DataOutputStream databaseOutputStream = new DataOutputStream(new FileOutputStream(DATABASE_NAME))) {
-			// Write Header
-			databaseOutputStream.writeUTF(DATABASE_SAVE_IDENTIFIER);
-			databaseOutputStream.writeUTF(DATABASE_SAVE_VERSION);
-			databaseOutputStream.writeInt(uncompressedDatabaseSize);
-
-			// Write Database
-			databaseOutputStream.write(compressedDatabase);
-			databaseOutputStream.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	
+	public void mergeDatabase(Database database) {
+		this.getGlobalList().putAll(database.getGlobalList());
+		this.getItemList().putAll(database.getItemList());
+		this.getCharClassList().putAll(database.getCharClassList());
+		this.getRaceList().putAll(database.getRaceList());
+		this.getActorList().putAll(database.getActorList());
+		this.getCreatureList().putAll(database.getCreatureList());
+		this.getLocationList().putAll(database.getLocationList());
+		this.getSubLocationList().putAll(database.getSubLocationList());
 	}
 
-	public static Database loadDatabase() throws IncompatibleDatabaseVersionException, DatabaseCorruptionException {
-		File file = new File(DATABASE_NAME);
-		Database database = null;
+	public Map<String, Location> getLocationList() {
+		return locationList;
+	}
 
-		try (DataInputStream databaseInputStream = new DataInputStream(new FileInputStream(file))) {
-			databaseInputStream.readUTF();
-			String databaseVersion = databaseInputStream.readUTF();
-			if (!databaseVersion.equals(DATABASE_SAVE_VERSION))
-				throw new IncompatibleDatabaseVersionException(
-						"This database is incompatible with this verison of Paper");
+	public Map<String, Creature> getCreatureList() {
+		return creatureList;
+	}
 
-			int databaseUncompressedSize = databaseInputStream.readInt();
-			byte[] compressedDatabaseData = databaseInputStream.readAllBytes();
-			byte[] uncompressedDatabaseData = Zstd.decompress(compressedDatabaseData, databaseUncompressedSize);
-			String databaseJson = new String(uncompressedDatabaseData);
+	public Map<String, Object> getGlobalList() {
+		return globalList;
+	}
 
-			database = SaveSystem.SAVE_GSON.fromJson(databaseJson, Database.class);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	public Map<String, Item> getItemList() {
+		return itemList;
+	}
 
-		// Creates a blank empty database
-		if (database == null)
-			throw new DatabaseCorruptionException("The PaperFX Database seems to be corrupted");
+	public Map<String, CharacterRace> getRaceList() {
+		return raceList;
+	}
 
-		return database;
+	public Map<String, CharacterClass> getCharClassList() {
+		return charClassList;
+	}
+
+	public Map<String, Actor> getActorList() {
+		return actorList;
+	}
+
+	public Map<String, SubLocation> getSubLocationList() {
+		return subLocationList;
 	}
 
 }

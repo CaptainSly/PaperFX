@@ -9,46 +9,38 @@ public class Location implements Serializable {
 	private static final long serialVersionUID = 1285907871914440413L;
 
 	private String locationId;
-	private String locationName;
-	private String locationDescription;
 
-	private Location[] locationNeighbors;
+	private String[] locationNeighbors;
 	private List<String> locationSubLocations;
 
-	private List<String> locationActors;
+	private LocationState locationState;
 
 	public Location(String locationId, String locationName, String locationDescription) {
 		this.locationId = locationId;
-		this.locationName = locationName;
-		this.locationDescription = locationDescription;
+		locationState = new LocationState(locationName, locationDescription);
 
-		locationNeighbors = new Location[4];
+		locationNeighbors = new String[4];
 		locationSubLocations = new ArrayList<>();
-		locationActors = new ArrayList<>();
 	}
 
 	public String getLocationId() {
 		return locationId;
 	}
 
-	public String getLocationName() {
-		return locationName;
+	public LocationState getLocationState() {
+		return locationState;
 	}
 
-	public String getLocationDescription() {
-		return locationDescription;
+	public void setLocationState(LocationState locationState) {
+		this.locationState = locationState;
 	}
 
-	public Location[] getLocationNeighbors() {
+	public String[] getLocationNeighbors() {
 		return locationNeighbors;
 	}
 
 	public List<String> getLocationSubLocations() {
 		return locationSubLocations;
-	}
-
-	public List<String> getLocationActors() {
-		return locationActors;
 	}
 
 }

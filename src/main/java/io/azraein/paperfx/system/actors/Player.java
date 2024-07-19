@@ -7,8 +7,12 @@ public class Player extends Actor {
 
 	private static final long serialVersionUID = -6782575409641873407L;
 
-	public Player(CharacterClass charClass, CharacterRace charRace) {
-		super("PLAYER_ACTOR", charClass, charRace);
+	public Player(String actorName, CharacterClass charClass, CharacterRace charRace) {
+		super("PLAYER_ACTOR", actorName, charClass, charRace);
+	}
+
+	@Override
+	public void updateActor() {
 	}
 
 }

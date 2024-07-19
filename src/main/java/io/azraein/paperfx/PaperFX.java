@@ -7,15 +7,17 @@ import io.azraein.paperfx.screens.GameScreen;
 import io.azraein.paperfx.screens.MainMenuScreen;
 import io.azraein.paperfx.screens.PaperScreen;
 import io.azraein.paperfx.system.io.Database;
+import io.azraein.paperfx.system.io.plugins.PaperPluginLoader;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 public class PaperFX extends Application {
 
-	private Database database;
-
 	private Map<String, PaperScreen> paperScreens;
+	private PaperPluginLoader ppl;
+
+	private static Database database;
 
 	// JavaFX Nodes
 	private Scene paperScene;
@@ -23,11 +25,14 @@ public class PaperFX extends Application {
 	@Override
 	public void init() throws Exception {
 		super.init();
+
+		ppl = new PaperPluginLoader();
+		database = new Database();
+
 		paperScreens = new HashMap<>();
 		paperScreens.put("mainMenu", new MainMenuScreen(this));
 		paperScreens.put("game", new GameScreen(this));
 
-		database = Database.loadDatabase();
 	}
 
 	@Override
@@ -44,7 +49,11 @@ public class PaperFX extends Application {
 			paperScene.setRoot(screen);
 	}
 
-	public Database getDatabase() {
+	public PaperPluginLoader getPaperPluginLoader() {
+		return ppl;
+	}
+
+	public static Database getDatabase() {
 		return database;
 	}
 
