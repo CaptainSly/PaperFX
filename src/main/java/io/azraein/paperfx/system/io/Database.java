@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import io.azraein.paperfx.system.actors.Actor;
-import io.azraein.paperfx.system.actors.classes.CharacterClass;
-import io.azraein.paperfx.system.actors.classes.CharacterRace;
+import io.azraein.paperfx.system.actors.classes.ActorClass;
+import io.azraein.paperfx.system.actors.classes.ActorRace;
 import io.azraein.paperfx.system.actors.creatures.Creature;
 import io.azraein.paperfx.system.inventory.items.Item;
 import io.azraein.paperfx.system.locations.Location;
@@ -18,8 +18,8 @@ public class Database implements Serializable {
 
 	private Map<String, Object> globalList = new HashMap<>();
 	private Map<String, Item> itemList = new HashMap<>();
-	private Map<String, CharacterRace> raceList = new HashMap<>();
-	private Map<String, CharacterClass> charClassList = new HashMap<>();
+	private Map<String, ActorRace> raceList = new HashMap<>();
+	private Map<String, ActorClass> charClassList = new HashMap<>();
 	private Map<String, Actor> actorList = new HashMap<>();
 	private Map<String, Creature> creatureList = new HashMap<>();
 	private Map<String, Location> locationList = new HashMap<>();
@@ -41,12 +41,12 @@ public class Database implements Serializable {
 		globalList.put(globalId, global);
 	}
 
-	public CharacterRace getCharacterRace(String characterRaceId) {
+	public ActorRace getCharacterRace(String characterRaceId) {
 		return raceList.get(characterRaceId);
 	}
 
-	public void addCharacterRace(CharacterRace characterRace) {
-		raceList.put(characterRace.getCharacterRaceId(), characterRace);
+	public void addCharacterRace(ActorRace characterRace) {
+		raceList.put(characterRace.getActorRaceId(), characterRace);
 	}
 
 	public Creature getCreature(String creatureId) {
@@ -57,12 +57,12 @@ public class Database implements Serializable {
 		creatureList.put(creature.getCreatureId(), creature);
 	}
 
-	public CharacterClass getCharacterClass(String charClassId) {
+	public ActorClass getCharacterClass(String charClassId) {
 		return charClassList.get(charClassId);
 	}
 
-	public void addCharacterClass(CharacterClass characterClass) {
-		charClassList.put(characterClass.getCharacterClassId(), characterClass);
+	public void addCharacterClass(ActorClass characterClass) {
+		charClassList.put(characterClass.getActorClassId(), characterClass);
 	}
 
 	public Location getLocation(String locationId) {
@@ -116,11 +116,11 @@ public class Database implements Serializable {
 		return itemList;
 	}
 
-	public Map<String, CharacterRace> getRaceList() {
+	public Map<String, ActorRace> getRaceList() {
 		return raceList;
 	}
 
-	public Map<String, CharacterClass> getCharClassList() {
+	public Map<String, ActorClass> getCharClassList() {
 		return charClassList;
 	}
 

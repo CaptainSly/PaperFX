@@ -2,8 +2,8 @@ package io.azraein.paperfx.system.actors;
 
 import java.io.Serializable;
 
-import io.azraein.paperfx.system.actors.classes.CharacterClass;
-import io.azraein.paperfx.system.actors.classes.CharacterRace;
+import io.azraein.paperfx.system.actors.classes.ActorClass;
+import io.azraein.paperfx.system.actors.classes.ActorRace;
 
 public abstract class Actor implements Serializable {
 
@@ -13,7 +13,7 @@ public abstract class Actor implements Serializable {
 
 	private ActorState actorState;
 
-	public Actor(String actorId, String actorName, CharacterClass actorClass, CharacterRace actorRace) {
+	public Actor(String actorId, String actorName, ActorClass actorClass, ActorRace actorRace) {
 		this.actorId = actorId;
 		actorState = new ActorState(actorName, actorClass, actorRace);
 	}

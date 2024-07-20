@@ -1,13 +1,13 @@
 package io.azraein.paperfx.system.actors;
 
-import io.azraein.paperfx.system.actors.classes.CharacterClass;
-import io.azraein.paperfx.system.actors.classes.CharacterRace;
+import io.azraein.paperfx.system.actors.classes.ActorClass;
+import io.azraein.paperfx.system.actors.classes.ActorRace;
 
 public class Player extends Actor {
 
 	private static final long serialVersionUID = -6782575409641873407L;
 
-	public Player(String actorName, CharacterClass charClass, CharacterRace charRace) {
+	public Player(String actorName, ActorClass charClass, ActorRace charRace) {
 		super("PLAYER_ACTOR", actorName, charClass, charRace);
 	}
 

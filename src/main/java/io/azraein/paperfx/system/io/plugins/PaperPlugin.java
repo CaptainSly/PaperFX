@@ -14,6 +14,7 @@ public class PaperPlugin implements Serializable {
 	private String pluginName;
 	private String pluginAuthor;
 	private String pluginDescription;
+	private String pluginVersion;
 
 	private boolean isMainFile;
 
@@ -27,7 +28,7 @@ public class PaperPlugin implements Serializable {
 		pluginDependencies = new ArrayList<>();
 		pluginDatabase = new Database();
 	}
-	
+
 	public PaperPlugin() {
 		pluginDependencies = new ArrayList<>();
 		pluginDatabase = new Database();
@@ -53,6 +54,10 @@ public class PaperPlugin implements Serializable {
 		return pluginDescription;
 	}
 
+	public String getPluginVersion() {
+		return pluginVersion;
+	}
+
 	public boolean isMainFile() {
 		return isMainFile;
 	}
@@ -75,6 +80,10 @@ public class PaperPlugin implements Serializable {
 
 	public void setPluginAuthor(String pluginAuthor) {
 		this.pluginAuthor = pluginAuthor;
+	}
+
+	public void setPluginVersion(String pluginVersion) {
+		this.pluginVersion = pluginVersion;
 	}
 
 	public void setPluginDescription(String pluginDescription) {

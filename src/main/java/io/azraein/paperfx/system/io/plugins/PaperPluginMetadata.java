@@ -8,21 +8,23 @@ public class PaperPluginMetadata {
 	private String pluginName;
 	private String pluginAuthor;
 	private String pluginDescription;
+	private String pluginVersion;
 	private String pluginPath;
 
-	private boolean isMainFile;
+	private boolean isPluginMainFile;
 
 	private List<String> pluginDependencies;
 
 	public PaperPluginMetadata(String pluginId, String pluginName, String pluginAuthor, String pluginDescription,
-			List<String> pluginDependencies, String pluginPath, boolean isMainFile) {
+			String pluginVersion, List<String> pluginDependencies, String pluginPath, boolean isMainFile) {
 		this.pluginId = pluginId;
 		this.pluginName = pluginName;
 		this.pluginAuthor = pluginAuthor;
 		this.pluginDescription = pluginDescription;
+		this.pluginVersion = pluginVersion;
 		this.pluginDependencies = pluginDependencies;
 		this.pluginPath = pluginPath;
-		this.isMainFile = isMainFile;
+		this.isPluginMainFile = isMainFile;
 	}
 
 	public String getPluginId() {
@@ -46,11 +48,15 @@ public class PaperPluginMetadata {
 	}
 
 	public boolean isPluginMainFile() {
-		return isMainFile;
+		return isPluginMainFile;
 	}
 
 	public List<String> getPluginDependencies() {
 		return pluginDependencies;
+	}
+
+	public String getPluginVersion() {
+		return pluginVersion;
 	}
 
 }

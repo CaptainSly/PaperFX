@@ -63,6 +63,7 @@ public class PaperPluginLoader {
 			return combinedPluginDatabase;
 		} catch (Exception e) {
 			Logger.error("Error during Plugin loading", e);
+			e.printStackTrace();
 		}
 
 		return null;
