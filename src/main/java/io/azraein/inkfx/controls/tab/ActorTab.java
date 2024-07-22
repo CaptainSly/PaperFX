@@ -12,6 +12,7 @@ import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.util.StringConverter;
 
 public class ActorTab extends PaperEditorTab {
 
@@ -30,6 +31,7 @@ public class ActorTab extends PaperEditorTab {
 
 					if (item != null) {
 						this.setText(item.getActorId());
+						
 					}
 
 				}
@@ -43,6 +45,9 @@ public class ActorTab extends PaperEditorTab {
 			@Override
 			public void onChanged(Change<? extends String, ? extends Actor> change) {
 				if (change.wasAdded()) {
+					if (inkFX.currentPluginProperty().get().getPluginDatabase().getActorList()
+							.containsKey(change.getKey()))
+						actorList.getItems().remove(change.getValueRemoved());
 					actorList.getItems().add(change.getValueAdded());
 				} else if (change.wasRemoved()) {
 					actorList.getItems().remove(change.getValueRemoved());
@@ -69,6 +74,21 @@ public class ActorTab extends PaperEditorTab {
 
 		ComboBox<ActorRace> actorCharacterRaceCB = new ComboBox<>();
 		actorCharacterRaceCB.getItems().addAll(inkFX.getRaceList().values());
+		actorCharacterRaceCB.setConverter(new StringConverter<ActorRace>() {
+
+			@Override
+			public String toString(ActorRace object) {
+				if (object != null)
+					return object.getActorRaceId();
+				else
+					return null;
+			}
+
+			@Override
+			public ActorRace fromString(String string) {
+				return null;
+			}
+		});
 		actorCharacterRaceCB.setCellFactory(listView -> {
 			return new ListCell<ActorRace>() {
 
@@ -105,6 +125,21 @@ public class ActorTab extends PaperEditorTab {
 
 		ComboBox<ActorClass> actorCharacterClassCB = new ComboBox<>();
 		actorCharacterClassCB.getItems().addAll(inkFX.getCharClassList().values());
+		actorCharacterClassCB.setConverter(new StringConverter<ActorClass>() {
+
+			@Override
+			public String toString(ActorClass object) {
+				if (object != null)
+					return object.getActorClassId();
+				else
+					return null;
+			}
+
+			@Override
+			public ActorClass fromString(String string) {
+				return null;
+			}
+		});
 		inkFX.getCharClassList().addListener(new MapChangeListener<String, ActorClass>() {
 
 			@Override

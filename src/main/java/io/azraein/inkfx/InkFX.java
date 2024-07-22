@@ -86,7 +86,7 @@ public class InkFX extends Application {
 		rootPane.setTop(menuBar);
 		rootPane.setCenter(new Label("Open or Create a new Plugin to get started"));
 
-		primaryStage.setScene(new Scene(rootPane, 1280, 720));
+		primaryStage.setScene(new Scene(rootPane, 1366, 768));
 		primaryStage.setTitle("Ink");
 		primaryStage.show();
 	}
@@ -106,8 +106,13 @@ public class InkFX extends Application {
 		});
 
 		MenuItem savePluginItem = new MenuItem("Save Plugin");
+		savePluginItem.setDisable(true);
 		savePluginItem.setOnAction(event -> {
 			savePlugin();
+		});
+
+		currentPluginProperty.addListener((observable, oldValue, newValue) -> {
+			savePluginItem.setDisable(newValue == null);
 		});
 
 		fileMenu.getItems().addAll(newPluginItem, openPluginItem, savePluginItem);
@@ -156,7 +161,6 @@ public class InkFX extends Application {
 				List<String> pluginDependencyPaths = depsAndMetadata.get().getValue().getKey();
 				List<String> pluginDependencies = depsAndMetadata.get().getKey();
 				PluginMetadataScreen pmd = ((PluginMetadataScreen) editorScreens.get(PLUGIN_METADATA_SCREEN));
-				mergeDatabase(ppl.loadPlugins(pluginDependencyPaths));
 
 				for (String str : ppl.getLoadedPlugins().keySet()) {
 					Logger.debug("Loaded Plugin: " + str);
@@ -168,6 +172,7 @@ public class InkFX extends Application {
 					Logger.debug(pluginMetadata.getPluginPath());
 					try {
 						currentPluginProperty.set(SaveSystem.loadPlugin(pluginMetadata.getPluginPath()));
+						mergeDatabase(ppl.loadPlugins(pluginDependencyPaths));
 						pmd.setDependencies(pluginDependencies);
 
 						// Remove the active plugin from the list, considering we don't want to add
@@ -189,6 +194,7 @@ public class InkFX extends Application {
 					}
 				} else {
 					currentPluginProperty.set(new PaperPlugin());
+					mergeDatabase(ppl.loadPlugins(pluginDependencyPaths));
 					pmd.setDependencies(pluginDependencies);
 				}
 

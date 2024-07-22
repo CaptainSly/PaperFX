@@ -2,11 +2,28 @@ package io.azraein.paperfx.system;
 
 public class Utils {
 
-	public static String toNormalCase(String str) {
-		if (str.contains("_"))
-			str.replace("_", " ");
+	public static String toNormalCase(String input) {
+		if (input == null || input.isEmpty()) {
+			return input; // Return the same if input is null or empty
+		}
 
-		return str.substring(0, 1).toUpperCase() + str.substring(1, str.length()).toLowerCase();
+		// Replace underscores with spaces
+		String replaced = input.replace("_", " ");
+
+		// Split the string by spaces, capitalize each word, and join them back together
+		String[] words = replaced.split(" ");
+		StringBuilder result = new StringBuilder();
+
+		for (String word : words) {
+			if (!word.isEmpty()) {
+				// Capitalize the first letter and append the rest of the word in lowercase
+				result.append(Character.toUpperCase(word.charAt(0))).append(word.substring(1).toLowerCase())
+						.append(" ");
+			}
+		}
+
+		// Trim the final string to remove any trailing space
+		return result.toString().trim();
 	}
 
 	public static String getSuffix(int number) {

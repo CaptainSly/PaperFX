@@ -26,6 +26,7 @@ public class PaperPluginLoader {
 				PaperPluginMetadata metadata = SaveSystem.readPluginMetadata(pluginPath);
 				metadataList.add(metadata);
 			}
+			Logger.debug("Step 1. metadataList Size: " + metadataList.size());
 
 			// Step 2. Separate MAIN Plugins from addon plugins
 			List<PaperPluginMetadata> mainPlugins = new ArrayList<>();
@@ -37,21 +38,30 @@ public class PaperPluginLoader {
 				else
 					addonPlugins.add(metadata);
 			}
+			Logger.debug("Step 2. Separate MAIN and ADDON Plugins, MAIN = " + mainPlugins.size() + ", ADDONS = "
+					+ addonPlugins.size());
+
+			// Step 3. Sort Main Plugins based on dependencies
+			List<String> sortedMainPluginPaths = sortPluginsByDependencies(mainPlugins);
 
 			// Load the MAIN Plugins first, absolutely no other way. THESE NEED TO BE THERE.
-			for (PaperPluginMetadata metadata : mainPlugins) {
-				PaperPlugin plugin = SaveSystem.loadPlugin(metadata.getPluginPath());
+			for (String pluginPath : sortedMainPluginPaths) {
+				PaperPlugin plugin = SaveSystem.loadPlugin(pluginPath);
 				addPlugin(plugin);
 			}
+			Logger.debug(
+					"Step 3. Sort and add MAIN Plugins to loadedPlugins list. LoadedPlugins: " + loadedPlugins.size());
 
-			// Step 3. Sort plugins based on dependencies
+			// Step 4. Sort Addon Plugins based on dependencies
 			List<String> sortedPluginPaths = sortPluginsByDependencies(addonPlugins);
 
-			// Step 4. Load Plugins in sorted order
+			// Load Plugins in sorted order
 			for (String pluginPath : sortedPluginPaths) {
 				PaperPlugin plugin = SaveSystem.loadPlugin(pluginPath);
 				addPlugin(plugin);
 			}
+			Logger.debug(
+					"Step 5. Sort and add ADDON Plugins to loadedPlugins list. LoadedPlugins: " + loadedPlugins.size());
 
 			// Step 5. Add plugin data to main database
 			Database combinedPluginDatabase = new Database();
@@ -74,46 +84,49 @@ public class PaperPluginLoader {
 	}
 
 	private List<String> sortPluginsByDependencies(List<PaperPluginMetadata> metadataList) {
+		// Maps plugin IDs to their metadata
 		Map<String, PaperPluginMetadata> metadataMap = new HashMap<>();
+		// Maps plugin IDs to their dependencies
 		Map<String, List<String>> dependencyGraph = new HashMap<>();
-		Set<String> mainPluginIds = new HashSet<>();
 
+		// Initialize metadata map and dependency graph
 		for (PaperPluginMetadata metadata : metadataList) {
 			metadataMap.put(metadata.getPluginId(), metadata);
-			if (metadata.isPluginMainFile())
-				mainPluginIds.add(metadata.getPluginId());
-			else
+			if (!metadata.isPluginMainFile()) {
 				dependencyGraph.put(metadata.getPluginId(), metadata.getPluginDependencies());
-		}
-
-		List<String> sortedPlugins = new ArrayList<>();
-		Set<String> visited = new HashSet<>();
-		Set<String> visiting = new HashSet<>();
-
-		// Add dependency-less plugins first
-		for (String pluginId : dependencyGraph.keySet()) {
-			if (dependencyGraph.get(pluginId).isEmpty()) {
-				sortedPlugins.add(pluginId);
-				visited.add(pluginId);
 			}
 		}
 
+		// List to store the sorted plugin IDs
+		List<String> sortedPlugins = new ArrayList<>();
+		// Sets to keep track of visited and currently visiting plugins
+		Set<String> visited = new HashSet<>();
+		Set<String> visiting = new HashSet<>();
+
+		// Perform topological sort on each plugin
 		for (String pluginId : dependencyGraph.keySet()) {
-			if (!visited.contains(pluginId))
+			if (!visited.contains(pluginId)) {
 				try {
 					topologicalSort(pluginId, dependencyGraph, visited, visiting, sortedPlugins);
 				} catch (MissingPluginDependencyException e) {
-					Logger.error("There seems to be a missing dependency while loading plugins", e);
+					Logger.error("Missing plugin dependency detected: " + e.getMessage());
 				}
+			}
 		}
 
+		// Add plugins with no dependencies (main plugins)
+		for (PaperPluginMetadata metadata : metadataList) {
+			if (metadata.isPluginMainFile() && !sortedPlugins.contains(metadata.getPluginId())) {
+				sortedPlugins.add(metadata.getPluginId());
+			}
+		}
+
+		// Convert sorted plugin IDs to plugin paths
 		List<String> sortedPluginPaths = new ArrayList<>();
 		for (String pluginId : sortedPlugins) {
-			for (PaperPluginMetadata metadata : metadataList) {
-				if (metadata.getPluginId().equals(pluginId)) {
-					if (metadata != null)
-						sortedPluginPaths.add(metadata.getPluginPath());
-				}
+			PaperPluginMetadata metadata = metadataMap.get(pluginId);
+			if (metadata != null) {
+				sortedPluginPaths.add(metadata.getPluginPath());
 			}
 		}
 
@@ -122,25 +135,32 @@ public class PaperPluginLoader {
 
 	private void topologicalSort(String pluginId, Map<String, List<String>> dependencyGraph, Set<String> visited,
 			Set<String> visiting, List<String> sortedPlugins) throws MissingPluginDependencyException {
+		// Detect circular dependencies
+		if (visiting.contains(pluginId)) {
+			throw new IllegalStateException("Circular dependency detected involving plugin: " + pluginId);
+		}
 
-		if (visiting.contains(pluginId))
-			throw new IllegalStateException("Circular Dependency detected involving Plugin: " + pluginId);
-
+		// If not already visited
 		if (!visited.contains(pluginId)) {
 			visiting.add(pluginId);
-			for (String dependency : dependencyGraph.get(pluginId)) {
 
-				if (!dependencyGraph.containsKey(dependency))
-					throw new MissingPluginDependencyException(pluginId + " is missing a dependency: " + dependency);
-
-				topologicalSort(dependency, dependencyGraph, visited, visiting, sortedPlugins);
+			// Recursively sort dependencies
+			List<String> dependencies = dependencyGraph.get(pluginId);
+			if (dependencies != null) {
+				for (String dependency : dependencies) {
+					if (!dependencyGraph.containsKey(dependency)) {
+						throw new MissingPluginDependencyException(
+								"Plugin " + pluginId + " depends on a non-existent plugin: " + dependency);
+					}
+					topologicalSort(dependency, dependencyGraph, visited, visiting, sortedPlugins);
+				}
 			}
 
+			// Mark the current plugin as visited and add to sorted list
 			visiting.remove(pluginId);
 			visited.add(pluginId);
 			sortedPlugins.add(pluginId);
 		}
-
 	}
 
 	public Map<String, PaperPlugin> getLoadedPlugins() {

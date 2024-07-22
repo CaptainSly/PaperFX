@@ -35,7 +35,7 @@ public class ActorRaceTab extends PaperEditorTab {
 		Spinner<Integer>[] actorRaceBaseAttrSpinners = new Spinner[Attribute.values().length];
 		Label[] actorRaceBaseAttrLbls = new Label[Attribute.values().length];
 		for (Attribute attr : Attribute.values()) {
-			actorRaceBaseAttrSpinners[attr.ordinal()] = new Spinner<>(1, 999, 1);
+			actorRaceBaseAttrSpinners[attr.ordinal()] = new Spinner<>(1, 999, 0);
 			actorRaceBaseAttrLbls[attr.ordinal()] = new Label(Utils.toNormalCase(attr.name()));
 		}
 
@@ -43,7 +43,7 @@ public class ActorRaceTab extends PaperEditorTab {
 		Spinner<Integer>[] actorRaceSkillBonusesSpinner = new Spinner[Skill.values().length];
 		Label[] actorRaceSkillBonusesLbls = new Label[Skill.values().length];
 		for (Skill skill : Skill.values()) {
-			actorRaceSkillBonusesSpinner[skill.ordinal()] = new Spinner<>(1, 999, 1);
+			actorRaceSkillBonusesSpinner[skill.ordinal()] = new Spinner<>(1, 999, 0);
 			actorRaceSkillBonusesLbls[skill.ordinal()] = new Label(Utils.toNormalCase(skill.name()));
 		}
 
@@ -62,7 +62,22 @@ public class ActorRaceTab extends PaperEditorTab {
 
 			};
 		});
+		actorRaceList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+			if (newValue != null) {
+				actorRaceIdFld.setText(newValue.getActorRaceId());
+				actorRaceNameFld.setText(newValue.getActorRaceName());
+				actorRaceDescriptionFld.setText(newValue.getActorRaceDescription());
+				actorIsBeastRaceCB.setSelected(newValue.isBeastRace());
 
+				for (Skill skill : Skill.values())
+					actorRaceSkillBonusesSpinner[skill.ordinal()].getValueFactory()
+							.setValue(newValue.getActorRaceSkillBonus(skill));
+
+				for (Attribute attr : Attribute.values())
+					actorRaceBaseAttrSpinners[attr.ordinal()].getValueFactory()
+							.setValue(newValue.getActorRaceBaseAttribute(attr));
+			}
+		});
 		actorRaceList.getItems().addAll(inkFX.getRaceList().values());
 		inkFX.getRaceList().addListener(new MapChangeListener<String, ActorRace>() {
 
@@ -83,31 +98,52 @@ public class ActorRaceTab extends PaperEditorTab {
 
 		});
 
-		Button saveRaceBtn = new Button("Save Race");
-		saveRaceBtn.setOnAction(event -> {
-			ActorRace race = new ActorRace(actorRaceIdFld.getText(), actorRaceNameFld.getText());
-			race.setActorRaceDescription(actorRaceDescriptionFld.getText());
-			race.setBeastRace(actorIsBeastRaceCB.isSelected());
+		Button clearFieldBtn = new Button("Clear Form");
+		clearFieldBtn.setOnAction(event -> {
+			actorRaceIdFld.setText("");
+			actorRaceNameFld.setText("");
+			actorRaceDescriptionFld.setText("");
+			actorIsBeastRaceCB.setSelected(false);
 
-			for (Attribute attr : Attribute.values()) {
-				race.getActorRaceBaseAttributes()[attr.ordinal()] = actorRaceBaseAttrSpinners[attr.ordinal()]
-						.getValue();
-			}
+			for (Skill skill : Skill.values())
+				actorRaceSkillBonusesSpinner[skill.ordinal()].getValueFactory().setValue(0);
 
-			for (Skill skill : Skill.values()) {
-				race.getActorRaceSkillBonuses()[skill.ordinal()] = actorRaceSkillBonusesSpinner[skill.ordinal()]
-						.getValue();
-			}
+			for (Attribute attr : Attribute.values())
+				actorRaceBaseAttrSpinners[attr.ordinal()].getValueFactory().setValue(0);
 
-			inkFX.currentPluginProperty().get().getPluginDatabase().addCharacterRace(race);
-			inkFX.getRaceList().put(race.getActorRaceId(), race);
 		});
 
-		// TODO: Add the rest of the stuff to the tab, not even close to be finished
-		// yet.
+		Button saveRaceBtn = new Button("Save Race");
+		saveRaceBtn.setOnAction(event -> {
+			String actorRaceId = actorRaceIdFld.getText();
+
+			ActorRace actorRace = null;
+			if (inkFX.getRaceList().containsKey(actorRaceId)) {
+				actorRace = inkFX.getRaceList().get(actorRaceId);
+			}
+
+			if (actorRace == null)
+				actorRace = new ActorRace(actorRaceId, actorRaceNameFld.getText());
+
+			actorRace.setActorRaceName(actorRaceNameFld.getText());
+			actorRace.setActorRaceDescription(actorRaceDescriptionFld.getText());
+			actorRace.setBeastRace(actorIsBeastRaceCB.isSelected());
+
+			for (Skill skill : Skill.values())
+				actorRace.getActorRaceSkillBonuses()[skill.ordinal()] = actorRaceSkillBonusesSpinner[skill.ordinal()]
+						.getValue();
+
+			for (Attribute attr : Attribute.values())
+				actorRace.getActorRaceBaseAttributes()[attr.ordinal()] = actorRaceBaseAttrSpinners[attr.ordinal()]
+						.getValue();
+
+			inkFX.currentPluginProperty().get().getPluginDatabase().addCharacterRace(actorRace);
+			inkFX.getRaceList().put(actorRace.getActorRaceId(), actorRace);
+		});
 
 		GridPane raceInfoPane = new GridPane();
-		GridPane.setColumnSpan(actorRaceDescriptionFld, 3);
+		GridPane.setColumnSpan(actorRaceDescriptionFld, 4);
+		GridPane.setRowSpan(actorRaceDescriptionFld, 6);
 		raceInfoPane.setPadding(new Insets(15));
 		raceInfoPane.setHgap(10);
 		raceInfoPane.setVgap(10);
@@ -117,9 +153,32 @@ public class ActorRaceTab extends PaperEditorTab {
 		raceInfoPane.add(actorRaceNameFld, 3, 0);
 		raceInfoPane.add(actorRaceDescriptionLbl, 0, 1);
 		raceInfoPane.add(actorRaceDescriptionFld, 1, 1);
-		raceInfoPane.add(actorIsBeastRaceLbl, 0, 2);
-		raceInfoPane.add(actorIsBeastRaceCB, 1, 2);
-		raceInfoPane.add(saveRaceBtn, 2, 2);
+		raceInfoPane.add(actorIsBeastRaceLbl, 0, 7);
+		raceInfoPane.add(actorIsBeastRaceCB, 1, 7);
+		raceInfoPane.add(saveRaceBtn, 0, 19);
+		raceInfoPane.add(clearFieldBtn, 1, 19);
+
+		raceInfoPane.add(new Label("Race Inital Attribute Values"), 5, 0);
+
+		for (int i = 0; i < Attribute.values().length; i++) {
+			raceInfoPane.add(actorRaceBaseAttrLbls[i], 5, i + 1);
+			raceInfoPane.add(actorRaceBaseAttrSpinners[i], 6, i + 1);
+		}
+
+		int numCols = 3;
+		int numRows = (int) Math.ceil((double) Skill.values().length / numCols);
+		int index = 0;
+		for (int row = 0; row < numRows; row++) {
+			for (int col = 0; col < numCols; col++) {
+				if (index < Skill.values().length) {
+					int curCol = col;
+					int curRow = 9 + row;
+					raceInfoPane.add(actorRaceSkillBonusesLbls[index], curCol * 2, curRow);
+					raceInfoPane.add(actorRaceSkillBonusesSpinner[index], curCol * 2 + 1, curRow);
+					index++;
+				}
+			}
+		}
 
 		BorderPane rootPane = new BorderPane();
 		rootPane.setLeft(actorRaceList);

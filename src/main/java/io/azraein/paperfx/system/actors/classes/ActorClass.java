@@ -1,8 +1,12 @@
 package io.azraein.paperfx.system.actors.classes;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import io.azraein.paperfx.system.actors.stats.Attribute;
+import io.azraein.paperfx.system.actors.stats.Skill;
 
 public class ActorClass implements Serializable {
 
@@ -12,24 +16,20 @@ public class ActorClass implements Serializable {
 	private String actorClassName;
 	private String actorClassDescription;
 
-	private int[] actorClassAttributeBonus;
+	private int[] actorClassSkillBonuses;
+	private Set<Attribute> actorClassFavoredAttributes;
+	private Set<Skill> actorClassSkills;
 
 	public ActorClass(String actorClassId, String actorClassName) {
 		this.actorClassId = actorClassId;
 		this.actorClassName = actorClassName;
-		actorClassAttributeBonus = new int[Attribute.values().length];
+		actorClassSkillBonuses = new int[Skill.values().length];
+		actorClassFavoredAttributes = new HashSet<>(2);
+		actorClassSkills = new HashSet<>(6);
 	}
 
 	public String getActorClassId() {
 		return actorClassId;
-	}
-
-	public int getActorClassAttributeBonus(Attribute attribute) {
-		return actorClassAttributeBonus[attribute.ordinal()];
-	}
-
-	public int[] getActorClassAttributeBonuses() {
-		return actorClassAttributeBonus;
 	}
 
 	public String getActorClassName() {
@@ -39,7 +39,19 @@ public class ActorClass implements Serializable {
 	public String getActorClassDescription() {
 		return actorClassDescription;
 	}
+	
+	public int[] getActorSkillBonuses() {
+		return actorClassSkillBonuses;
+	}
+	
+	public Set<Attribute> getActorClassFavoredAttributes() {
+		return actorClassFavoredAttributes;
+	}
 
+	public Set<Skill> getActorClassSkills() {
+		return actorClassSkills;
+	}
+	
 	public void setActorClassId(String actorClassId) {
 		this.actorClassId = actorClassId;
 	}
@@ -52,8 +64,13 @@ public class ActorClass implements Serializable {
 		this.actorClassDescription = actorClassDescription;
 	}
 
-	public void setActorClassAttributeBonus(int[] actorClassAttributeBonus) {
-		this.actorClassAttributeBonus = actorClassAttributeBonus;
+	public void setActorClassSkills(List<Skill> actorSkills) {
+		actorClassSkills.addAll(actorSkills);
+	}
+	
+	public void setActorClassFavoredAttribute(Attribute attr1, Attribute attr2) {
+		actorClassFavoredAttributes.add(attr1);
+		actorClassFavoredAttributes.add(attr2);
 	}
 
 }
