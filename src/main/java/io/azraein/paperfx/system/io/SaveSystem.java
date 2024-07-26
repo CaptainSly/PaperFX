@@ -1,8 +1,6 @@
 package io.azraein.paperfx.system.io;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.tinylog.Logger;
 
@@ -33,29 +31,30 @@ public class SaveSystem {
 			// Write Plugin File Version
 			pluginOutputStream.writeUTF(PAPER_PLUGIN_FILE_VERSION);
 
-			// Get Database stuff ready for writing
+			String metadataJson = SAVE_GSON.toJson(plugin.getMetadata());
 			String databaseJson = SAVE_GSON.toJson(plugin.getPluginDatabase());
-			Logger.debug(databaseJson);
+
+			byte[] uncompressedMetadataBytes = metadataJson.getBytes();
 			byte[] uncompressedDatabaseBytes = databaseJson.getBytes();
+
+			int uncompressedMetadataSize = uncompressedMetadataBytes.length;
 			int uncompressedDatabaseSize = uncompressedDatabaseBytes.length;
+
+			pluginOutputStream.writeInt(uncompressedMetadataSize);
 			pluginOutputStream.writeInt(uncompressedDatabaseSize);
 
-			// Write Plugin Metadata
-			pluginOutputStream.writeUTF(plugin.getPluginId());
-			pluginOutputStream.writeUTF(plugin.getPluginName());
-			pluginOutputStream.writeUTF(plugin.getPluginAuthor());
-			pluginOutputStream.writeUTF(plugin.getPluginVersion());
-			pluginOutputStream.writeUTF(plugin.getPluginDescription());
-			pluginOutputStream.writeBoolean(plugin.isMainFile());
-
-			// Write Plugin Dependency Ids
-			pluginOutputStream.writeInt(plugin.getPluginDependencies().size());
-			for (String pluginId : plugin.getPluginDependencies())
-				pluginOutputStream.writeUTF(pluginId);
-
 			// Finally Compress and Write the database bytes
+			byte[] compressedMetadataBytes = Zstd.compress(uncompressedMetadataBytes);
 			byte[] compressedDatabaseBytes = Zstd.compress(uncompressedDatabaseBytes);
+
+			int compressedMetadataBytesSize = compressedMetadataBytes.length;
+			int compressedDatabaseBytesSize = compressedDatabaseBytes.length;
+
+			pluginOutputStream.writeInt(compressedMetadataBytesSize);
+			pluginOutputStream.writeInt(compressedDatabaseBytesSize);
+			pluginOutputStream.write(compressedMetadataBytes);
 			pluginOutputStream.write(compressedDatabaseBytes);
+
 			pluginOutputStream.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -67,47 +66,36 @@ public class SaveSystem {
 	public static PaperPlugin loadPlugin(String pluginPath)
 			throws IncompatiblePluginVersionException, PluginCorruptionException {
 		PaperPlugin ppf = null;
-		Logger.debug("Reading Plugin from path: " + pluginPath);
+		Logger.debug("Plugin Path: " + pluginPath);
 		try (DataInputStream pluginInputStream = new DataInputStream(new FileInputStream(pluginPath))) {
 
-			// Read Plugin File Identifier
-			String pluginFileId = pluginInputStream.readUTF();
-			if (!pluginFileId.equals(PAPER_PLUGIN_FILE_IDENTIFIER))
+			String pluginFileIdentifier = pluginInputStream.readUTF();
+			if (!pluginFileIdentifier.equals(PAPER_PLUGIN_FILE_IDENTIFIER))
 				throw new PluginCorruptionException(
-						"The Paper Plugin File Identifier doesn't match, the file might be corrupted");
+						"The File Identifier does not match, the file could be corrupted or malformed");
 
 			String pluginFileVersion = pluginInputStream.readUTF();
 			if (!pluginFileVersion.equals(PAPER_PLUGIN_FILE_VERSION))
 				throw new IncompatiblePluginVersionException(
-						"The plugin file version doesn't match, incompatible with this version of Paper");
+						"The loaded plugins version is incompatible with this version of Paper");
 
-			int uncompressedDatabaseSize = pluginInputStream.readInt();
+			int uncompressedMetadataBytesSize = pluginInputStream.readInt();
+			int uncompressedDatabaseBytesSize = pluginInputStream.readInt();
 
-			String pluginId = pluginInputStream.readUTF();
-			String pluginName = pluginInputStream.readUTF();
-			String pluginAuthor = pluginInputStream.readUTF();
-			String pluginVersion = pluginInputStream.readUTF();
-			String pluginDescription = pluginInputStream.readUTF();
-			Boolean pluginIsMainFile = pluginInputStream.readBoolean();
+			int compressedMetadataBytesSize = pluginInputStream.readInt();
+			int compressedDatabaseBytesSize = pluginInputStream.readInt();
 
-			int dependencyCount = pluginInputStream.readInt();
+			byte[] compressedMetadataBytes = pluginInputStream.readNBytes(compressedMetadataBytesSize);
+			byte[] compressedDatabaseBytes = pluginInputStream.readNBytes(compressedDatabaseBytesSize);
 
-			List<String> pluginDependencies = new ArrayList<>();
-			for (int i = 0; i < dependencyCount; i++)
-				pluginDependencies.add(pluginInputStream.readUTF());
+			byte[] uncompressedMetadataBytes = Zstd.decompress(compressedMetadataBytes, uncompressedMetadataBytesSize);
+			byte[] uncompressedDatabaseBytes = Zstd.decompress(compressedDatabaseBytes, uncompressedDatabaseBytesSize);
 
-			byte[] compressedDatabase = pluginInputStream.readAllBytes();
-			Database database = SAVE_GSON.fromJson(
-					new String(Zstd.decompress(compressedDatabase, uncompressedDatabaseSize)), Database.class);
+			PaperPluginMetadata metadata = SAVE_GSON.fromJson(new String(uncompressedMetadataBytes),
+					PaperPluginMetadata.class);
+			Database database = SAVE_GSON.fromJson(new String(uncompressedDatabaseBytes), Database.class);
 
-			ppf = new PaperPlugin(pluginId, pluginName);
-			ppf.setPluginAuthor(pluginAuthor);
-			ppf.setPluginDependencies(pluginDependencies);
-			ppf.setPluginDescription(pluginDescription);
-			ppf.setPluginVersion(pluginVersion);
-			ppf.setIsMainFile(pluginIsMainFile);
-			ppf.setPluginDatabase(database);
-
+			ppf = new PaperPlugin(metadata, database);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -117,36 +105,22 @@ public class SaveSystem {
 		return ppf;
 	}
 
+	@SuppressWarnings("unused")
 	public static PaperPluginMetadata readPluginMetadata(String pluginPath) throws IOException {
 		try (DataInputStream metadataInputStream = new DataInputStream(new FileInputStream(pluginPath))) {
-			// Ignore the File METADATA
 			metadataInputStream.readUTF();
 			metadataInputStream.readUTF();
-			metadataInputStream.readInt();
+			int uncompressedMetadataBytesSize = metadataInputStream.readInt();
+			int uncompressedDatabaseBytesSize = metadataInputStream.readInt();
+			int compressedMetadataBytesSize = metadataInputStream.readInt();
+			int compressedDatabaseBytesSize = metadataInputStream.readInt();
+			byte[] compressedMetadataBytes = metadataInputStream.readNBytes(compressedMetadataBytesSize);
+			byte[] compressedDatabaseBytes = metadataInputStream.readNBytes(compressedDatabaseBytesSize);
+			byte[] uncompressedMetadataBytes = Zstd.decompress(compressedMetadataBytes, uncompressedMetadataBytesSize);
+			PaperPluginMetadata metadata = SAVE_GSON.fromJson(new String(uncompressedMetadataBytes),
+					PaperPluginMetadata.class);
 
-			// We're looking for the Plugin METADATA
-			// Read Plugin Id
-			String pluginId = metadataInputStream.readUTF();
-			// Read Plugin Name
-			String pluginName = metadataInputStream.readUTF();
-			// Read Plugin Author
-			String pluginAuthor = metadataInputStream.readUTF();
-			// Read Plugin Version
-			String pluginVersion = metadataInputStream.readUTF();
-			// Read Plugin Description
-			String pluginDescription = metadataInputStream.readUTF();
-			// Read Plugin isMainFile
-			boolean isPluginMainFile = metadataInputStream.readBoolean();
-			// Read Plugin Dependencies Count
-			int dependencyCount = metadataInputStream.readInt();
-			// Read Plugin Dependencies
-			List<String> pluginDependencies = new ArrayList<>();
-			for (int i = 0; i < dependencyCount; i++) {
-				pluginDependencies.add(metadataInputStream.readUTF());
-			}
-
-			return new PaperPluginMetadata(pluginId, pluginName, pluginAuthor, pluginDescription, pluginVersion,
-					pluginDependencies, pluginPath, isPluginMainFile);
+			return metadata;
 		}
 	}
 

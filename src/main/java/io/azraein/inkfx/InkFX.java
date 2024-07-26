@@ -1,6 +1,10 @@
 package io.azraein.inkfx;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import org.tinylog.Logger;
 
@@ -48,17 +52,17 @@ public class InkFX extends Application {
 	public static final String INK_VERSION = "0.0.3";
 
 	// Everything gets saved to this database in here, avoiding duplicate entries
-	private ObjectProperty<PaperPlugin> currentPluginProperty = new SimpleObjectProperty<>(null);
+	private final ObjectProperty<PaperPlugin> currentPluginProperty = new SimpleObjectProperty<>(null);
 
 	// Everything gets loaded here, but nothing gets saved.
-	private ObservableMap<String, Object> globalList = FXCollections.observableHashMap();
-	private ObservableMap<String, Item> itemList = FXCollections.observableHashMap();
-	private ObservableMap<String, ActorRace> raceList = FXCollections.observableHashMap();
-	private ObservableMap<String, ActorClass> charClassList = FXCollections.observableHashMap();
-	private ObservableMap<String, Actor> actorList = FXCollections.observableHashMap();
-	private ObservableMap<String, Creature> creatureList = FXCollections.observableHashMap();
-	private ObservableMap<String, Location> locationList = FXCollections.observableHashMap();
-	private ObservableMap<String, SubLocation> subLocationList = FXCollections.observableHashMap();
+	private final ObservableMap<String, Object> globalList = FXCollections.observableHashMap();
+	private final ObservableMap<String, Item> itemList = FXCollections.observableHashMap();
+	private final ObservableMap<String, ActorRace> raceList = FXCollections.observableHashMap();
+	private final ObservableMap<String, ActorClass> charClassList = FXCollections.observableHashMap();
+	private final ObservableMap<String, Actor> actorList = FXCollections.observableHashMap();
+	private final ObservableMap<String, Creature> creatureList = FXCollections.observableHashMap();
+	private final ObservableMap<String, Location> locationList = FXCollections.observableHashMap();
+	private final ObservableMap<String, SubLocation> subLocationList = FXCollections.observableHashMap();
 
 	public static final String PLUGIN_METADATA_SCREEN = "pluginMetadata";
 	public static final String PLUGIN_CONTENT_EDITOR_SCREEN = "pluginContent";
@@ -111,11 +115,21 @@ public class InkFX extends Application {
 			savePlugin();
 		});
 
-		currentPluginProperty.addListener((observable, oldValue, newValue) -> {
-			savePluginItem.setDisable(newValue == null);
+		MenuItem closePluginItem = new MenuItem("Close Plugin");
+		closePluginItem.setDisable(true);
+		closePluginItem.setOnAction(event -> {
+			swapScreens(PLUGIN_METADATA_SCREEN);
+			clearDatabase();
+			ppl.clearLoadedPlugins();
+			currentPluginProperty.set(null);
 		});
 
-		fileMenu.getItems().addAll(newPluginItem, openPluginItem, savePluginItem);
+		currentPluginProperty.addListener((observable, oldValue, newValue) -> {
+			savePluginItem.setDisable(newValue == null);
+			closePluginItem.setDisable(newValue == null);
+		});
+
+		fileMenu.getItems().addAll(newPluginItem, openPluginItem, savePluginItem, closePluginItem);
 		menuBar.getMenus().add(fileMenu);
 	}
 
@@ -124,7 +138,7 @@ public class InkFX extends Application {
 		screenMenu.setDisable(true);
 
 		currentPluginProperty.addListener((observable, oldValue, newValue) -> {
-			screenMenu.setDisable(newValue == null ? true : false);
+			screenMenu.setDisable(newValue == null);
 		});
 
 		MenuItem metadataScreen = new MenuItem("Swap to Plugin Metadata");
@@ -146,7 +160,8 @@ public class InkFX extends Application {
 
 		MenuItem aboutItem = new MenuItem("About Ink");
 		aboutItem.setOnAction(event -> {
-			new AboutAlert();
+			AboutAlert alert = new AboutAlert();
+			alert.show();
 		});
 
 		aboutMenu.getItems().add(aboutItem);
@@ -155,11 +170,12 @@ public class InkFX extends Application {
 
 	private void openPlugin() {
 		PluginSelectionDialog psd = new PluginSelectionDialog();
-		Optional<Pair<List<String>, Pair<List<String>, PaperPluginMetadata>>> depsAndMetadata = psd.showAndWait();
+		Optional<Pair<List<PaperPluginMetadata>, Pair<List<String>, PaperPluginMetadata>>> depsAndMetadata = psd
+				.showAndWait();
 		if (depsAndMetadata.isPresent()) {
 			if (depsAndMetadata.get().getKey() != null) {
 				List<String> pluginDependencyPaths = depsAndMetadata.get().getValue().getKey();
-				List<String> pluginDependencies = depsAndMetadata.get().getKey();
+				List<PaperPluginMetadata> pluginDependencies = depsAndMetadata.get().getKey();
 				PluginMetadataScreen pmd = ((PluginMetadataScreen) editorScreens.get(PLUGIN_METADATA_SCREEN));
 
 				for (String str : ppl.getLoadedPlugins().keySet()) {
@@ -169,7 +185,7 @@ public class InkFX extends Application {
 				if (depsAndMetadata.get().getValue().getValue() != null) {
 					PaperPluginMetadata pluginMetadata = depsAndMetadata.get().getValue().getValue();
 
-					Logger.debug(pluginMetadata.getPluginPath());
+					Logger.debug("Plugin Path: " + pluginMetadata.getPluginPath());
 					try {
 						currentPluginProperty.set(SaveSystem.loadPlugin(pluginMetadata.getPluginPath()));
 						mergeDatabase(ppl.loadPlugins(pluginDependencyPaths));
@@ -177,7 +193,7 @@ public class InkFX extends Application {
 
 						// Remove the active plugin from the list, considering we don't want to add
 						// ourselves. Talk about recursive
-						pmd.getDependencyList().getItems().remove(pluginMetadata.getPluginId());
+						pmd.getDependencyListView().getItems().remove(pluginMetadata);
 
 						// Add the rest of the information to the plugin
 						pmd.getPluginIdFld().setText(pluginMetadata.getPluginId());
@@ -187,9 +203,7 @@ public class InkFX extends Application {
 						pmd.getPluginMainFileCB().setSelected(pluginMetadata.isPluginMainFile());
 						pmd.getPluginVersionFld().setText(pluginMetadata.getPluginVersion());
 
-					} catch (IncompatiblePluginVersionException e) {
-						Logger.error(e);
-					} catch (PluginCorruptionException e) {
+					} catch (IncompatiblePluginVersionException | PluginCorruptionException e) {
 						Logger.error(e);
 					}
 				} else {
@@ -217,23 +231,24 @@ public class InkFX extends Application {
 
 		if (pmd.getPluginIdFld() != null && pmd.getPluginNameFld() != null && pmd.getPluginAuthorFld() != null
 				&& pmd.getPluginDescription() != null && pmd.getPluginMainFileCB() != null
-				&& pmd.getDependencyList() != null) {
+				&& pmd.getDependencyListView() != null) {
 
-			plugin.setPluginId(pmd.getPluginIdFld().getText());
-			plugin.setPluginName(pmd.getPluginNameFld().getText());
-			plugin.setPluginAuthor(pmd.getPluginAuthorFld().getText());
-			plugin.setPluginVersion(pmd.getPluginVersionFld().getText());
-			plugin.setPluginDescription(pmd.getPluginDescription().getText());
-			plugin.setIsMainFile(pmd.getPluginMainFileCB().isSelected());
+			plugin.getMetadata().setPluginId(pmd.getPluginIdFld().getText());
+			plugin.getMetadata().setPluginName(pmd.getPluginNameFld().getText());
+			plugin.getMetadata().setPluginAuthor(pmd.getPluginAuthorFld().getText());
+			plugin.getMetadata().setPluginVersion(pmd.getPluginVersionFld().getText());
+			plugin.getMetadata().setPluginDescription(pmd.getPluginDescription().getText());
+			plugin.getMetadata().setPluginMainFile(pmd.getPluginMainFileCB().isSelected());
 
 			List<String> dependencyList = new ArrayList<>();
-			for (String dependency : pmd.getDependencyList().getItems())
-				dependencyList.add(dependency);
+			for (PaperPluginMetadata dependency : pmd.getDependencyListView().getItems())
+				dependencyList.add(dependency.getPluginId());
 
-			plugin.setPluginDependencies(dependencyList);
+			plugin.getMetadata().setPluginDependencies(dependencyList);
 
-			String fileName = plugin.isMainFile() ? plugin.getPluginId() + SaveSystem.PAPER_PLUGIN_MAIN_FILE_EXTENSION
-					: plugin.getPluginId() + SaveSystem.PAPER_PLUGIN_ADDON_FILE_EXTENSION;
+			String fileName = plugin.getMetadata().isPluginMainFile()
+					? plugin.getMetadata().getPluginId() + SaveSystem.PAPER_PLUGIN_MAIN_FILE_EXTENSION
+					: plugin.getMetadata().getPluginId() + SaveSystem.PAPER_PLUGIN_ADDON_FILE_EXTENSION;
 
 			String filePath = SaveSystem.PAPER_DATA_FOLDER + fileName;
 			SaveSystem.savePlugin(plugin, filePath);
@@ -251,8 +266,22 @@ public class InkFX extends Application {
 		this.getSubLocationList().putAll(database.getSubLocationList());
 	}
 
+	public void clearDatabase() {
+		this.getGlobalList().clear();
+		this.getItemList().clear();
+		this.getCharClassList().clear();
+		this.getRaceList().clear();
+		this.getActorList().clear();
+		this.getLocationList().clear();
+		this.getSubLocationList().clear();
+	}
+
 	public void swapScreens(String screenId) {
 		rootPane.setCenter(editorScreens.get(screenId));
+	}
+
+	public PaperPluginLoader getPluginLoader() {
+		return ppl;
 	}
 
 	public ObjectProperty<PaperPlugin> currentPluginProperty() {
@@ -289,14 +318,6 @@ public class InkFX extends Application {
 
 	public ObservableMap<String, SubLocation> getSubLocationList() {
 		return subLocationList;
-	}
-
-	public void setRaceList(ObservableMap<String, ActorRace> raceList) {
-		this.raceList = raceList;
-	}
-
-	public void setLocationList(ObservableMap<String, Location> locationList) {
-		this.locationList = locationList;
 	}
 
 }

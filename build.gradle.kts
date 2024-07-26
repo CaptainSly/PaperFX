@@ -21,6 +21,11 @@ dependencies {
     // ZStd - Compression
     implementation("com.github.luben:zstd-jni:1.5.6-3")
     
+    // Ikonli
+    implementation("org.kordamp.desktoppanefx:desktoppanefx-core:0.15.0")
+    implementation("org.kordamp.ikonli:ikonli-javafx:12.3.1")
+    implementation("org.kordamp.ikonli:ikonli-materialdesign2-pack:12.3.1")
+    
     // Gson
     implementation("com.google.code.gson:gson:2.10.1")
 

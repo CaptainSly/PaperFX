@@ -1,8 +1,12 @@
 package io.azraein.paperfx.system.io.plugins;
 
+import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
-public class PaperPluginMetadata {
+public class PaperPluginMetadata implements Serializable {
+
+	private static final long serialVersionUID = -6663876549074108161L;
 
 	private String pluginId;
 	private String pluginName;
@@ -14,17 +18,23 @@ public class PaperPluginMetadata {
 	private boolean isPluginMainFile;
 
 	private List<String> pluginDependencies;
+	private Map<String, Integer> pluginDependenciesLoadOrder;
 
 	public PaperPluginMetadata(String pluginId, String pluginName, String pluginAuthor, String pluginDescription,
-			String pluginVersion, List<String> pluginDependencies, String pluginPath, boolean isMainFile) {
+			String pluginVersion, List<String> pluginDependencies, Map<String, Integer> pluginDependenciesLoadOrder,
+			String pluginPath, boolean isMainFile) {
 		this.pluginId = pluginId;
 		this.pluginName = pluginName;
 		this.pluginAuthor = pluginAuthor;
 		this.pluginDescription = pluginDescription;
 		this.pluginVersion = pluginVersion;
 		this.pluginDependencies = pluginDependencies;
+		this.pluginDependenciesLoadOrder = pluginDependenciesLoadOrder;
 		this.pluginPath = pluginPath;
 		this.isPluginMainFile = isMainFile;
+	}
+
+	public PaperPluginMetadata() {
 	}
 
 	public String getPluginId() {
@@ -55,8 +65,48 @@ public class PaperPluginMetadata {
 		return pluginDependencies;
 	}
 
+	public Map<String, Integer> getPluginDependenciesLoadOrder() {
+		return pluginDependenciesLoadOrder;
+	}
+
 	public String getPluginVersion() {
 		return pluginVersion;
+	}
+
+	public void setPluginId(String pluginId) {
+		this.pluginId = pluginId;
+	}
+
+	public void setPluginName(String pluginName) {
+		this.pluginName = pluginName;
+	}
+
+	public void setPluginAuthor(String pluginAuthor) {
+		this.pluginAuthor = pluginAuthor;
+	}
+
+	public void setPluginDescription(String pluginDescription) {
+		this.pluginDescription = pluginDescription;
+	}
+
+	public void setPluginVersion(String pluginVersion) {
+		this.pluginVersion = pluginVersion;
+	}
+
+	public void setPluginPath(String pluginPath) {
+		this.pluginPath = pluginPath;
+	}
+
+	public void setPluginMainFile(boolean isPluginMainFile) {
+		this.isPluginMainFile = isPluginMainFile;
+	}
+
+	public void setPluginDependencies(List<String> pluginDependencies) {
+		this.pluginDependencies = pluginDependencies;
+	}
+
+	public void setPluginDependenciesLoadOrder(Map<String, Integer> pluginDependenciesLoadOrder) {
+		this.pluginDependenciesLoadOrder = pluginDependenciesLoadOrder;
 	}
 
 }

@@ -3,6 +3,7 @@ package io.azraein.inkfx.controls.tab;
 import io.azraein.inkfx.InkFX;
 import io.azraein.paperfx.system.Utils;
 import io.azraein.paperfx.system.actors.Actor;
+import io.azraein.paperfx.system.actors.ActorState;
 import io.azraein.paperfx.system.actors.classes.ActorClass;
 import io.azraein.paperfx.system.actors.classes.ActorRace;
 import io.azraein.paperfx.system.actors.stats.Attribute;
@@ -14,47 +15,12 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.util.StringConverter;
 
-public class ActorTab extends PaperEditorTab {
+public class NpcActorTab extends PaperEditorTab {
 
-	public ActorTab(InkFX inkFX) {
+	public NpcActorTab(InkFX inkFX) {
 		super(inkFX);
-		setText("Actor Editor");
+		setText("Npc Actor Editor");
 		setClosable(false);
-
-		ListView<Actor> actorList = new ListView<>();
-		actorList.setCellFactory(listView -> {
-			return new ListCell<Actor>() {
-
-				@Override
-				public void updateItem(Actor item, boolean empty) {
-					super.updateItem(item, empty);
-
-					if (item != null) {
-						this.setText(item.getActorId());
-						
-					}
-
-				}
-
-			};
-		});
-
-		actorList.getItems().addAll(inkFX.getActorList().values());
-		inkFX.getActorList().addListener(new MapChangeListener<String, Actor>() {
-
-			@Override
-			public void onChanged(Change<? extends String, ? extends Actor> change) {
-				if (change.wasAdded()) {
-					if (inkFX.currentPluginProperty().get().getPluginDatabase().getActorList()
-							.containsKey(change.getKey()))
-						actorList.getItems().remove(change.getValueRemoved());
-					actorList.getItems().add(change.getValueAdded());
-				} else if (change.wasRemoved()) {
-					actorList.getItems().remove(change.getValueRemoved());
-				}
-			}
-
-		});
 
 		Label actorIdLbl = new Label("Actor ID");
 		Label actorNameLbl = new Label("Actor Name");
@@ -177,6 +143,53 @@ public class ActorTab extends PaperEditorTab {
 			actorSkillLbls[skill.ordinal()] = new Label(Utils.toNormalCase(skill.name()));
 			actorSkillSpinners[skill.ordinal()] = new Spinner<Integer>(1, 999, 1);
 		}
+
+		ListView<Actor> actorList = new ListView<>();
+		actorList.setCellFactory(listView -> {
+			return new ListCell<Actor>() {
+
+				@Override
+				public void updateItem(Actor item, boolean empty) {
+					super.updateItem(item, empty);
+
+					if (item != null) {
+						this.setText(item.getActorId());
+
+					}
+
+				}
+
+			};
+		});
+		actorList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+			if (newValue != null) {
+				ActorState state = newValue.getActorState();
+
+			}
+		});
+		actorList.getItems().addAll(inkFX.getActorList().values());
+		inkFX.getActorList().addListener(new MapChangeListener<String, Actor>() {
+
+			@Override
+			public void onChanged(Change<? extends String, ? extends Actor> change) {
+				if (change.wasAdded()) {
+					if (inkFX.currentPluginProperty().get().getPluginDatabase().getActorList()
+							.containsKey(change.getKey()))
+						actorList.getItems().remove(change.getValueRemoved());
+					actorList.getItems().add(change.getValueAdded());
+				} else if (change.wasRemoved()) {
+					actorList.getItems().remove(change.getValueRemoved());
+				}
+			}
+
+		});
+
+		
+		inkFX.currentPluginProperty().addListener((observableValue, oldValue, newValue) -> {
+			if (newValue == null)
+				actorList.getItems().clear();				
+		});
+
 
 		// Put All the Controls in the Grid
 		GridPane actorBasicInfoPane = new GridPane();

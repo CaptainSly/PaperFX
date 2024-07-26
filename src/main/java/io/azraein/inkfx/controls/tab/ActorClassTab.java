@@ -14,6 +14,15 @@ import javafx.util.StringConverter;
 
 public class ActorClassTab extends PaperEditorTab {
 
+	private TextField actorClassIdFld;
+	private TextField actorClassNameFld;
+	private TextArea actorClassDescriptionArea;
+	private ListView<Skill> classSkills;
+	private Spinner<Integer>[] actorClassSkillBonusSpinners;
+	private ComboBox<Attribute> actorClassFavoredAttributeOneCB;
+	private ComboBox<Attribute> actorClassFavoredAttributeTwoCB;
+
+	@SuppressWarnings("unchecked")
 	public ActorClassTab(InkFX inkFX) {
 		super(inkFX);
 		setText("Class Editor");
@@ -23,8 +32,7 @@ public class ActorClassTab extends PaperEditorTab {
 		Label actorClassNameLbl = new Label("Class Name");
 		Label actorClassDescriptionLbl = new Label("Class Description");
 
-		@SuppressWarnings("unchecked")
-		Spinner<Integer>[] actorClassSkillBonusSpinners = new Spinner[Skill.values().length];
+		actorClassSkillBonusSpinners = new Spinner[Skill.values().length];
 		Label[] actorClassSkillBonusLbls = new Label[Skill.values().length];
 		for (Skill skill : Skill.values()) {
 			actorClassSkillBonusLbls[skill.ordinal()] = new Label(Utils.toNormalCase(skill.name()) + " Bonus");
@@ -33,8 +41,8 @@ public class ActorClassTab extends PaperEditorTab {
 		}
 
 		Label actorClassFavoredAttributes = new Label("Class Favorite Attributes");
-		ComboBox<Attribute> actorClassFavoredAttributeOneCB = new ComboBox<>();
-		ComboBox<Attribute> actorClassFavoredAttributeTwoCB = new ComboBox<>();
+		actorClassFavoredAttributeOneCB = new ComboBox<>();
+		actorClassFavoredAttributeTwoCB = new ComboBox<>();
 
 		actorClassFavoredAttributeOneCB.getItems().addAll(Attribute.values());
 		actorClassFavoredAttributeOneCB.getSelectionModel().select(0);
@@ -93,7 +101,7 @@ public class ActorClassTab extends PaperEditorTab {
 		});
 
 		Label actorClassSkills = new Label("Class Skills");
-		ListView<Skill> classSkills = new ListView<>();
+		classSkills = new ListView<>();
 		classSkills.setCellFactory(listView -> new ListCell<Skill>() {
 			@Override
 			public void updateItem(Skill item, boolean empty) {
@@ -161,10 +169,10 @@ public class ActorClassTab extends PaperEditorTab {
 			}
 		});
 
-		TextField actorClassIdFld = new TextField();
-		TextField actorClassNameFld = new TextField();
+		actorClassIdFld = new TextField();
+		actorClassNameFld = new TextField();
 
-		TextArea actorClassDescriptionArea = new TextArea();
+		actorClassDescriptionArea = new TextArea();
 		actorClassDescriptionArea.setWrapText(true);
 
 		ListView<ActorClass> actorClassList = new ListView<>();
@@ -194,6 +202,8 @@ public class ActorClassTab extends PaperEditorTab {
 
 				if (item != null) {
 					setText(item.getActorClassId());
+				} else {
+					setText("");
 				}
 			}
 
@@ -201,39 +211,21 @@ public class ActorClassTab extends PaperEditorTab {
 		actorClassList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
 
 			if (newValue != null) {
-				actorClassIdFld.setText(newValue.getActorClassId());
-				actorClassNameFld.setText(newValue.getActorClassName());
-				actorClassDescriptionArea.setText(newValue.getActorClassDescription());
-
-				for (Skill skill : Skill.values()) {
-					actorClassSkillBonusSpinners[skill.ordinal()].getValueFactory()
-							.setValue(newValue.getActorSkillBonuses()[skill.ordinal()]);
-				}
-
-				actorClassFavoredAttributeOneCB
-						.setValue((Attribute) newValue.getActorClassFavoredAttributes().toArray()[0]);
-				actorClassFavoredAttributeTwoCB
-						.setValue((Attribute) newValue.getActorClassFavoredAttributes().toArray()[1]);
-
-				classSkills.getItems().addAll((Skill[]) newValue.getActorClassFavoredAttributes().toArray());
+				clearData();
+				loadData(newValue);
 			}
 
 		});
 
 		Button clearFieldBtn = new Button("Clear Form");
 		clearFieldBtn.setOnAction(event -> {
-			actorClassIdFld.setText("");
-			actorClassNameFld.setText("");
-			actorClassDescriptionArea.setText("");
+			clearData();
+		});
 
-			for (Skill skill : Skill.values()) {
-				actorClassSkillBonusSpinners[skill.ordinal()].getValueFactory().setValue(0);
-			}
-
-			actorClassFavoredAttributeOneCB.getSelectionModel().select(0);
-			actorClassFavoredAttributeTwoCB.getSelectionModel().select(1);
-
-			classSkills.getItems().clear();
+		inkFX.currentPluginProperty().addListener((observableValue, oldValue, newValue) -> {
+			if (newValue == null) {
+				actorClassList.getItems().clear();
+			}	
 		});
 
 		Button saveActorClassBtn = new Button("Save Actor Class");
@@ -311,5 +303,41 @@ public class ActorClassTab extends PaperEditorTab {
 
 		setContent(rootPane);
 	}
+	
+	private void clearData() {
+		actorClassIdFld.setText("");
+		actorClassNameFld.setText("");
+		actorClassDescriptionArea.setText("");
 
+		for (Skill skill : Skill.values()) {
+			actorClassSkillBonusSpinners[skill.ordinal()].getValueFactory().setValue(0);
+		}
+
+		actorClassFavoredAttributeOneCB.getSelectionModel().select(0);
+		actorClassFavoredAttributeTwoCB.getSelectionModel().select(1);
+
+		classSkills.getItems().clear();
+	}
+
+	private void loadData(ActorClass newValue) {
+		actorClassIdFld.setText(newValue.getActorClassId());
+		actorClassNameFld.setText(newValue.getActorClassName());
+		actorClassDescriptionArea.setText(newValue.getActorClassDescription());
+
+		for (Skill skill : Skill.values()) {
+			actorClassSkillBonusSpinners[skill.ordinal()].getValueFactory()
+					.setValue(newValue.getActorSkillBonuses()[skill.ordinal()]);
+		}
+
+		actorClassFavoredAttributeOneCB
+				.setValue((Attribute) newValue.getActorClassFavoredAttributes().toArray()[0]);
+		actorClassFavoredAttributeTwoCB
+				.setValue((Attribute) newValue.getActorClassFavoredAttributes().toArray()[1]);
+
+		for (Object obj : newValue.getActorClassSkills().toArray()) {
+			if (obj instanceof Skill)
+				classSkills.getItems().add(((Skill) obj));
+		}
+	}
+	
 }

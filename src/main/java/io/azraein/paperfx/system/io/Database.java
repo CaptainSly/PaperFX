@@ -88,7 +88,7 @@ public class Database implements Serializable {
 	public void addActor(Actor actor) {
 		actorList.put(actor.getActorId(), actor);
 	}
-	
+
 	public void mergeDatabase(Database database) {
 		this.getGlobalList().putAll(database.getGlobalList());
 		this.getItemList().putAll(database.getItemList());
@@ -130,6 +130,12 @@ public class Database implements Serializable {
 
 	public Map<String, SubLocation> getSubLocationList() {
 		return subLocationList;
+	}
+
+	public int getDatabaseSize() {
+		return getGlobalList().size() + getItemList().size() + getCharClassList().size() + getRaceList().size()
+				+ getActorList().size() + getCreatureList().size() + getLocationList().size()
+				+ getSubLocationList().size();
 	}
 
 }

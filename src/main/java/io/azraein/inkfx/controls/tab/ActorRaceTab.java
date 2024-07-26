@@ -57,6 +57,8 @@ public class ActorRaceTab extends PaperEditorTab {
 
 					if (item != null) {
 						this.setText(item.getActorRaceId());
+					} else {
+						this.setText("");
 					}
 				}
 
@@ -71,7 +73,7 @@ public class ActorRaceTab extends PaperEditorTab {
 
 				for (Skill skill : Skill.values())
 					actorRaceSkillBonusesSpinner[skill.ordinal()].getValueFactory()
-							.setValue(newValue.getActorRaceSkillBonus(skill));
+							.setValue(newValue.getActorRaceBaseSkill(skill));
 
 				for (Attribute attr : Attribute.values())
 					actorRaceBaseAttrSpinners[attr.ordinal()].getValueFactory()
@@ -111,6 +113,12 @@ public class ActorRaceTab extends PaperEditorTab {
 			for (Attribute attr : Attribute.values())
 				actorRaceBaseAttrSpinners[attr.ordinal()].getValueFactory().setValue(0);
 
+		});
+
+		inkFX.currentPluginProperty().addListener((observableValue, oldValue, newValue) -> {
+			if (newValue == null) {
+				actorRaceList.getItems().clear();
+			}
 		});
 
 		Button saveRaceBtn = new Button("Save Race");

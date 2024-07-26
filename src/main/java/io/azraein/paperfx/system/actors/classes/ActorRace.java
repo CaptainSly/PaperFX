@@ -16,13 +16,13 @@ public class ActorRace implements Serializable {
 	private boolean isBeastRace;
 
 	private int[] actorRaceBaseAttributes;
-	private int[] actorRaceSkillBonuses;
+	private int[] actorRaceBaseSkills;
 
 	public ActorRace(String characterRaceId, String characterRaceName) {
 		this.actorRaceId = characterRaceId;
 		this.actorRaceName = characterRaceName;
 		actorRaceBaseAttributes = new int[Attribute.values().length];
-		actorRaceSkillBonuses = new int[Skill.values().length];
+		actorRaceBaseSkills = new int[Skill.values().length];
 	}
 
 	public String getActorRaceId() {
@@ -46,11 +46,11 @@ public class ActorRace implements Serializable {
 	}
 
 	public int[] getActorRaceSkillBonuses() {
-		return actorRaceSkillBonuses;
+		return actorRaceBaseSkills;
 	}
 	
-	public int getActorRaceSkillBonus(Skill skill) {
-		return actorRaceSkillBonuses[skill.ordinal()];
+	public int getActorRaceBaseSkill(Skill skill) {
+		return actorRaceBaseSkills[skill.ordinal()];
 	}
 
 	public int getActorRaceBaseAttribute(Attribute attribute) {
@@ -77,8 +77,8 @@ public class ActorRace implements Serializable {
 		this.actorRaceBaseAttributes = actorRaceBaseAttributes;
 	}
 
-	public void setActorRaceSkillBonuses(int[] actorRaceSkillBonuses) {
-		this.actorRaceSkillBonuses = actorRaceSkillBonuses;
+	public void setActorBaseSkills(int[] actorRaceBaseSkills) {
+		this.actorRaceBaseSkills = actorRaceBaseSkills;
 	}
 
 }

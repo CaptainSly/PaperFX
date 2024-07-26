@@ -10,7 +10,6 @@ public abstract class Actor implements Serializable {
 	private static final long serialVersionUID = -3805788470792235597L;
 
 	protected String actorId;
-
 	private ActorState actorState;
 
 	public Actor(String actorId, String actorName, ActorClass actorClass, ActorRace actorRace) {
@@ -27,7 +26,7 @@ public abstract class Actor implements Serializable {
 	public void setActorState(ActorState actorState) {
 		this.actorState = actorState;
 	}
-	
+
 	public ActorState getActorState() {
 		return actorState;
 	}

@@ -1,5 +1,8 @@
 package io.azraein.paperfx.system;
 
+import io.azraein.paperfx.system.actors.ActorState;
+import io.azraein.paperfx.system.actors.stats.Stat;
+
 public class Utils {
 
 	public static String toNormalCase(String input) {
@@ -56,12 +59,29 @@ public class Utils {
 
 	// Math Stuff
 
-	public static int getTotalXPForLevel(int baseXp, double exponent, int targetLevel) {
+	public static int getTotalXPForLevel(Stat<?> stat, int targetLevel) {
 		int totalXP = 0;
 		for (int level = 1; level <= targetLevel; level++) {
-			totalXP += (int) (baseXp * Math.pow(level, exponent));
+			totalXP += (int) (stat.getBaseExp() * Math.pow(level, stat.getExponent()));
 		}
 		return totalXP;
+	}
+
+	/**
+	 * Gets the totalXPForLevel based off the ActorState class's baseExp and
+	 * Exponent
+	 * 
+	 * @param targetLevel
+	 * @return The total amount exp for the level given based off an Actor level
+	 *         growth.
+	 */
+	public static int getTotalXpForLevel(int targetLevel) {
+		int totalXp = 0;
+		for (int level = 1; level <= targetLevel; level++) {
+			totalXp += (int) (ActorState.BASE_EXP * Math.pow(level, ActorState.EXPONENT));
+		}
+
+		return totalXp;
 	}
 
 }

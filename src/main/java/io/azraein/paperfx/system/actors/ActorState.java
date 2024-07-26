@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import org.tinylog.Logger;
 
+import io.azraein.paperfx.system.Utils;
 import io.azraein.paperfx.system.actors.classes.ActorClass;
 import io.azraein.paperfx.system.actors.classes.ActorRace;
 import io.azraein.paperfx.system.actors.stats.Attribute;
@@ -24,8 +25,10 @@ public class ActorState implements Serializable {
 	private String actorName;
 	private String actorDescription;
 
-	private ActorRace actorRace;
-	private ActorClass actorClass;
+	private transient ActorRace actorRace;
+	private transient ActorClass actorClass;
+
+	public String actorRaceId, actorClassId;
 
 	// Actor Stats
 	private int actorMaxHp, actorCurrentHp;
@@ -34,42 +37,65 @@ public class ActorState implements Serializable {
 	private int actorExp;
 	private int actorLevel;
 
-	private int[] actorAttributes;
-	private Stat[] actorSkills;
+	private Stat<Attribute>[] actorAttributes;
+	private Stat<Skill>[] actorSkills;
 
 	// Actor Inventory
 	private Inventory actorInventory;
 	private double actorCarryWeight;
 
+	@SuppressWarnings("unchecked")
 	public ActorState(String actorName, String actorDescription, ActorClass actorClass, ActorRace actorRace) {
 		this.actorName = actorName;
 		this.actorDescription = actorDescription;
 		this.actorClass = actorClass;
 		this.actorRace = actorRace;
 
+		this.actorClassId = actorClass.getActorClassId();
+		this.actorRaceId = actorRace.getActorRaceId();
+
 		actorExp = 0;
 		actorLevel = 1;
 
 		actorInventory = new Inventory();
 
-		actorAttributes = new int[Attribute.values().length];
+		actorAttributes = new Stat[Attribute.values().length];
 		actorSkills = new Stat[Skill.values().length];
 
 		for (Attribute attribute : Attribute.values()) {
-			actorAttributes[attribute.ordinal()] = actorRace.getActorRaceBaseAttribute(attribute);
+			int baseExp = 300;
+			double exponent = 1.763;
+
+			if (actorClass.getActorClassFavoredAttributes().contains(attribute)) {
+				baseExp = 250;
+				exponent = 1.623;
+			}
+
+			actorAttributes[attribute.ordinal()] = new Stat<Attribute>(attribute, attribute.name(), baseExp, exponent);
+			int totalXp = Utils.getTotalXPForLevel(actorAttributes[attribute.ordinal()],
+					actorRace.getActorRaceBaseAttribute(attribute));
+			actorAttributes[attribute.ordinal()].addXp(totalXp);
+
 		}
 
 		for (Skill skill : Skill.values()) {
-			actorSkills[skill.ordinal()] = new Stat(skill, Stat.BASE_EXP, Stat.EXPONENT);
+			int baseExp = 225;
+			double exponent = 1.648;
 
-//			if (actorRace.getActorRaceSkillBonuses().containsKey(skill)) {
-//				actorSkills[skill.ordinal()].addXp(Utils.getTotalXPForLevel(Stat.BASE_EXP, Stat.EXPONENT,
-//						actorRace.getActorRaceSkillBonus(skill)));
-//			}
+			if (actorClass.getActorClassSkills().contains(skill)) {
+				baseExp = 185;
+				exponent = 1.572;
+			}
 
+			actorSkills[skill.ordinal()] = new Stat<Skill>(skill, skill.name(), baseExp, exponent);
+			int totalXp = Utils.getTotalXPForLevel(actorSkills[skill.ordinal()],
+					actorRace.getActorRaceBaseSkill(skill));
+			totalXp += Utils.getTotalXPForLevel(actorSkills[skill.ordinal()],
+					actorClass.getActorSkillBonuses()[skill.ordinal()]);
+			actorSkills[skill.ordinal()].addXp(totalXp);
 		}
 
-		actorCarryWeight = getActorAttribute(Attribute.STRENGTH) * 5;
+		actorCarryWeight = getActorAttribute(Attribute.STRENGTH).getLevel() * 5;
 
 	}
 
@@ -109,6 +135,14 @@ public class ActorState implements Serializable {
 		return actorDescription;
 	}
 
+	public String getActorClassId() {
+		return actorClassId;
+	}
+
+	public String getActorRaceId() {
+		return actorRaceId;
+	}
+
 	public boolean isActorEncumbered() {
 		return actorCarryWeight < actorInventory.getInventoryWeight();
 	}
@@ -137,11 +171,11 @@ public class ActorState implements Serializable {
 		return actorCurrentMp;
 	}
 
-	public int[] getActorAttributes() {
+	public Stat<Attribute>[] getActorAttributes() {
 		return actorAttributes;
 	}
 
-	public Stat[] getActorSkills() {
+	public Stat<Skill>[] getActorSkills() {
 		return actorSkills;
 	}
 
@@ -149,11 +183,11 @@ public class ActorState implements Serializable {
 		return actorCarryWeight;
 	}
 
-	public int getActorAttribute(Attribute attribute) {
+	public Stat<Attribute> getActorAttribute(Attribute attribute) {
 		return actorAttributes[attribute.ordinal()];
 	}
 
-	public Stat getActorSkill(Skill skill) {
+	public Stat<Skill> getActorSkill(Skill skill) {
 		return actorSkills[skill.ordinal()];
 	}
 
@@ -209,11 +243,11 @@ public class ActorState implements Serializable {
 		this.actorLevel = actorLevel;
 	}
 
-	public void setActorAttributes(int[] actorAttributes) {
+	public void setActorAttributes(Stat<Attribute>[] actorAttributes) {
 		this.actorAttributes = actorAttributes;
 	}
 
-	public void setActorSkills(Stat[] actorSkills) {
+	public void setActorSkills(Stat<Skill>[] actorSkills) {
 		this.actorSkills = actorSkills;
 	}
 

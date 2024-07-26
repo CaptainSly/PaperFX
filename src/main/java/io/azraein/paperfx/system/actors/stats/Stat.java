@@ -6,34 +6,36 @@ import org.tinylog.Logger;
 
 import io.azraein.paperfx.system.Utils;
 
-public class Stat implements Serializable {
+public class Stat<T> implements Serializable {
 
 	private static final long serialVersionUID = 8889867311180368598L;
 
 	private String statName;
-	private Skill skill;
+	private T stat;
 
-	private int currentXp;
+	private int currentExp;
 	private int level;
 
-	public static final transient int BASE_EXP = 150;
-	public static final transient double EXPONENT = 1.660;
+	private int baseExp;
+	private double exponent;
 
-	public Stat(Skill skill, int baseXp, double exponent) {
-		this.skill = skill;
-		this.statName = Utils.toNormalCase(skill.name());
-		this.currentXp = 0;
+	public Stat(T skill, String statName, int baseXp, double exponent) {
+		this.stat = skill;
+		this.statName = Utils.toNormalCase(statName);
+		this.baseExp = baseXp;
+		this.exponent = exponent;
+		this.currentExp = 0;
 		this.level = 1;
 	}
 
 	private int getXpForNextLevel() {
-		return (int) (BASE_EXP * Math.pow(level, EXPONENT));
+		return (int) (baseExp * Math.pow(level, exponent));
 	}
 
 	public void addXp(int xp) {
-		currentXp += xp;
-		while (currentXp >= getXpForNextLevel()) {
-			currentXp -= getXpForNextLevel();
+		currentExp += xp;
+		while (currentExp >= getXpForNextLevel()) {
+			currentExp -= getXpForNextLevel();
 			levelUp();
 		}
 	}
@@ -43,8 +45,16 @@ public class Stat implements Serializable {
 		Logger.debug("Stat: " + statName + " has leveled up to: " + level);
 	}
 
-	public Skill getSkill() {
-		return skill;
+	public T getStat() {
+		return stat;
+	}
+
+	public int getBaseExp() {
+		return baseExp;
+	}
+
+	public double getExponent() {
+		return exponent;
 	}
 
 	public String getStatName() {
@@ -52,7 +62,7 @@ public class Stat implements Serializable {
 	}
 
 	public int getCurrentXp() {
-		return currentXp;
+		return currentExp;
 	}
 
 	public int getLevel() {

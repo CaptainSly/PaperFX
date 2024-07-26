@@ -1,20 +1,35 @@
 package io.azraein.inkfx.screens;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import io.azraein.inkfx.InkFX;
+import io.azraein.paperfx.system.io.Database;
+import io.azraein.paperfx.system.io.SaveSystem;
 import io.azraein.paperfx.system.io.plugins.PaperPlugin;
+import io.azraein.paperfx.system.io.plugins.PaperPluginMetadata;
 import javafx.geometry.Insets;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
+import javafx.util.StringConverter;
 
 public class PluginMetadataScreen extends PaperEditorScreen {
 
 	TextField pluginIdFld, pluginNameFld, pluginAuthorFld, pluginVersionFld;
 	TextArea pluginDescription;
 	CheckBox pluginMainFileCB;
-	ListView<String> dependencyList;
+	ListView<PaperPluginMetadata> dependencyListView;
 
 	public PluginMetadataScreen(InkFX inkFX) {
 		super(inkFX);
@@ -29,23 +44,140 @@ public class PluginMetadataScreen extends PaperEditorScreen {
 		Button saveMetadataToPlugin = new Button("Save Plugin Metadata");
 		saveMetadataToPlugin.setOnAction(event -> {
 			PaperPlugin plugin = inkFX.currentPluginProperty().get();
+			if (plugin == null) {
+				plugin = new PaperPlugin();
+				inkFX.currentPluginProperty().set(plugin);
+			}
 
-			plugin.setPluginId(getPluginIdFld().getText());
-			plugin.setPluginName(getPluginNameFld().getText());
-			plugin.setPluginAuthor(getPluginAuthorFld().getText());
-			plugin.setPluginDescription(getPluginDescription().getText());
-			plugin.setPluginVersion(getPluginVersionFld().getText());
-			plugin.setIsMainFile(getPluginMainFileCB().isSelected());
+			plugin.getMetadata().setPluginId(getPluginIdFld().getText());
+			plugin.getMetadata().setPluginName(getPluginNameFld().getText());
+			plugin.getMetadata().setPluginAuthor(getPluginAuthorFld().getText());
+			plugin.getMetadata().setPluginDescription(getPluginDescription().getText());
+			plugin.getMetadata().setPluginVersion(getPluginVersionFld().getText());
+			plugin.getMetadata().setPluginMainFile(getPluginMainFileCB().isSelected());
+
+			String ext;
+			if (plugin.getMetadata().isPluginMainFile())
+				ext = SaveSystem.PAPER_PLUGIN_MAIN_FILE_EXTENSION;
+			else
+				ext = SaveSystem.PAPER_PLUGIN_ADDON_FILE_EXTENSION;
+
+			String filePath = SaveSystem.PAPER_DATA_FOLDER + plugin.getMetadata().getPluginId() + ext;
+			plugin.getMetadata().setPluginPath(filePath);
 
 			List<String> dependencyList = new ArrayList<>();
-			for (String dependency : getDependencyList().getItems())
-				dependencyList.add(dependency);
+			for (PaperPluginMetadata dependency : getDependencyListView().getItems())
+				dependencyList.add(dependency.getPluginId());
 
-			plugin.setPluginDependencies(dependencyList);
+			plugin.getMetadata().setPluginDependencies(dependencyList);
+
+			// Clear the databases and load everything again
+			inkFX.clearDatabase();
+			inkFX.getPluginLoader().clearLoadedPlugins();
+
+			List<String> dependencyPaths = new ArrayList<>();
+			for (PaperPluginMetadata metadata : dependencyListView.getItems()) {
+				dependencyPaths.add(metadata.getPluginPath());
+			}
+
+			Database combinedDatabase = inkFX.getPluginLoader().loadPlugins(dependencyPaths);
+			inkFX.mergeDatabase(combinedDatabase);
+
 			inkFX.swapScreens(InkFX.PLUGIN_CONTENT_EDITOR_SCREEN);
 		});
 
-		dependencyList = new ListView<String>();
+		ComboBox<PaperPluginMetadata> dependencyChooser = new ComboBox<>();
+		dependencyChooser.setCellFactory(listView -> new ListCell<PaperPluginMetadata>() {
+
+			@Override
+			public void updateItem(PaperPluginMetadata item, boolean empty) {
+				super.updateItem(item, empty);
+
+				if (item != null || !empty) {
+					String pluginType;
+					if (item.isPluginMainFile())
+						pluginType = "M";
+					else
+						pluginType = "A";
+
+					setText(item.getPluginId() + " " + pluginType);
+				} else {
+					setText("");
+				}
+
+			}
+
+		});
+		dependencyChooser.setConverter(new StringConverter<PaperPluginMetadata>() {
+
+			@Override
+			public String toString(PaperPluginMetadata object) {
+				if (object != null) {
+					String pluginType;
+					if (object.isPluginMainFile())
+						pluginType = "M";
+					else
+						pluginType = "A";
+
+					return object.getPluginId() + " " + pluginType;
+				}
+
+				return "";
+			}
+
+			@Override
+			public PaperPluginMetadata fromString(String string) {
+				throw null;
+			}
+
+		});
+		File file = new File(SaveSystem.PAPER_DATA_FOLDER);
+		for (File pluginFile : file.listFiles()) {
+			if (pluginFile.exists()) {
+				if (pluginFile.getPath().endsWith(SaveSystem.PAPER_PLUGIN_MAIN_FILE_EXTENSION)
+						|| pluginFile.getPath().endsWith(SaveSystem.PAPER_PLUGIN_ADDON_FILE_EXTENSION)) {
+					PaperPluginMetadata metadata;
+					try {
+						metadata = SaveSystem.readPluginMetadata(pluginFile.getPath());
+						dependencyChooser.getItems().add(metadata);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+
+			}
+		}
+		dependencyChooser.getSelectionModel().select(0);
+
+		Button chooseDepdencyBtn = new Button("Choose Dependency");
+		chooseDepdencyBtn.setOnAction(event -> {
+			PaperPluginMetadata metadata = dependencyChooser.getSelectionModel().getSelectedItem();
+			dependencyListView.getItems().add(metadata);
+		});
+
+		dependencyListView = new ListView<>();
+		dependencyListView.setCellFactory(listView -> new ListCell<PaperPluginMetadata>() {
+
+			@Override
+			public void updateItem(PaperPluginMetadata item, boolean empty) {
+				if (item != null && !empty) {
+					this.setText(item.getPluginId());
+					ContextMenu cm = new ContextMenu();
+					MenuItem removeDependency = new MenuItem("Remove Dependency");
+					removeDependency.setOnAction(event -> {
+						int currentIdx = dependencyListView.getItems()
+								.indexOf(dependencyListView.getSelectionModel().getSelectedItem());
+						dependencyListView.getItems().remove(currentIdx);
+					});
+					cm.getItems().add(removeDependency);
+					this.setContextMenu(cm);
+				} else {
+					this.setText("");
+					this.setContextMenu(null);
+				}
+			}
+
+		});
 
 		pluginIdFld = new TextField();
 		pluginNameFld = new TextField();
@@ -58,8 +190,21 @@ public class PluginMetadataScreen extends PaperEditorScreen {
 		pluginDescription.setWrapText(true);
 		pluginDescription.setPromptText("Plugin Description...");
 
+		inkFX.currentPluginProperty().addListener((observableValue, oldValue, newValue) -> {
+			if (newValue == null) {
+				dependencyListView.getItems().clear();
+				pluginIdFld.setText("");
+				pluginNameFld.setText("");
+				pluginAuthorFld.setText("");
+				pluginDescription.setText("");
+				pluginVersionFld.setText("");
+				pluginMainFileCB.setSelected(false);
+			}
+		});
+
 		GridPane gridPane = new GridPane();
 		GridPane.setColumnSpan(pluginDescription, 2);
+		GridPane.setRowSpan(dependencyListView, 4);
 		gridPane.setPadding(new Insets(15));
 		gridPane.setHgap(10);
 		gridPane.setVgap(10);
@@ -76,16 +221,18 @@ public class PluginMetadataScreen extends PaperEditorScreen {
 		gridPane.add(pluginMainFileCB, 3, 2);
 		gridPane.add(pluginDescription, 0, 3);
 		gridPane.add(pluginDeps, 0, 4);
-		gridPane.add(dependencyList, 0, 5);
-		gridPane.add(saveMetadataToPlugin, 1, 5);
+		gridPane.add(dependencyListView, 0, 5);
+		gridPane.add(dependencyChooser, 1, 7);
+		gridPane.add(chooseDepdencyBtn, 2, 7);
+		gridPane.add(saveMetadataToPlugin, 1, 8);
 
 		setCenter(gridPane);
 
 	}
 
-	public void setDependencies(List<String> deps) {
-		dependencyList.getItems().clear();
-		dependencyList.getItems().addAll(deps);
+	public void setDependencies(List<PaperPluginMetadata> deps) {
+		dependencyListView.getItems().clear();
+		dependencyListView.getItems().addAll(deps);
 	}
 
 	public TextField getPluginIdFld() {
@@ -112,8 +259,8 @@ public class PluginMetadataScreen extends PaperEditorScreen {
 		return pluginMainFileCB;
 	}
 
-	public ListView<String> getDependencyList() {
-		return dependencyList;
+	public ListView<PaperPluginMetadata> getDependencyListView() {
+		return dependencyListView;
 	}
 
 }
