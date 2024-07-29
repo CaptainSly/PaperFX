@@ -12,6 +12,8 @@ import io.azraein.paperfx.system.io.SaveSystem;
 import io.azraein.paperfx.system.io.plugins.PaperPluginMetadata;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.scene.control.Button;
@@ -29,6 +31,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.util.Pair;
 
+// TODO: If Player selects a plugin that requires dependencies, disable the OK Button until they're selected, currently you can load the databases without them, and that would most likely break a few things.
+
 public class PluginSelectionDialog
 		extends Dialog<Pair<List<PaperPluginMetadata>, Pair<List<String>, PaperPluginMetadata>>> {
 
@@ -38,14 +42,14 @@ public class PluginSelectionDialog
 	private TextArea pluginDescription;
 	private TextField pluginIdFld, pluginNameFld, pluginAuthorFld, pluginVersionFld;
 
-	private List<PaperPluginMetadata> selectedPlugins;
+	private ObservableList<PaperPluginMetadata> selectedPlugins;
 	private List<String> selectedPluginPaths;
 
 	private ObjectProperty<PaperPluginMetadata> activePluginMetadataProperty = new SimpleObjectProperty<>();
 
 	public PluginSelectionDialog() {
 		PluginSelectionDialog pluginSelectionDialog = this;
-		selectedPlugins = new ArrayList<>();
+		selectedPlugins = FXCollections.observableArrayList();
 		selectedPluginPaths = new ArrayList<>();
 
 		pluginDescription = new TextArea();

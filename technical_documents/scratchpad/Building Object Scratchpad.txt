@@ -1,0 +1,13 @@
+The Building Object
+
+A building is a place inside a location where a player can visit. Buildings contain actors, and can be used as Inns and Taverns, Shops, Guilds or Homes. 
+
+String id
+String name
+String description
+
+boolean isOwned
+String ownerNpcId
+
+List<String> buildingContainerIds
+List<String> buildingNpcIds

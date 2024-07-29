@@ -10,7 +10,6 @@ import io.azraein.paperfx.system.actors.classes.ActorRace;
 import io.azraein.paperfx.system.actors.creatures.Creature;
 import io.azraein.paperfx.system.inventory.items.Item;
 import io.azraein.paperfx.system.locations.Location;
-import io.azraein.paperfx.system.locations.SubLocation;
 
 public class Database implements Serializable {
 
@@ -19,11 +18,10 @@ public class Database implements Serializable {
 	private Map<String, Object> globalList = new HashMap<>();
 	private Map<String, Item> itemList = new HashMap<>();
 	private Map<String, ActorRace> raceList = new HashMap<>();
-	private Map<String, ActorClass> charClassList = new HashMap<>();
+	private Map<String, ActorClass> actorClassList = new HashMap<>();
 	private Map<String, Actor> actorList = new HashMap<>();
 	private Map<String, Creature> creatureList = new HashMap<>();
 	private Map<String, Location> locationList = new HashMap<>();
-	private Map<String, SubLocation> subLocationList = new HashMap<>();
 
 	public Item getItem(String itemId) {
 		return itemList.get(itemId);
@@ -57,12 +55,12 @@ public class Database implements Serializable {
 		creatureList.put(creature.getCreatureId(), creature);
 	}
 
-	public ActorClass getCharacterClass(String charClassId) {
-		return charClassList.get(charClassId);
+	public ActorClass getActorClass(String charClassId) {
+		return actorClassList.get(charClassId);
 	}
-
-	public void addCharacterClass(ActorClass characterClass) {
-		charClassList.put(characterClass.getActorClassId(), characterClass);
+	
+	public void addActorClass(ActorClass characterClass) {
+		actorClassList.put(characterClass.getActorClassId(), characterClass);
 	}
 
 	public Location getLocation(String locationId) {
@@ -71,14 +69,6 @@ public class Database implements Serializable {
 
 	public void addLocation(Location location) {
 		locationList.put(location.getLocationId(), location);
-	}
-
-	public SubLocation getSubLocation(String subLocationId) {
-		return subLocationList.get(subLocationId);
-	}
-
-	public void addSubLocation(SubLocation subLocation) {
-		subLocationList.put(subLocation.getSubLocationId(), subLocation);
 	}
 
 	public Actor getActor(String actorId) {
@@ -92,12 +82,11 @@ public class Database implements Serializable {
 	public void mergeDatabase(Database database) {
 		this.getGlobalList().putAll(database.getGlobalList());
 		this.getItemList().putAll(database.getItemList());
-		this.getCharClassList().putAll(database.getCharClassList());
+		this.getActorClassList().putAll(database.getActorClassList());
 		this.getRaceList().putAll(database.getRaceList());
 		this.getActorList().putAll(database.getActorList());
 		this.getCreatureList().putAll(database.getCreatureList());
 		this.getLocationList().putAll(database.getLocationList());
-		this.getSubLocationList().putAll(database.getSubLocationList());
 	}
 
 	public Map<String, Location> getLocationList() {
@@ -120,22 +109,17 @@ public class Database implements Serializable {
 		return raceList;
 	}
 
-	public Map<String, ActorClass> getCharClassList() {
-		return charClassList;
+	public Map<String, ActorClass> getActorClassList() {
+		return actorClassList;
 	}
 
 	public Map<String, Actor> getActorList() {
 		return actorList;
 	}
 
-	public Map<String, SubLocation> getSubLocationList() {
-		return subLocationList;
-	}
-
 	public int getDatabaseSize() {
-		return getGlobalList().size() + getItemList().size() + getCharClassList().size() + getRaceList().size()
-				+ getActorList().size() + getCreatureList().size() + getLocationList().size()
-				+ getSubLocationList().size();
+		return getGlobalList().size() + getItemList().size() + getActorClassList().size() + getRaceList().size()
+				+ getActorList().size() + getCreatureList().size() + getLocationList().size();
 	}
 
 }

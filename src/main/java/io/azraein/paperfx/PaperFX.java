@@ -32,7 +32,6 @@ public class PaperFX extends Application {
 		paperScreens = new HashMap<>();
 		paperScreens.put("mainMenu", new MainMenuScreen(this));
 		paperScreens.put("game", new GameScreen(this));
-
 	}
 
 	@Override

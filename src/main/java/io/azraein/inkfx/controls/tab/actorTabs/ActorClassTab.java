@@ -1,10 +1,12 @@
-package io.azraein.inkfx.controls.tab;
+package io.azraein.inkfx.controls.tab.actorTabs;
 
 import io.azraein.inkfx.InkFX;
+import io.azraein.inkfx.controls.tab.PaperEditorTab;
 import io.azraein.paperfx.system.Utils;
 import io.azraein.paperfx.system.actors.classes.ActorClass;
 import io.azraein.paperfx.system.actors.stats.Attribute;
 import io.azraein.paperfx.system.actors.stats.Skill;
+import io.azraein.paperfx.system.io.Database;
 import javafx.collections.MapChangeListener;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
@@ -18,7 +20,7 @@ public class ActorClassTab extends PaperEditorTab {
 	private TextField actorClassNameFld;
 	private TextArea actorClassDescriptionArea;
 	private ListView<Skill> classSkills;
-	private Spinner<Integer>[] actorClassSkillBonusSpinners;
+	private Spinner<Integer>[] actorClassBaseSkillsSpinners;
 	private ComboBox<Attribute> actorClassFavoredAttributeOneCB;
 	private ComboBox<Attribute> actorClassFavoredAttributeTwoCB;
 
@@ -32,12 +34,12 @@ public class ActorClassTab extends PaperEditorTab {
 		Label actorClassNameLbl = new Label("Class Name");
 		Label actorClassDescriptionLbl = new Label("Class Description");
 
-		actorClassSkillBonusSpinners = new Spinner[Skill.values().length];
-		Label[] actorClassSkillBonusLbls = new Label[Skill.values().length];
+		actorClassBaseSkillsSpinners = new Spinner[Skill.values().length];
+		Label[] actorClassBaseSkillLbls = new Label[Skill.values().length];
 		for (Skill skill : Skill.values()) {
-			actorClassSkillBonusLbls[skill.ordinal()] = new Label(Utils.toNormalCase(skill.name()) + " Bonus");
-			actorClassSkillBonusSpinners[skill.ordinal()] = new Spinner<>(0, 999, 0);
-			actorClassSkillBonusSpinners[skill.ordinal()].setMaxWidth(80);
+			actorClassBaseSkillLbls[skill.ordinal()] = new Label(Utils.toNormalCase(skill.name()) + " Bonus");
+			actorClassBaseSkillsSpinners[skill.ordinal()] = new Spinner<>(5, 100, 5);
+			actorClassBaseSkillsSpinners[skill.ordinal()].setMaxWidth(80);
 		}
 
 		Label actorClassFavoredAttributes = new Label("Class Favorite Attributes");
@@ -176,14 +178,14 @@ public class ActorClassTab extends PaperEditorTab {
 		actorClassDescriptionArea.setWrapText(true);
 
 		ListView<ActorClass> actorClassList = new ListView<>();
-		actorClassList.getItems().addAll(inkFX.getCharClassList().values());
-		inkFX.getCharClassList().addListener(new MapChangeListener<String, ActorClass>() {
+		actorClassList.getItems().addAll(inkFX.getActorClassList().values());
+		inkFX.getActorClassList().addListener(new MapChangeListener<String, ActorClass>() {
 
 			@Override
 			public void onChanged(Change<? extends String, ? extends ActorClass> change) {
 
 				if (change.wasAdded()) {
-					if (inkFX.currentPluginProperty().get().getPluginDatabase().getCharClassList()
+					if (inkFX.currentPluginProperty().get().getPluginDatabase().getActorClassList()
 							.containsKey(change.getKey()))
 						actorClassList.getItems().remove(change.getValueRemoved());
 					actorClassList.getItems().add(change.getValueAdded());
@@ -201,8 +203,31 @@ public class ActorClassTab extends PaperEditorTab {
 				super.updateItem(item, empty);
 
 				if (item != null) {
+					ContextMenu cm = new ContextMenu();
+					MenuItem removeClass = new MenuItem("Remove class");
+					removeClass.setOnAction(event -> {
+						ActorClass ac = actorClassList.getSelectionModel().getSelectedItem();
+						
+						if (inkFX.currentPluginProperty().get() != null) {
+							Database curPluginDb = inkFX.currentPluginProperty().get().getPluginDatabase();
+							
+							// TODO: this needs fixing. It won't mess up any other plugins, but if you delete something that exists both in the plugin and dep, but comes from the dep
+							// it'll show back up after the plugin saves, quits and reloads. 
+
+							if (curPluginDb.getActorClassList().containsKey(ac.getActorClassId())) {
+								curPluginDb.getActorClassList().remove(ac.getActorClassId());
+								inkFX.getActorClassList().remove(ac.getActorClassId());
+							}
+						}
+
+					});
+
+
+					cm.getItems().add(removeClass);
+					setContextMenu(cm);
 					setText(item.getActorClassId());
 				} else {
+					setContextMenu(null);
 					setText("");
 				}
 			}
@@ -234,8 +259,8 @@ public class ActorClassTab extends PaperEditorTab {
 			String actorClassName = actorClassNameFld.getText();
 
 			ActorClass actorClass = null;
-			if (inkFX.getCharClassList().containsKey(actorClassId)) {
-				actorClass = inkFX.getCharClassList().get(actorClassId);
+			if (inkFX.getActorClassList().containsKey(actorClassId)) {
+				actorClass = inkFX.getActorClassList().get(actorClassId);
 			}
 
 			if (actorClass == null)
@@ -248,11 +273,11 @@ public class ActorClassTab extends PaperEditorTab {
 			actorClass.setActorClassSkills(classSkills.getItems());
 
 			for (Skill skill : Skill.values())
-				actorClass.getActorSkillBonuses()[skill.ordinal()] = actorClassSkillBonusSpinners[skill.ordinal()]
+				actorClass.getActorClassBaseSkills()[skill.ordinal()] = actorClassBaseSkillsSpinners[skill.ordinal()]
 						.getValue();
 
-			inkFX.currentPluginProperty().get().getPluginDatabase().addCharacterClass(actorClass);
-			inkFX.getCharClassList().put(actorClass.getActorClassId(), actorClass);
+			inkFX.currentPluginProperty().get().getPluginDatabase().addActorClass(actorClass);
+			inkFX.getActorClassList().put(actorClass.getActorClassId(), actorClass);
 		});
 
 		GridPane actorClassInfoPane = new GridPane();
@@ -290,8 +315,8 @@ public class ActorClassTab extends PaperEditorTab {
 				if (index < Skill.values().length) {
 					int curCol = 1 + col;
 					int curRow = 8 + row;
-					actorClassInfoPane.add(actorClassSkillBonusLbls[index], curCol * 2, curRow);
-					actorClassInfoPane.add(actorClassSkillBonusSpinners[index], curCol * 2 + 1, curRow);
+					actorClassInfoPane.add(actorClassBaseSkillLbls[index], curCol * 2, curRow);
+					actorClassInfoPane.add(actorClassBaseSkillsSpinners[index], curCol * 2 + 1, curRow);
 					index++;
 				}
 			}
@@ -310,7 +335,7 @@ public class ActorClassTab extends PaperEditorTab {
 		actorClassDescriptionArea.setText("");
 
 		for (Skill skill : Skill.values()) {
-			actorClassSkillBonusSpinners[skill.ordinal()].getValueFactory().setValue(0);
+			actorClassBaseSkillsSpinners[skill.ordinal()].getValueFactory().setValue(0);
 		}
 
 		actorClassFavoredAttributeOneCB.getSelectionModel().select(0);
@@ -325,8 +350,8 @@ public class ActorClassTab extends PaperEditorTab {
 		actorClassDescriptionArea.setText(newValue.getActorClassDescription());
 
 		for (Skill skill : Skill.values()) {
-			actorClassSkillBonusSpinners[skill.ordinal()].getValueFactory()
-					.setValue(newValue.getActorSkillBonuses()[skill.ordinal()]);
+			actorClassBaseSkillsSpinners[skill.ordinal()].getValueFactory()
+					.setValue(newValue.getActorClassBaseSkills()[skill.ordinal()]);
 		}
 
 		actorClassFavoredAttributeOneCB

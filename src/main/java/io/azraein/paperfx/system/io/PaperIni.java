@@ -42,7 +42,10 @@ public class PaperIni {
 	}
 
 	public void updateSelectedPluginsList(List<String> selectedPlugins) {
-		
+		String slLoadedPlugins = "";
+		for (String pluginId : selectedPlugins) {
+			slLoadedPlugins += pluginId + ";";
+		}
 	}
 	
 }

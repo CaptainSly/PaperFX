@@ -49,7 +49,7 @@ public class InkFX extends Application {
 
 	private PaperPluginLoader ppl;
 
-	public static final String INK_VERSION = "0.0.3";
+	public static final String INK_VERSION = "0.0.8";
 
 	// Everything gets saved to this database in here, avoiding duplicate entries
 	private final ObjectProperty<PaperPlugin> currentPluginProperty = new SimpleObjectProperty<>(null);
@@ -58,7 +58,7 @@ public class InkFX extends Application {
 	private final ObservableMap<String, Object> globalList = FXCollections.observableHashMap();
 	private final ObservableMap<String, Item> itemList = FXCollections.observableHashMap();
 	private final ObservableMap<String, ActorRace> raceList = FXCollections.observableHashMap();
-	private final ObservableMap<String, ActorClass> charClassList = FXCollections.observableHashMap();
+	private final ObservableMap<String, ActorClass> actorClassList = FXCollections.observableHashMap();
 	private final ObservableMap<String, Actor> actorList = FXCollections.observableHashMap();
 	private final ObservableMap<String, Creature> creatureList = FXCollections.observableHashMap();
 	private final ObservableMap<String, Location> locationList = FXCollections.observableHashMap();
@@ -184,8 +184,6 @@ public class InkFX extends Application {
 
 				if (depsAndMetadata.get().getValue().getValue() != null) {
 					PaperPluginMetadata pluginMetadata = depsAndMetadata.get().getValue().getValue();
-
-					Logger.debug("Plugin Path: " + pluginMetadata.getPluginPath());
 					try {
 						currentPluginProperty.set(SaveSystem.loadPlugin(pluginMetadata.getPluginPath()));
 						mergeDatabase(ppl.loadPlugins(pluginDependencyPaths));
@@ -258,7 +256,7 @@ public class InkFX extends Application {
 	public void mergeDatabase(Database database) {
 		this.getGlobalList().putAll(database.getGlobalList());
 		this.getItemList().putAll(database.getItemList());
-		this.getCharClassList().putAll(database.getCharClassList());
+		this.getActorClassList().putAll(database.getActorClassList());
 		this.getRaceList().putAll(database.getRaceList());
 		this.getActorList().putAll(database.getActorList());
 		this.getCreatureList().putAll(database.getCreatureList());
@@ -269,7 +267,7 @@ public class InkFX extends Application {
 	public void clearDatabase() {
 		this.getGlobalList().clear();
 		this.getItemList().clear();
-		this.getCharClassList().clear();
+		this.getActorClassList().clear();
 		this.getRaceList().clear();
 		this.getActorList().clear();
 		this.getLocationList().clear();
@@ -300,8 +298,8 @@ public class InkFX extends Application {
 		return raceList;
 	}
 
-	public ObservableMap<String, ActorClass> getCharClassList() {
-		return charClassList;
+	public ObservableMap<String, ActorClass> getActorClassList() {
+		return actorClassList;
 	}
 
 	public ObservableMap<String, Actor> getActorList() {

@@ -1,0 +1,21 @@
+TODO List for PaperFX Version 1.0.0
+
+PAPER
+Start working on UI/Engine stuff. 
+
+INK
+
+Add "Test from Engine" to the Editor in Version 1.0.0
+When selecting items from the lists to edit their data, prioritize pulling the data from the current plugin if it exists instead of just pulling from the database. That way we never really edit the database. 
+
+
+
+PLUGIN STUFF
+Add a flag for non-editable MAIN Plugins. I.e. Game Plugins that are published so they can't be tampered. They can still be used as dependencies, but their internally data can not be edited, only modified. (Modifying any record from another plugin saves it into the current active plugin, not the plugin the record originally came from.)
+
+
+
+
+SCRIPTING STUFF
+
+Get started on the LuaScripting Engine

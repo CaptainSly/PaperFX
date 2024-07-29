@@ -1,10 +1,12 @@
-package io.azraein.inkfx.controls.tab;
+package io.azraein.inkfx.controls.tab.actorTabs;
 
 import io.azraein.inkfx.InkFX;
+import io.azraein.inkfx.controls.tab.PaperEditorTab;
 import io.azraein.paperfx.system.Utils;
 import io.azraein.paperfx.system.actors.classes.ActorRace;
 import io.azraein.paperfx.system.actors.stats.Attribute;
 import io.azraein.paperfx.system.actors.stats.Skill;
+import io.azraein.paperfx.system.io.Database;
 import javafx.collections.MapChangeListener;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
@@ -35,7 +37,7 @@ public class ActorRaceTab extends PaperEditorTab {
 		Spinner<Integer>[] actorRaceBaseAttrSpinners = new Spinner[Attribute.values().length];
 		Label[] actorRaceBaseAttrLbls = new Label[Attribute.values().length];
 		for (Attribute attr : Attribute.values()) {
-			actorRaceBaseAttrSpinners[attr.ordinal()] = new Spinner<>(1, 999, 0);
+			actorRaceBaseAttrSpinners[attr.ordinal()] = new Spinner<>(0, 100, 0);
 			actorRaceBaseAttrLbls[attr.ordinal()] = new Label(Utils.toNormalCase(attr.name()));
 		}
 
@@ -43,7 +45,7 @@ public class ActorRaceTab extends PaperEditorTab {
 		Spinner<Integer>[] actorRaceSkillBonusesSpinner = new Spinner[Skill.values().length];
 		Label[] actorRaceSkillBonusesLbls = new Label[Skill.values().length];
 		for (Skill skill : Skill.values()) {
-			actorRaceSkillBonusesSpinner[skill.ordinal()] = new Spinner<>(1, 999, 0);
+			actorRaceSkillBonusesSpinner[skill.ordinal()] = new Spinner<>(0, 10, 0);
 			actorRaceSkillBonusesLbls[skill.ordinal()] = new Label(Utils.toNormalCase(skill.name()));
 		}
 
@@ -56,8 +58,27 @@ public class ActorRaceTab extends PaperEditorTab {
 					super.updateItem(item, empty);
 
 					if (item != null) {
+
+						ContextMenu cm = new ContextMenu();
+						MenuItem removeRace = new MenuItem("Remove Race");
+						removeRace.setOnAction(event -> {
+							ActorRace ar = actorRaceList.getSelectionModel().getSelectedItem();
+							
+							if (inkFX.currentPluginProperty().get() != null) {
+								Database curPluginDb = inkFX.currentPluginProperty().get().getPluginDatabase();
+								if (curPluginDb.getRaceList().containsKey(ar.getActorRaceId())) {
+									curPluginDb.getRaceList().remove(ar.getActorRaceId());
+									inkFX.getRaceList().remove(ar.getActorRaceId());
+								}
+							}
+
+						});
+
+						cm.getItems().add(removeRace);
+						this.setContextMenu(cm);
 						this.setText(item.getActorRaceId());
 					} else {
+						this.setContextMenu(null);
 						this.setText("");
 					}
 				}

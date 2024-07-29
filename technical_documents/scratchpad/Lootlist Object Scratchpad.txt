@@ -1,0 +1,5 @@
+A Lootlist Object
+
+A Lootlist is a Map of Item ids to item count. That is literally it. 
+
+Map<String, Integer> lootlist.

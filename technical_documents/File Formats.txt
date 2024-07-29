@@ -1,0 +1,28 @@
+Paper Plugin File Format (*.pepm/*.pepf)
+
+FILE_IDENTIFIER - UTF String
+FILE_VERSION - UTF String
+
+UNCOMPRESSED_METADATA_BYTE_SIZE - int
+UNCOMPRESSED_DATABASE_BYTE_SIZE - int
+
+COMPRESSED_METADATA_BYTE_SIZE - int
+COMPRESSED_DATABASE_BYTE_SIZE - int
+
+COMPRESSED_METADATA_BYTES - bytes
+COMPRESSED_DATABASE_BYTES - bytes
+
+___________________________________________________
+
+Paper Save File Format (*.pesf)
+
+FILE_IDENTIFIER - UTF String
+FILE_VERSION - UTF String
+
+UNCOMPRESSED_WORLD_BYTE_SIZE - int
+COMPRESSED_WORLD_BYTES - bytes
+
+
+TODO Update this once the World class is "Finished"
+
+___________________________________________________

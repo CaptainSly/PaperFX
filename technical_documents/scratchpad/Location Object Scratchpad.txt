@@ -1,0 +1,14 @@
+The Location Object
+
+A physical place in the world a player can go to. The location can have up to 4 neighbors, allowing the player to move from location to location based on where their neighbors are put inside an array. 
+
+A location could also have buildings and npcs. 
+
+String id
+String name
+String description
+
+String[] neighborLocationIds
+List<String> locationBuildingIds
+List<String> locationNpcIds
+

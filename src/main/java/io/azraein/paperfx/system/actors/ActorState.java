@@ -71,7 +71,7 @@ public class ActorState implements Serializable {
 				exponent = 1.623;
 			}
 
-			actorAttributes[attribute.ordinal()] = new Stat<Attribute>(attribute, attribute.name(), baseExp, exponent);
+			actorAttributes[attribute.ordinal()] = new Stat<>(attribute, attribute.name(), baseExp, exponent);
 			int totalXp = Utils.getTotalXPForLevel(actorAttributes[attribute.ordinal()],
 					actorRace.getActorRaceBaseAttribute(attribute));
 			actorAttributes[attribute.ordinal()].addXp(totalXp);
@@ -87,16 +87,15 @@ public class ActorState implements Serializable {
 				exponent = 1.572;
 			}
 
-			actorSkills[skill.ordinal()] = new Stat<Skill>(skill, skill.name(), baseExp, exponent);
+			actorSkills[skill.ordinal()] = new Stat<>(skill, skill.name(), baseExp, exponent);
 			int totalXp = Utils.getTotalXPForLevel(actorSkills[skill.ordinal()],
 					actorRace.getActorRaceBaseSkill(skill));
 			totalXp += Utils.getTotalXPForLevel(actorSkills[skill.ordinal()],
-					actorClass.getActorSkillBonuses()[skill.ordinal()]);
+					actorClass.getActorClassBaseSkills()[skill.ordinal()]);
 			actorSkills[skill.ordinal()].addXp(totalXp);
 		}
 
-		actorCarryWeight = getActorAttribute(Attribute.STRENGTH).getLevel() * 5;
-
+		actorCarryWeight = this.getActorAttribute(Attribute.STRENGTH).getLevel() * 5;
 	}
 
 	private int getXpForNextLevel() {

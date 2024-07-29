@@ -16,14 +16,14 @@ public class ActorClass implements Serializable {
 	private String actorClassName;
 	private String actorClassDescription;
 
-	private int[] actorClassSkillBonuses;
+	private int[] actorClassBaseSkills;
 	private Set<Attribute> actorClassFavoredAttributes;
 	private Set<Skill> actorClassSkills;
 
 	public ActorClass(String actorClassId, String actorClassName) {
 		this.actorClassId = actorClassId;
 		this.actorClassName = actorClassName;
-		actorClassSkillBonuses = new int[Skill.values().length];
+		actorClassBaseSkills = new int[Skill.values().length];
 		actorClassFavoredAttributes = new HashSet<>(2);
 		actorClassSkills = new HashSet<>(6);
 	}
@@ -40,8 +40,8 @@ public class ActorClass implements Serializable {
 		return actorClassDescription;
 	}
 	
-	public int[] getActorSkillBonuses() {
-		return actorClassSkillBonuses;
+	public int[] getActorClassBaseSkills() {
+		return actorClassBaseSkills;
 	}
 	
 	public Set<Attribute> getActorClassFavoredAttributes() {
