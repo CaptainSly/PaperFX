@@ -10,7 +10,6 @@ import io.azraein.paperfx.system.io.Database;
 import javafx.collections.MapChangeListener;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.util.StringConverter;
 
@@ -28,7 +27,6 @@ public class ActorClassTab extends PaperEditorTab {
 	public ActorClassTab(InkFX inkFX) {
 		super(inkFX);
 		setText("Class Editor");
-		setClosable(false);
 
 		Label actorClassIdLbl = new Label("Class ID");
 		Label actorClassNameLbl = new Label("Class Name");
@@ -322,11 +320,8 @@ public class ActorClassTab extends PaperEditorTab {
 			}
 		}
 
-		BorderPane rootPane = new BorderPane();
-		rootPane.setLeft(actorClassList);
-		rootPane.setCenter(actorClassInfoPane);
-
-		setContent(rootPane);
+		content.setLeft(actorClassList);
+		content.setCenter(actorClassInfoPane);
 	}
 	
 	private void clearData() {
@@ -360,8 +355,8 @@ public class ActorClassTab extends PaperEditorTab {
 				.setValue((Attribute) newValue.getActorClassFavoredAttributes().toArray()[1]);
 
 		for (Object obj : newValue.getActorClassSkills().toArray()) {
-			if (obj instanceof Skill)
-				classSkills.getItems().add(((Skill) obj));
+			if (obj instanceof Skill skill)
+				classSkills.getItems().add(skill);
 		}
 	}
 	

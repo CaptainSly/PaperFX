@@ -1,20 +1,14 @@
 package io.azraein.inkfx.controls.tab;
 
 import io.azraein.inkfx.InkFX;
-import javafx.scene.control.TabPane;
-import javafx.scene.control.TabPane.TabDragPolicy;
+import io.azraein.inkfx.controls.tab.locationTab.LocationTab;
 
-public class LocationGroupTab extends PaperEditorTab {
+public class LocationGroupTab extends PaperGroupTab {
 
     public LocationGroupTab(InkFX inkFX) {
         super(inkFX);
         setText("Location Editor");
-        setClosable(false);
-
-        TabPane tb = new TabPane();
-        tb.setTabDragPolicy(TabDragPolicy.REORDER);
-
-        setContent(tb);
+        addTab(new LocationTab(inkFX));
     }
 
 }

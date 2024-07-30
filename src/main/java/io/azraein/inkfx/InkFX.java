@@ -16,7 +16,6 @@ import io.azraein.inkfx.screens.PluginMetadataScreen;
 import io.azraein.paperfx.system.actors.Actor;
 import io.azraein.paperfx.system.actors.classes.ActorClass;
 import io.azraein.paperfx.system.actors.classes.ActorRace;
-import io.azraein.paperfx.system.actors.creatures.Creature;
 import io.azraein.paperfx.system.exceptions.IncompatiblePluginVersionException;
 import io.azraein.paperfx.system.exceptions.PluginCorruptionException;
 import io.azraein.paperfx.system.inventory.items.Item;
@@ -26,7 +25,6 @@ import io.azraein.paperfx.system.io.plugins.PaperPlugin;
 import io.azraein.paperfx.system.io.plugins.PaperPluginLoader;
 import io.azraein.paperfx.system.io.plugins.PaperPluginMetadata;
 import io.azraein.paperfx.system.locations.Location;
-import io.azraein.paperfx.system.locations.SubLocation;
 import javafx.application.Application;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -60,9 +58,7 @@ public class InkFX extends Application {
 	private final ObservableMap<String, ActorRace> raceList = FXCollections.observableHashMap();
 	private final ObservableMap<String, ActorClass> actorClassList = FXCollections.observableHashMap();
 	private final ObservableMap<String, Actor> actorList = FXCollections.observableHashMap();
-	private final ObservableMap<String, Creature> creatureList = FXCollections.observableHashMap();
 	private final ObservableMap<String, Location> locationList = FXCollections.observableHashMap();
-	private final ObservableMap<String, SubLocation> subLocationList = FXCollections.observableHashMap();
 
 	public static final String PLUGIN_METADATA_SCREEN = "pluginMetadata";
 	public static final String PLUGIN_CONTENT_EDITOR_SCREEN = "pluginContent";
@@ -259,9 +255,7 @@ public class InkFX extends Application {
 		this.getActorClassList().putAll(database.getActorClassList());
 		this.getRaceList().putAll(database.getRaceList());
 		this.getActorList().putAll(database.getActorList());
-		this.getCreatureList().putAll(database.getCreatureList());
 		this.getLocationList().putAll(database.getLocationList());
-		this.getSubLocationList().putAll(database.getSubLocationList());
 	}
 
 	public void clearDatabase() {
@@ -271,7 +265,6 @@ public class InkFX extends Application {
 		this.getRaceList().clear();
 		this.getActorList().clear();
 		this.getLocationList().clear();
-		this.getSubLocationList().clear();
 	}
 
 	public void swapScreens(String screenId) {
@@ -306,16 +299,8 @@ public class InkFX extends Application {
 		return actorList;
 	}
 
-	public ObservableMap<String, Creature> getCreatureList() {
-		return creatureList;
-	}
-
 	public ObservableMap<String, Location> getLocationList() {
 		return locationList;
-	}
-
-	public ObservableMap<String, SubLocation> getSubLocationList() {
-		return subLocationList;
 	}
 
 }

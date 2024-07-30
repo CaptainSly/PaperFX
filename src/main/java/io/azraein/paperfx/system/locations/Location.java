@@ -8,10 +8,10 @@ public class Location implements Serializable {
 
 	private static final long serialVersionUID = 1285907871914440413L;
 
-	private String locationId;
+	private final String locationId;
 
-	private String[] locationNeighbors;
-	private List<String> locationSubLocations;
+	private final String[] locationNeighbors;
+	private final List<String> locationBuildingIds;
 
 	private LocationState locationState;
 
@@ -20,7 +20,7 @@ public class Location implements Serializable {
 		locationState = new LocationState(locationName, locationDescription);
 
 		locationNeighbors = new String[4];
-		locationSubLocations = new ArrayList<>();
+		locationBuildingIds = new ArrayList<>();
 	}
 
 	public String getLocationId() {
@@ -31,16 +31,25 @@ public class Location implements Serializable {
 		return locationState;
 	}
 
-	public void setLocationState(LocationState locationState) {
-		this.locationState = locationState;
-	}
-
 	public String[] getLocationNeighbors() {
 		return locationNeighbors;
 	}
 
-	public List<String> getLocationSubLocations() {
-		return locationSubLocations;
+	public List<String> getLocationBuildingIds() {
+		return locationBuildingIds;
+	}
+
+	public void setBuildingIds(List<String> locationBuildingIds) {
+		this.locationBuildingIds.addAll(locationBuildingIds);
+	}
+
+	public void setNeighborLocation(Direction dir, Location location) {
+		locationNeighbors[dir.ordinal()] = location.getLocationId();
+		location.getLocationNeighbors()[dir.opposite().ordinal()] = this.getLocationId();
+	}
+
+	public void setLocationState(LocationState locationState) {
+		this.locationState = locationState;
 	}
 
 }

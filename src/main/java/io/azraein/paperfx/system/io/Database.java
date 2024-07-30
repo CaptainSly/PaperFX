@@ -7,7 +7,6 @@ import java.util.Map;
 import io.azraein.paperfx.system.actors.Actor;
 import io.azraein.paperfx.system.actors.classes.ActorClass;
 import io.azraein.paperfx.system.actors.classes.ActorRace;
-import io.azraein.paperfx.system.actors.creatures.Creature;
 import io.azraein.paperfx.system.inventory.items.Item;
 import io.azraein.paperfx.system.locations.Location;
 
@@ -20,7 +19,6 @@ public class Database implements Serializable {
 	private Map<String, ActorRace> raceList = new HashMap<>();
 	private Map<String, ActorClass> actorClassList = new HashMap<>();
 	private Map<String, Actor> actorList = new HashMap<>();
-	private Map<String, Creature> creatureList = new HashMap<>();
 	private Map<String, Location> locationList = new HashMap<>();
 
 	public Item getItem(String itemId) {
@@ -47,18 +45,10 @@ public class Database implements Serializable {
 		raceList.put(characterRace.getActorRaceId(), characterRace);
 	}
 
-	public Creature getCreature(String creatureId) {
-		return creatureList.get(creatureId);
-	}
-
-	public void addCreature(Creature creature) {
-		creatureList.put(creature.getCreatureId(), creature);
-	}
-
 	public ActorClass getActorClass(String charClassId) {
 		return actorClassList.get(charClassId);
 	}
-	
+
 	public void addActorClass(ActorClass characterClass) {
 		actorClassList.put(characterClass.getActorClassId(), characterClass);
 	}
@@ -85,16 +75,11 @@ public class Database implements Serializable {
 		this.getActorClassList().putAll(database.getActorClassList());
 		this.getRaceList().putAll(database.getRaceList());
 		this.getActorList().putAll(database.getActorList());
-		this.getCreatureList().putAll(database.getCreatureList());
 		this.getLocationList().putAll(database.getLocationList());
 	}
 
 	public Map<String, Location> getLocationList() {
 		return locationList;
-	}
-
-	public Map<String, Creature> getCreatureList() {
-		return creatureList;
 	}
 
 	public Map<String, Object> getGlobalList() {
@@ -119,7 +104,7 @@ public class Database implements Serializable {
 
 	public int getDatabaseSize() {
 		return getGlobalList().size() + getItemList().size() + getActorClassList().size() + getRaceList().size()
-				+ getActorList().size() + getCreatureList().size() + getLocationList().size();
+				+ getActorList().size() + getLocationList().size();
 	}
 
 }

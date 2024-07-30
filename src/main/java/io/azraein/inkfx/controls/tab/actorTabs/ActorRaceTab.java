@@ -10,7 +10,6 @@ import io.azraein.paperfx.system.io.Database;
 import javafx.collections.MapChangeListener;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 
 public class ActorRaceTab extends PaperEditorTab {
@@ -18,7 +17,6 @@ public class ActorRaceTab extends PaperEditorTab {
 	public ActorRaceTab(InkFX inkFX) {
 		super(inkFX);
 		setText("Race Editor");
-		setClosable(false);
 
 		Label actorRaceIdLbl = new Label("Race Id");
 		Label actorRaceNameLbl = new Label("Race Name");
@@ -209,12 +207,8 @@ public class ActorRaceTab extends PaperEditorTab {
 			}
 		}
 
-		BorderPane rootPane = new BorderPane();
-		rootPane.setLeft(actorRaceList);
-		rootPane.setCenter(raceInfoPane);
-
-		setContent(rootPane);
-
+		content.setLeft(actorRaceList);
+		content.setCenter(raceInfoPane);
 	}
 
 }

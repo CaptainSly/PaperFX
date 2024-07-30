@@ -95,7 +95,7 @@ public class ActorState implements Serializable {
 			actorSkills[skill.ordinal()].addXp(totalXp);
 		}
 
-		actorCarryWeight = this.getActorAttribute(Attribute.STRENGTH).getLevel() * 5;
+		actorCarryWeight = actorAttributes[Attribute.STRENGTH.ordinal()].getLevel() * 5;
 	}
 
 	private int getXpForNextLevel() {

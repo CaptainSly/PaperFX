@@ -11,27 +11,14 @@ public class LocationState implements Serializable {
 	private String locationName;
 	private String locationDescription;
 
-	private List<String> actorsList;
-	private List<String> creaturesList;
+	private List<String> locationNpcIds;
+	private List<String> locationCreatureIds;
 
 	public LocationState(String locationName, String locationDescription) {
 		this.locationName = locationName;
 		this.locationDescription = locationDescription;
-
-		actorsList = new ArrayList<>();
-		creaturesList = new ArrayList<>();
-	}
-
-	public void update() {
-
-	}
-
-	public List<String> getActorsList() {
-		return actorsList;
-	}
-
-	public List<String> getCreaturesList() {
-		return creaturesList;
+		locationNpcIds = new ArrayList<>();
+		locationCreatureIds = new ArrayList<>();
 	}
 
 	public String getLocationName() {
@@ -41,4 +28,21 @@ public class LocationState implements Serializable {
 	public String getLocationDescription() {
 		return locationDescription;
 	}
+
+	public List<String> getLocationNpcIds() {
+		return locationNpcIds;
+	}
+
+	public List<String> getLocationCreatureIds() {
+		return locationCreatureIds;
+	}
+
+	public void setLocationNpcIds(List<String> locationNpcIds) {
+		this.locationNpcIds = locationNpcIds;
+	}
+
+	public void setLocationCreatureIds(List<String> locationCreatureIds) {
+		this.locationCreatureIds = locationCreatureIds;
+	}
+
 }
