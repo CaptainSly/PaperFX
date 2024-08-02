@@ -35,6 +35,7 @@ public class PluginMetadataCell extends ListCell<PaperPluginMetadata> {
 		MenuItem setActive = new MenuItem("Set Active Plugin");
 		setActive.setOnAction(e -> {
 			dialog.activePluginMetadataProperty().set(getItem());
+			pmcCB.setSelected(true);
 		});
 
 		pmcCM.getItems().add(setActive);

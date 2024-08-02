@@ -7,7 +7,6 @@ import java.util.List;
 public class LocationState implements Serializable {
 
 	private static final long serialVersionUID = 1265793962596734550L;
-
 	private String locationName;
 	private String locationDescription;
 
@@ -35,6 +34,14 @@ public class LocationState implements Serializable {
 
 	public List<String> getLocationCreatureIds() {
 		return locationCreatureIds;
+	}
+
+	public void setLocationName(String locationName) {
+		this.locationName = locationName;
+	}
+
+	public void setLocationDescription(String locationDescription) {
+		this.locationDescription = locationDescription;
 	}
 
 	public void setLocationNpcIds(List<String> locationNpcIds) {

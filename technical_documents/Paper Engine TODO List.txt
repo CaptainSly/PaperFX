@@ -7,6 +7,8 @@ INK
 
 Add "Test from Engine" to the Editor in Version 1.0.0
 When selecting items from the lists to edit their data, prioritize pulling the data from the current plugin if it exists instead of just pulling from the database. That way we never really edit the database. 
+Tighten up each tab in the editor, make any record change mark the tab as dirty. 
+Give the editor fields a bit of logic so an object with conflicting and/or illegal data doesn't get sent out. 
 
 
 

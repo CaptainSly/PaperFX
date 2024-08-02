@@ -8,6 +8,7 @@ import io.azraein.paperfx.system.actors.stats.Attribute;
 import io.azraein.paperfx.system.actors.stats.Skill;
 import io.azraein.paperfx.system.io.Database;
 import javafx.collections.MapChangeListener;
+import javafx.collections.MapChangeListener.Change;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
@@ -18,7 +19,7 @@ public class ActorClassTab extends PaperEditorTab {
 	private TextField actorClassIdFld;
 	private TextField actorClassNameFld;
 	private TextArea actorClassDescriptionArea;
-	private ListView<Skill> classSkills;
+	private ListView<Skill> actorSpecializedSkills;
 	private Spinner<Integer>[] actorClassBaseSkillsSpinners;
 	private ComboBox<Attribute> actorClassFavoredAttributeOneCB;
 	private ComboBox<Attribute> actorClassFavoredAttributeTwoCB;
@@ -100,9 +101,9 @@ public class ActorClassTab extends PaperEditorTab {
 			}
 		});
 
-		Label actorClassSkills = new Label("Class Skills");
-		classSkills = new ListView<>();
-		classSkills.setCellFactory(listView -> new ListCell<Skill>() {
+		Label actorClassSkills = new Label("Class Specialized Skills");
+		actorSpecializedSkills = new ListView<>();
+		actorSpecializedSkills.setCellFactory(listView -> new ListCell<Skill>() {
 			@Override
 			public void updateItem(Skill item, boolean empty) {
 				super.updateItem(item, empty);
@@ -114,7 +115,7 @@ public class ActorClassTab extends PaperEditorTab {
 					cm.getItems().add(removeSkillItem);
 
 					removeSkillItem.setOnAction(event -> {
-						classSkills.getItems().remove(item);
+						actorSpecializedSkills.getItems().remove(item);
 					});
 
 					this.setContextMenu(cm);
@@ -160,10 +161,12 @@ public class ActorClassTab extends PaperEditorTab {
 		Button addSkillButton = new Button("Add Skill");
 		addSkillButton.setOnAction(event -> {
 			if (skillChoice.getValue() != null) { // Make sure the skill isn't null
-				if (!classSkills.getItems().contains(skillChoice.getValue())) { // Make sure the list doesn't contain
-																				// the skill already
-					if (classSkills.getItems().size() < 6) { // Make sure the list doesn't already have 6 skills.
-						classSkills.getItems().add(skillChoice.getValue());
+				if (!actorSpecializedSkills.getItems().contains(skillChoice.getValue())) { // Make sure the list doesn't
+																							// contain
+					// the skill already
+					if (actorSpecializedSkills.getItems().size() < 6) { // Make sure the list doesn't already have 6
+																		// skills.
+						actorSpecializedSkills.getItems().add(skillChoice.getValue());
 					}
 				}
 			}
@@ -177,22 +180,15 @@ public class ActorClassTab extends PaperEditorTab {
 
 		ListView<ActorClass> actorClassList = new ListView<>();
 		actorClassList.getItems().addAll(inkFX.getActorClassList().values());
-		inkFX.getActorClassList().addListener(new MapChangeListener<String, ActorClass>() {
-
-			@Override
-			public void onChanged(Change<? extends String, ? extends ActorClass> change) {
-
-				if (change.wasAdded()) {
-					if (inkFX.currentPluginProperty().get().getPluginDatabase().getActorClassList()
-							.containsKey(change.getKey()))
-						actorClassList.getItems().remove(change.getValueRemoved());
-					actorClassList.getItems().add(change.getValueAdded());
-				} else if (change.wasRemoved()) {
+		inkFX.getActorClassList().addListener((Change<? extends String, ? extends ActorClass> change) -> {
+			if (change.wasAdded()) {
+				if (inkFX.currentPluginProperty().get().getPluginDatabase().getActorClassList()
+						.containsKey(change.getKey()))
 					actorClassList.getItems().remove(change.getValueRemoved());
-				}
-
+				actorClassList.getItems().add(change.getValueAdded());
+			} else if (change.wasRemoved()) {
+				actorClassList.getItems().remove(change.getValueRemoved());
 			}
-
 		});
 		actorClassList.setCellFactory(listView -> new ListCell<ActorClass>() {
 
@@ -205,12 +201,14 @@ public class ActorClassTab extends PaperEditorTab {
 					MenuItem removeClass = new MenuItem("Remove class");
 					removeClass.setOnAction(event -> {
 						ActorClass ac = actorClassList.getSelectionModel().getSelectedItem();
-						
+
 						if (inkFX.currentPluginProperty().get() != null) {
 							Database curPluginDb = inkFX.currentPluginProperty().get().getPluginDatabase();
-							
-							// TODO: this needs fixing. It won't mess up any other plugins, but if you delete something that exists both in the plugin and dep, but comes from the dep
-							// it'll show back up after the plugin saves, quits and reloads. 
+
+							// TODO: this needs fixing. It won't mess up any other plugins, but if you
+							// delete something that exists both in the plugin and dep, but comes from the
+							// dep
+							// it'll show back up after the plugin saves, quits and reloads.
 
 							if (curPluginDb.getActorClassList().containsKey(ac.getActorClassId())) {
 								curPluginDb.getActorClassList().remove(ac.getActorClassId());
@@ -219,7 +217,6 @@ public class ActorClassTab extends PaperEditorTab {
 						}
 
 					});
-
 
 					cm.getItems().add(removeClass);
 					setContextMenu(cm);
@@ -248,7 +245,7 @@ public class ActorClassTab extends PaperEditorTab {
 		inkFX.currentPluginProperty().addListener((observableValue, oldValue, newValue) -> {
 			if (newValue == null) {
 				actorClassList.getItems().clear();
-			}	
+			}
 		});
 
 		Button saveActorClassBtn = new Button("Save Actor Class");
@@ -268,7 +265,7 @@ public class ActorClassTab extends PaperEditorTab {
 			actorClass.setActorClassDescription(actorClassDescriptionArea.getText());
 			actorClass.setActorClassFavoredAttribute(actorClassFavoredAttributeOneCB.getValue(),
 					actorClassFavoredAttributeTwoCB.getValue());
-			actorClass.setActorClassSkills(classSkills.getItems());
+			actorClass.setActorClassSkills(actorSpecializedSkills.getItems());
 
 			for (Skill skill : Skill.values())
 				actorClass.getActorClassBaseSkills()[skill.ordinal()] = actorClassBaseSkillsSpinners[skill.ordinal()]
@@ -278,10 +275,12 @@ public class ActorClassTab extends PaperEditorTab {
 			inkFX.getActorClassList().put(actorClass.getActorClassId(), actorClass);
 		});
 
+		Label actorClassBaseSkillsLbl = new Label("Class Skill Bonus");
+
 		GridPane actorClassInfoPane = new GridPane();
 		GridPane.setColumnSpan(actorClassDescriptionArea, 4);
-		GridPane.setColumnSpan(classSkills, 2);
-		GridPane.setRowSpan(classSkills, 12);
+		GridPane.setColumnSpan(actorSpecializedSkills, 2);
+		GridPane.setRowSpan(actorSpecializedSkills, 12);
 		GridPane.setRowSpan(actorClassDescriptionArea, 6);
 		actorClassInfoPane.setPadding(new Insets(15));
 		actorClassInfoPane.setHgap(10);
@@ -294,7 +293,7 @@ public class ActorClassTab extends PaperEditorTab {
 		actorClassInfoPane.add(actorClassDescriptionArea, 1, 1);
 
 		actorClassInfoPane.add(actorClassSkills, 0, 7);
-		actorClassInfoPane.add(classSkills, 0, 8);
+		actorClassInfoPane.add(actorSpecializedSkills, 0, 8);
 		actorClassInfoPane.add(skillChoice, 0, 20);
 		actorClassInfoPane.add(addSkillButton, 1, 20);
 		actorClassInfoPane.add(saveActorClassBtn, 2, 20);
@@ -308,6 +307,7 @@ public class ActorClassTab extends PaperEditorTab {
 		int numRows = (int) Math.ceil((double) Skill.values().length / numCols);
 		int index = 0;
 
+		actorClassInfoPane.add(actorClassBaseSkillsLbl, 2, 7);
 		for (int row = 0; row < numRows; row++) {
 			for (int col = 0; col < numCols; col++) {
 				if (index < Skill.values().length) {
@@ -323,7 +323,7 @@ public class ActorClassTab extends PaperEditorTab {
 		content.setLeft(actorClassList);
 		content.setCenter(actorClassInfoPane);
 	}
-	
+
 	private void clearData() {
 		actorClassIdFld.setText("");
 		actorClassNameFld.setText("");
@@ -336,7 +336,7 @@ public class ActorClassTab extends PaperEditorTab {
 		actorClassFavoredAttributeOneCB.getSelectionModel().select(0);
 		actorClassFavoredAttributeTwoCB.getSelectionModel().select(1);
 
-		classSkills.getItems().clear();
+		actorSpecializedSkills.getItems().clear();
 	}
 
 	private void loadData(ActorClass newValue) {
@@ -356,8 +356,8 @@ public class ActorClassTab extends PaperEditorTab {
 
 		for (Object obj : newValue.getActorClassSkills().toArray()) {
 			if (obj instanceof Skill skill)
-				classSkills.getItems().add(skill);
+				actorSpecializedSkills.getItems().add(skill);
 		}
 	}
-	
+
 }

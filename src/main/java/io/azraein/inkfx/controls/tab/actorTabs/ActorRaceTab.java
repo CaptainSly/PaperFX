@@ -7,9 +7,18 @@ import io.azraein.paperfx.system.actors.classes.ActorRace;
 import io.azraein.paperfx.system.actors.stats.Attribute;
 import io.azraein.paperfx.system.actors.stats.Skill;
 import io.azraein.paperfx.system.io.Database;
-import javafx.collections.MapChangeListener;
+import javafx.collections.MapChangeListener.Change;
 import javafx.geometry.Insets;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 
 public class ActorRaceTab extends PaperEditorTab {
@@ -61,7 +70,7 @@ public class ActorRaceTab extends PaperEditorTab {
 						MenuItem removeRace = new MenuItem("Remove Race");
 						removeRace.setOnAction(event -> {
 							ActorRace ar = actorRaceList.getSelectionModel().getSelectedItem();
-							
+
 							if (inkFX.currentPluginProperty().get() != null) {
 								Database curPluginDb = inkFX.currentPluginProperty().get().getPluginDatabase();
 								if (curPluginDb.getRaceList().containsKey(ar.getActorRaceId())) {
@@ -100,23 +109,18 @@ public class ActorRaceTab extends PaperEditorTab {
 			}
 		});
 		actorRaceList.getItems().addAll(inkFX.getRaceList().values());
-		inkFX.getRaceList().addListener(new MapChangeListener<String, ActorRace>() {
-
-			@Override
-			public void onChanged(Change<? extends String, ? extends ActorRace> change) {
-				if (change.wasAdded()) {
-					if (inkFX.currentPluginProperty().get().getPluginDatabase().getRaceList()
-							.containsKey(change.getKey())) {
-						actorRaceList.getItems().remove(change.getValueRemoved());
-						actorRaceList.getItems().add(change.getValueAdded());
-					} else {
-						actorRaceList.getItems().add(change.getValueAdded());
-					}
-				} else if (change.wasRemoved()) {
+		inkFX.getRaceList().addListener((Change<? extends String, ? extends ActorRace> change) -> {
+			if (change.wasAdded()) {
+				if (inkFX.currentPluginProperty().get().getPluginDatabase().getRaceList()
+						.containsKey(change.getKey())) {
 					actorRaceList.getItems().remove(change.getValueRemoved());
+					actorRaceList.getItems().add(change.getValueAdded());
+				} else {
+					actorRaceList.getItems().add(change.getValueAdded());
 				}
+			} else if (change.wasRemoved()) {
+				actorRaceList.getItems().remove(change.getValueRemoved());
 			}
-
 		});
 
 		Button clearFieldBtn = new Button("Clear Form");
@@ -191,6 +195,8 @@ public class ActorRaceTab extends PaperEditorTab {
 			raceInfoPane.add(actorRaceBaseAttrLbls[i], 5, i + 1);
 			raceInfoPane.add(actorRaceBaseAttrSpinners[i], 6, i + 1);
 		}
+
+		raceInfoPane.add(new Label("Race Initial Skill Values"), 0, 8);
 
 		int numCols = 3;
 		int numRows = (int) Math.ceil((double) Skill.values().length / numCols);
