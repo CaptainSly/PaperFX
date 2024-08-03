@@ -75,7 +75,7 @@ public class Utils {
 	 * @return The total amount exp for the level given based off an Actor level
 	 *         growth.
 	 */
-	public static int getTotalXpForLevel(int targetLevel) {
+	public static int getTotalXPForLevel(int targetLevel) {
 		int totalXp = 0;
 		for (int level = 1; level <= targetLevel; level++) {
 			totalXp += (int) (ActorState.BASE_EXP * Math.pow(level, ActorState.EXPONENT));

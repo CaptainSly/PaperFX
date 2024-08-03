@@ -5,6 +5,9 @@ plugins {
 
 repositories {
     mavenCentral()
+    maven {
+        url = uri("https://jitpack.io")
+    }
 }
 
 
@@ -21,10 +24,8 @@ dependencies {
     // ZStd - Compression
     implementation("com.github.luben:zstd-jni:1.5.6-3")
     
-    // Ikonli
-    implementation("org.kordamp.desktoppanefx:desktoppanefx-core:0.15.0")
-    implementation("org.kordamp.ikonli:ikonli-javafx:12.3.1")
-    implementation("org.kordamp.ikonli:ikonli-materialdesign2-pack:12.3.1")
+    // Gluon RichTextArea
+    implementation("com.gluonhq:rich-text-area:1.2.0")
     
     // Gson
     implementation("com.google.code.gson:gson:2.10.1")
@@ -32,6 +33,10 @@ dependencies {
     // TinyLog2
     implementation("org.tinylog:tinylog-api:2.7.0")
     implementation("org.tinylog:tinylog-impl:2.7.0")   
+    
+    // LuaJ
+    implementation("com.github.fabrice-ducos:luaj:3.0.1")
+
 }
 
 java {

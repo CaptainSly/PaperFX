@@ -7,7 +7,6 @@ import io.azraein.paperfx.system.actors.classes.ActorClass;
 import io.azraein.paperfx.system.actors.stats.Attribute;
 import io.azraein.paperfx.system.actors.stats.Skill;
 import io.azraein.paperfx.system.io.Database;
-import javafx.collections.MapChangeListener;
 import javafx.collections.MapChangeListener.Change;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;

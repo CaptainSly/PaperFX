@@ -7,7 +7,7 @@ public class LocationGroupTab extends PaperGroupTab {
 
     public LocationGroupTab(InkFX inkFX) {
         super(inkFX);
-        setText("Location Editor");
+        setText("Location Editors");
         addTab(new LocationTab(inkFX));
     }
 

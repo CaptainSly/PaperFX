@@ -9,7 +9,7 @@ public class NpcGroupTab extends PaperGroupTab {
 
     public NpcGroupTab(InkFX inkFX) {
         super(inkFX);
-        setText("NPC Editor");
+        setText("Actor Editors");
         
         addTab(new ActorClassTab(inkFX));
         addTab(new ActorRaceTab(inkFX));

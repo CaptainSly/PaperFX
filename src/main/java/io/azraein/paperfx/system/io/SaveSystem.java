@@ -1,20 +1,32 @@
 package io.azraein.paperfx.system.io;
 
-import java.io.*;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 import org.tinylog.Logger;
 
 import com.github.luben.zstd.Zstd;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
+import io.azraein.paperfx.system.actors.Actor;
 import io.azraein.paperfx.system.exceptions.IncompatiblePluginVersionException;
 import io.azraein.paperfx.system.exceptions.PluginCorruptionException;
 import io.azraein.paperfx.system.io.plugins.PaperPlugin;
 import io.azraein.paperfx.system.io.plugins.PaperPluginMetadata;
+import io.azraein.paperfx.system.io.type_adapters.ActorTypeAdapter;
 
 public class SaveSystem {
 
-	public static Gson SAVE_GSON = new Gson();
+	public static Gson SAVE_GSON;
+
+	static {
+		SAVE_GSON = new GsonBuilder().registerTypeAdapter(Actor.class, new ActorTypeAdapter(new Gson())).create();
+	}
 
 	public static final String PAPER_PLUGIN_FILE_IDENTIFIER = "PEPF";
 	public static final String PAPER_PLUGIN_FILE_VERSION = "1.0";
@@ -111,11 +123,11 @@ public class SaveSystem {
 			metadataInputStream.readUTF();
 			metadataInputStream.readUTF();
 			int uncompressedMetadataBytesSize = metadataInputStream.readInt();
-			int uncompressedDatabaseBytesSize = metadataInputStream.readInt();
+			metadataInputStream.readInt();
 			int compressedMetadataBytesSize = metadataInputStream.readInt();
 			int compressedDatabaseBytesSize = metadataInputStream.readInt();
 			byte[] compressedMetadataBytes = metadataInputStream.readNBytes(compressedMetadataBytesSize);
-			byte[] compressedDatabaseBytes = metadataInputStream.readNBytes(compressedDatabaseBytesSize);
+			metadataInputStream.readNBytes(compressedDatabaseBytesSize);
 			byte[] uncompressedMetadataBytes = Zstd.decompress(compressedMetadataBytes, uncompressedMetadataBytesSize);
 			PaperPluginMetadata metadata = SAVE_GSON.fromJson(new String(uncompressedMetadataBytes),
 					PaperPluginMetadata.class);

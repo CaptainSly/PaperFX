@@ -1,0 +1,11 @@
+Lua Scripting Documentation as it's written.
+
+GLOBALS
+
+player - The current Player, set on New Game, and Load Save
+
+current_location - The Current Location, set on location move
+current_time 
+current_date
+
+database - The current database, set after plugin load
