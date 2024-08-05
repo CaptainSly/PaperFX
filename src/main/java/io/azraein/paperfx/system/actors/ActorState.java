@@ -75,7 +75,6 @@ public class ActorState implements Serializable {
 			int totalXp = Utils.getTotalXPForLevel(actorAttributes[attribute.ordinal()],
 					actorRace.getActorRaceBaseAttribute(attribute));
 			actorAttributes[attribute.ordinal()].addXp(totalXp);
-
 		}
 
 		for (Skill skill : Skill.values()) {
@@ -99,7 +98,7 @@ public class ActorState implements Serializable {
 	}
 
 	private int getXpForNextLevel() {
-		return (int) (BASE_EXP * Math.pow(actorLevel, EXPONENT));
+		return (int) (BASE_EXP * Math.pow(actorLevel + 1, EXPONENT));
 	}
 
 	public void addXp(int xp) {

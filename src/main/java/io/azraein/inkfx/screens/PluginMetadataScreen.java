@@ -11,17 +11,10 @@ import io.azraein.paperfx.system.io.SaveSystem;
 import io.azraein.paperfx.system.io.plugins.PaperPlugin;
 import io.azraein.paperfx.system.io.plugins.PaperPluginMetadata;
 import javafx.geometry.Insets;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.util.StringConverter;
 
 public class PluginMetadataScreen extends PaperEditorScreen {
@@ -29,6 +22,7 @@ public class PluginMetadataScreen extends PaperEditorScreen {
 	TextField pluginIdFld, pluginNameFld, pluginAuthorFld, pluginVersionFld;
 	TextArea pluginDescription;
 	CheckBox pluginMainFileCB;
+	TextField pluginMainScriptFld;
 	ListView<PaperPluginMetadata> dependencyListView;
 
 	public PluginMetadataScreen(InkFX inkFX) {
@@ -40,8 +34,10 @@ public class PluginMetadataScreen extends PaperEditorScreen {
 		Label pluginVersionLbl = new Label("Plugin Version");
 		Label pluginMainfileLbl = new Label("Is Plugin Main File?");
 		Label pluginDeps = new Label("Plugin Dependencies");
+		Label pluginMainScriptLbl = new Label("Plugin Script Main File: ");
 
 		Button saveMetadataToPlugin = new Button("Save Plugin Metadata");
+		saveMetadataToPlugin.setTooltip(new Tooltip("Saving the Metadata will also save the plugin."));
 		saveMetadataToPlugin.setOnAction(event -> {
 			PaperPlugin plugin = inkFX.currentPluginProperty().get();
 			if (plugin == null) {
@@ -55,6 +51,7 @@ public class PluginMetadataScreen extends PaperEditorScreen {
 			plugin.getMetadata().setPluginDescription(getPluginDescription().getText());
 			plugin.getMetadata().setPluginVersion(getPluginVersionFld().getText());
 			plugin.getMetadata().setPluginMainFile(getPluginMainFileCB().isSelected());
+			plugin.getMetadata().setPluginMainScript(pluginMainScriptFld.getText());
 
 			String ext;
 			if (plugin.getMetadata().isPluginMainFile())
@@ -80,10 +77,13 @@ public class PluginMetadataScreen extends PaperEditorScreen {
 				dependencyPaths.add(metadata.getPluginPath());
 			}
 
+			// Get the Combined Plugin Databases, merge it with the current plugin, then
+			// finally merge it into the Editor's database.
 			Database combinedDatabase = inkFX.getPluginLoader().loadPlugins(dependencyPaths);
+			combinedDatabase.mergeDatabase(plugin.getPluginDatabase());
 			inkFX.mergeDatabase(combinedDatabase);
 
-			inkFX.swapScreens(InkFX.PLUGIN_CONTENT_EDITOR_SCREEN);
+			SaveSystem.savePlugin(plugin, filePath);
 		});
 
 		ComboBox<PaperPluginMetadata> dependencyChooser = new ComboBox<>();
@@ -93,7 +93,7 @@ public class PluginMetadataScreen extends PaperEditorScreen {
 			public void updateItem(PaperPluginMetadata item, boolean empty) {
 				super.updateItem(item, empty);
 
-				if (item != null || !empty) {
+				if (item != null) {
 					String pluginType;
 					if (item.isPluginMainFile())
 						pluginType = "M";
@@ -184,7 +184,31 @@ public class PluginMetadataScreen extends PaperEditorScreen {
 		pluginAuthorFld = new TextField();
 		pluginVersionFld = new TextField();
 
+		Button choosePluginScriptBtn = new Button("Select Main Script");
+		choosePluginScriptBtn.setDisable(true);
+		choosePluginScriptBtn.setOnAction(event -> {
+			FileChooser fc = new FileChooser();
+			fc.setInitialDirectory(new File(SaveSystem.PAPER_SCRIPT_FOLDER));
+			fc.getExtensionFilters().add(new ExtensionFilter("Lua Script", "*.lua"));
+
+			File selectedScript = fc.showOpenDialog(inkFX.getPrimaryStage().getOwner());
+			if (selectedScript != null) {
+				pluginMainScriptFld.setText(selectedScript.getName());
+			}
+
+		});
+
+		Button clearPluginScriptBtn = new Button("Clear Selected Plugin");
+		clearPluginScriptBtn.setOnAction(event -> {
+			pluginMainScriptFld.setText("");
+		});
+
 		pluginMainFileCB = new CheckBox();
+		pluginMainFileCB.selectedProperty()
+				.addListener((observableValue, oldValue, newValue) -> choosePluginScriptBtn.setDisable(!newValue));
+
+		pluginMainScriptFld = new TextField();
+		pluginMainScriptFld.setEditable(false);
 
 		pluginDescription = new TextArea();
 		pluginDescription.setWrapText(true);
@@ -199,34 +223,41 @@ public class PluginMetadataScreen extends PaperEditorScreen {
 				pluginDescription.setText("");
 				pluginVersionFld.setText("");
 				pluginMainFileCB.setSelected(false);
+
 			}
 		});
 
-		GridPane gridPane = new GridPane();
+		// #region pluginMetadataGrid
+		GridPane pluginMetadataGrid = new GridPane();
 		GridPane.setColumnSpan(pluginDescription, 2);
-		GridPane.setRowSpan(dependencyListView, 4);
-		gridPane.setPadding(new Insets(15));
-		gridPane.setHgap(10);
-		gridPane.setVgap(10);
-		gridPane.add(pluginIdLbl, 0, 0);
-		gridPane.add(pluginIdFld, 1, 0);
-		gridPane.add(pluginNameLbl, 2, 0);
-		gridPane.add(pluginNameFld, 3, 0);
-		gridPane.add(pluginAuthorLbl, 0, 1);
-		gridPane.add(pluginAuthorFld, 1, 1);
-		gridPane.add(pluginVersionLbl, 2, 1);
-		gridPane.add(pluginVersionFld, 3, 1);
-		gridPane.add(new Label("Plugin Description"), 0, 2);
-		gridPane.add(pluginMainfileLbl, 2, 2);
-		gridPane.add(pluginMainFileCB, 3, 2);
-		gridPane.add(pluginDescription, 0, 3);
-		gridPane.add(pluginDeps, 0, 4);
-		gridPane.add(dependencyListView, 0, 5);
-		gridPane.add(dependencyChooser, 1, 7);
-		gridPane.add(chooseDepdencyBtn, 2, 7);
-		gridPane.add(saveMetadataToPlugin, 1, 8);
+		GridPane.setRowSpan(dependencyListView, 7);
+		pluginMetadataGrid.setPadding(new Insets(15));
+		pluginMetadataGrid.setHgap(10);
+		pluginMetadataGrid.setVgap(10);
+		pluginMetadataGrid.add(pluginIdLbl, 0, 0);
+		pluginMetadataGrid.add(pluginIdFld, 1, 0);
+		pluginMetadataGrid.add(pluginNameLbl, 2, 0);
+		pluginMetadataGrid.add(pluginNameFld, 3, 0);
+		pluginMetadataGrid.add(pluginAuthorLbl, 0, 1);
+		pluginMetadataGrid.add(pluginAuthorFld, 1, 1);
+		pluginMetadataGrid.add(pluginVersionLbl, 2, 1);
+		pluginMetadataGrid.add(pluginVersionFld, 3, 1);
+		pluginMetadataGrid.add(new Label("Plugin Description"), 0, 2);
+		pluginMetadataGrid.add(pluginMainfileLbl, 2, 2);
+		pluginMetadataGrid.add(pluginMainFileCB, 3, 2);
+		pluginMetadataGrid.add(pluginDescription, 0, 3);
+		pluginMetadataGrid.add(pluginDeps, 0, 4);
+		pluginMetadataGrid.add(dependencyListView, 0, 5);
+		pluginMetadataGrid.add(dependencyChooser, 1, 7);
+		pluginMetadataGrid.add(chooseDepdencyBtn, 2, 7);
+		pluginMetadataGrid.add(saveMetadataToPlugin, 1, 8);
+		pluginMetadataGrid.add(pluginMainScriptLbl, 1, 9);
+		pluginMetadataGrid.add(pluginMainScriptFld, 2, 9);
+		pluginMetadataGrid.add(choosePluginScriptBtn, 3, 9);
+		pluginMetadataGrid.add(clearPluginScriptBtn, 4, 9);
+		// #endregion
 
-		setCenter(gridPane);
+		setCenter(pluginMetadataGrid);
 
 	}
 
@@ -257,6 +288,10 @@ public class PluginMetadataScreen extends PaperEditorScreen {
 
 	public CheckBox getPluginMainFileCB() {
 		return pluginMainFileCB;
+	}
+
+	public TextField getPluginMainScriptFld() {
+		return pluginMainScriptFld;
 	}
 
 	public ListView<PaperPluginMetadata> getDependencyListView() {

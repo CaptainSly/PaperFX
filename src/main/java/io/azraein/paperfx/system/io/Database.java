@@ -78,6 +78,11 @@ public class Database implements Serializable {
 		this.getLocationList().putAll(database.getLocationList());
 	}
 
+	public void mergeDatabase(Database...databases) {
+		for (Database database : databases)
+			mergeDatabase(database);
+	}
+
 	public Map<String, Location> getLocationList() {
 		return locationList;
 	}

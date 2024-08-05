@@ -8,8 +8,8 @@ public class PaperPlugin implements Serializable {
 
 	private static final long serialVersionUID = -3358471471692027114L;
 
-	private PaperPluginMetadata metadata;
-	private Database pluginDatabase;
+	private final PaperPluginMetadata metadata;
+	private final Database pluginDatabase;
 
 	public PaperPlugin(PaperPluginMetadata metadata, Database database) {
 		this.metadata = metadata;

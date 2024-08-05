@@ -1,13 +1,17 @@
 package io.azraein.paperfx.system.io.type_adapters;
 
-import com.google.gson.*;
+import java.io.IOException;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 
 import io.azraein.paperfx.system.actors.Actor;
 import io.azraein.paperfx.system.actors.Npc;
-
-import java.io.IOException;
+import io.azraein.paperfx.system.actors.Player;
 
 public class ActorTypeAdapter extends TypeAdapter<Actor> {
 
@@ -37,14 +41,10 @@ public class ActorTypeAdapter extends TypeAdapter<Actor> {
         Actor actor = null;
 
         switch (type) {
-            case "npc" -> actor = gson.fromJson(jsonObject, Npc.class);
-            default -> throw new IllegalArgumentException("Unknown type: " + type);
+        case "npc" -> actor = gson.fromJson(jsonObject, Npc.class);
+        case "player" -> actor = gson.fromJson(jsonObject, Player.class);
+        default -> throw new IllegalArgumentException("Unknown type: " + type);
         }
-        // Add other subclasses here
-        // case "player":
-        // actor = gson.fromJson(jsonObject, Player.class);
-        // break;
-
         return actor;
     }
 }

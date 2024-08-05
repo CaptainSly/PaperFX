@@ -35,7 +35,7 @@ dependencies {
     implementation("org.tinylog:tinylog-impl:2.7.0")   
     
     // LuaJ
-    implementation("com.github.fabrice-ducos:luaj:3.0.1")
+    implementation("org.luaj:luaj-jse:3.0.1")
 
 }
 

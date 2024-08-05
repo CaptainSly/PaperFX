@@ -29,7 +29,7 @@ public class Stat<T> implements Serializable {
 	}
 
 	private int getXpForNextLevel() {
-		return (int) (baseExp * Math.pow(level, exponent));
+		return (int) (baseExp * Math.pow(level+1, exponent));
 	}
 
 	public void addXp(int xp) {

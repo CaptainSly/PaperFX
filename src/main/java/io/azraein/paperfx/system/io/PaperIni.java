@@ -12,14 +12,13 @@ public class PaperIni {
 	private Ini ini;
 
 	public static final String INI_NAME = "paperfx.ini";
-	
+
 	// Sections
 	public static final String SYSTEM_SECTION = "System";
-	
+
 	// Keys
 	// System
 	public static final String SYSTEM_SELECTED_PLUGINS = "slLoadedPlugins";
-	
 
 	public PaperIni() {
 		try {
@@ -47,5 +46,5 @@ public class PaperIni {
 			slLoadedPlugins += pluginId + ";";
 		}
 	}
-	
+
 }

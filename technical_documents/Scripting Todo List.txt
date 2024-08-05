@@ -1,11 +1,12 @@
-Lua Scripting Documentation as it's written.
+Lua Scripting Documentation, written as it's created. 
 
 GLOBALS
 
-player - The current Player, set on New Game, and Load Save
+Underneath the _G Lua Global
+class - A utility java class that allows you to create classes using the syntax outlined in the LuaSimpleClass.txt file
 
-current_location - The Current Location, set on location move
-current_time 
-current_date
+Underneath the Paper table
 
-database - The current database, set after plugin load
+_VERSION - The Current Version of the Paper Engine | String
+database - The Current Loaded Plugin Database | Java Object
+ppl - The Plugin Loader, gives access to the current plugin list | Java Object

@@ -9,16 +9,7 @@ import io.azraein.paperfx.system.actors.stats.Skill;
 import io.azraein.paperfx.system.io.Database;
 import javafx.collections.MapChangeListener.Change;
 import javafx.geometry.Insets;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.Spinner;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 
 public class ActorRaceTab extends PaperEditorTab {
@@ -44,7 +35,7 @@ public class ActorRaceTab extends PaperEditorTab {
 		Spinner<Integer>[] actorRaceBaseAttrSpinners = new Spinner[Attribute.values().length];
 		Label[] actorRaceBaseAttrLbls = new Label[Attribute.values().length];
 		for (Attribute attr : Attribute.values()) {
-			actorRaceBaseAttrSpinners[attr.ordinal()] = new Spinner<>(0, 100, 0);
+			actorRaceBaseAttrSpinners[attr.ordinal()] = new Spinner<>(1, 50, 1);
 			actorRaceBaseAttrLbls[attr.ordinal()] = new Label(Utils.toNormalCase(attr.name()));
 		}
 
@@ -52,7 +43,7 @@ public class ActorRaceTab extends PaperEditorTab {
 		Spinner<Integer>[] actorRaceSkillBonusesSpinner = new Spinner[Skill.values().length];
 		Label[] actorRaceSkillBonusesLbls = new Label[Skill.values().length];
 		for (Skill skill : Skill.values()) {
-			actorRaceSkillBonusesSpinner[skill.ordinal()] = new Spinner<>(0, 10, 0);
+			actorRaceSkillBonusesSpinner[skill.ordinal()] = new Spinner<>(1, 15, 1);
 			actorRaceSkillBonusesLbls[skill.ordinal()] = new Label(Utils.toNormalCase(skill.name()));
 		}
 

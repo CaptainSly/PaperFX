@@ -16,20 +16,19 @@ public class PaperPluginMetadata implements Serializable {
 	private String pluginPath;
 
 	private boolean isPluginMainFile;
+	private String pluginMainScript;
 
 	private List<String> pluginDependencies;
-	private Map<String, Integer> pluginDependenciesLoadOrder;
 
 	public PaperPluginMetadata(String pluginId, String pluginName, String pluginAuthor, String pluginDescription,
-			String pluginVersion, List<String> pluginDependencies, Map<String, Integer> pluginDependenciesLoadOrder,
-			String pluginPath, boolean isMainFile) {
+			String pluginVersion, List<String> pluginDependencies, 
+			String pluginPath, boolean isMainFile, String pluginMainScript) {
 		this.pluginId = pluginId;
 		this.pluginName = pluginName;
 		this.pluginAuthor = pluginAuthor;
 		this.pluginDescription = pluginDescription;
 		this.pluginVersion = pluginVersion;
 		this.pluginDependencies = pluginDependencies;
-		this.pluginDependenciesLoadOrder = pluginDependenciesLoadOrder;
 		this.pluginPath = pluginPath;
 		this.isPluginMainFile = isMainFile;
 	}
@@ -64,13 +63,12 @@ public class PaperPluginMetadata implements Serializable {
 	public List<String> getPluginDependencies() {
 		return pluginDependencies;
 	}
-
-	public Map<String, Integer> getPluginDependenciesLoadOrder() {
-		return pluginDependenciesLoadOrder;
-	}
-
 	public String getPluginVersion() {
 		return pluginVersion;
+	}
+
+	public String getPluginMainScript() {
+		return pluginMainScript;
 	}
 
 	public void setPluginId(String pluginId) {
@@ -79,6 +77,10 @@ public class PaperPluginMetadata implements Serializable {
 
 	public void setPluginName(String pluginName) {
 		this.pluginName = pluginName;
+	}
+
+	public void setPluginMainScript(String pluginMainScript) {
+		this.pluginMainScript = pluginMainScript;
 	}
 
 	public void setPluginAuthor(String pluginAuthor) {
@@ -103,10 +105,6 @@ public class PaperPluginMetadata implements Serializable {
 
 	public void setPluginDependencies(List<String> pluginDependencies) {
 		this.pluginDependencies = pluginDependencies;
-	}
-
-	public void setPluginDependenciesLoadOrder(Map<String, Integer> pluginDependenciesLoadOrder) {
-		this.pluginDependenciesLoadOrder = pluginDependenciesLoadOrder;
 	}
 
 }

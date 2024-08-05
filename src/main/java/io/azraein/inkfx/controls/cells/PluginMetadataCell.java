@@ -11,10 +11,10 @@ import javafx.scene.control.MenuItem;
 
 public class PluginMetadataCell extends ListCell<PaperPluginMetadata> {
 
-	private BooleanProperty selectedProperty = new SimpleBooleanProperty(false);
+	private final BooleanProperty selectedProperty = new SimpleBooleanProperty(false);
 
-	private CheckBox pmcCB;
-	private ContextMenu pmcCM;
+	private final CheckBox pmcCB;
+	private final ContextMenu pmcCM;
 
 	public PluginMetadataCell(PluginSelectionDialog dialog) {
 		pmcCB = new CheckBox();

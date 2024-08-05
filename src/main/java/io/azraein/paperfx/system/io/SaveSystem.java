@@ -2,6 +2,7 @@ package io.azraein.paperfx.system.io;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -24,16 +25,38 @@ public class SaveSystem {
 
 	public static Gson SAVE_GSON;
 
-	static {
-		SAVE_GSON = new GsonBuilder().registerTypeAdapter(Actor.class, new ActorTypeAdapter(new Gson())).create();
-	}
-
 	public static final String PAPER_PLUGIN_FILE_IDENTIFIER = "PEPF";
 	public static final String PAPER_PLUGIN_FILE_VERSION = "1.0";
 	public static final String PAPER_PLUGIN_MAIN_FILE_EXTENSION = ".pepm";
 	public static final String PAPER_PLUGIN_ADDON_FILE_EXTENSION = ".pepf";
 
-	public static final String PAPER_DATA_FOLDER = "paper/data/";
+	public static final String PAPER_SAVE_FILE_IDENTIFIER = "PESF";
+	public static final String PAPER_SAVE_FILE_VERSION = "1.0";
+	public static final String PAPER_SAVE_FILE_EXTENSION = ".pesf";
+
+	public static final String PAPER_FOLDER = "paper/";
+	public static final String PAPER_DATA_FOLDER = PAPER_FOLDER + "/data/";
+	public static final String PAPER_SCRIPT_FOLDER = PAPER_DATA_FOLDER + "scripts/";
+
+	public static final String[] PAPER_DATA_FOLDERS = { "data/", "data/scripts/", "saves/", };
+
+	static {
+		SAVE_GSON = new GsonBuilder().registerTypeAdapter(Actor.class, new ActorTypeAdapter(new Gson())).create();
+	}
+
+	public static void checkFileSystem() {
+		Logger.debug("Checking to see if Paper's Working Directory exists, if not we'll create it for you.");
+
+		File file = new File(PAPER_FOLDER);
+		if (!file.exists()) {
+			file.mkdirs();
+
+			for (String str : PAPER_DATA_FOLDERS) {
+				new File(PAPER_FOLDER + str).mkdir();
+			}
+
+		}
+	}
 
 	public static void savePlugin(PaperPlugin plugin, String path) {
 		try (DataOutputStream pluginOutputStream = new DataOutputStream(new FileOutputStream(path))) {
@@ -117,7 +140,6 @@ public class SaveSystem {
 		return ppf;
 	}
 
-	@SuppressWarnings("unused")
 	public static PaperPluginMetadata readPluginMetadata(String pluginPath) throws IOException {
 		try (DataInputStream metadataInputStream = new DataInputStream(new FileInputStream(pluginPath))) {
 			metadataInputStream.readUTF();

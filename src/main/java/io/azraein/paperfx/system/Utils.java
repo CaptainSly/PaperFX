@@ -34,16 +34,12 @@ public class Utils {
 			return "th";
 		} else {
 			int lastDigit = number % 10;
-			switch (lastDigit) {
-				case 1:
-					return number + "st";
-				case 2:
-					return number + "nd";
-				case 3:
-					return number + "rd";
-				default:
-					return number + "th";
-			}
+			return switch (lastDigit) {
+			case 1 -> number + "st";
+			case 2 -> number + "nd";
+			case 3 -> number + "rd";
+			default -> number + "th";
+			};
 		}
 	}
 
@@ -57,8 +53,15 @@ public class Utils {
 		return Utils.formatToDecimalPlace(2, updateInterval);
 	}
 
-	// Math Stuff
-
+	/**
+	 * Using the given stat, gets the totalXPForLevel based on it's baseExp and
+	 * Exponent
+	 * 
+	 * @param stat
+	 * @param targetLevel
+	 * @return The Total amount exp for the level given based off a Stats level
+	 *         growth
+	 */
 	public static int getTotalXPForLevel(Stat<?> stat, int targetLevel) {
 		int totalXP = 0;
 		for (int level = 1; level <= targetLevel; level++) {

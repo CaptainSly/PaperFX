@@ -41,6 +41,7 @@ import javafx.util.Pair;
 
 public class InkFX extends Application {
 
+	private Stage primaryStage;
 	private BorderPane rootPane;
 	private MenuBar menuBar;
 	private Map<String, PaperEditorScreen> editorScreens;
@@ -71,7 +72,10 @@ public class InkFX extends Application {
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
+		this.primaryStage = primaryStage;
 		rootPane = new BorderPane();
+
+		SaveSystem.checkFileSystem();
 
 		editorScreens = new HashMap<>();
 		editorScreens.put(PLUGIN_METADATA_SCREEN, new PluginMetadataScreen(this));
@@ -196,6 +200,7 @@ public class InkFX extends Application {
 						pmd.getPluginDescription().setText(pluginMetadata.getPluginDescription());
 						pmd.getPluginMainFileCB().setSelected(pluginMetadata.isPluginMainFile());
 						pmd.getPluginVersionFld().setText(pluginMetadata.getPluginVersion());
+						pmd.getPluginMainScriptFld().setText(pluginMetadata.getPluginMainScript());
 
 					} catch (IncompatiblePluginVersionException | PluginCorruptionException e) {
 						Logger.error(e);
@@ -273,6 +278,10 @@ public class InkFX extends Application {
 
 	public PaperPluginLoader getPluginLoader() {
 		return ppl;
+	}
+
+	public Stage getPrimaryStage() {
+		return primaryStage;
 	}
 
 	public ObjectProperty<PaperPlugin> currentPluginProperty() {
