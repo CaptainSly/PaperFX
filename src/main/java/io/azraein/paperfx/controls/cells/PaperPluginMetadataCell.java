@@ -1,6 +1,6 @@
-package io.azraein.inkfx.controls.cells;
+package io.azraein.paperfx.controls.cells;
 
-import io.azraein.inkfx.dialog.PluginSelectionDialog;
+import io.azraein.paperfx.controls.dialog.PaperPluginSelectionDialog;
 import io.azraein.paperfx.system.io.plugins.PaperPluginMetadata;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -9,14 +9,14 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.MenuItem;
 
-public class PluginMetadataCell extends ListCell<PaperPluginMetadata> {
+public class PaperPluginMetadataCell extends ListCell<PaperPluginMetadata> {
 
 	private final BooleanProperty selectedProperty = new SimpleBooleanProperty(false);
 
 	private final CheckBox pmcCB;
 	private final ContextMenu pmcCM;
 
-	public PluginMetadataCell(PluginSelectionDialog dialog) {
+	public PaperPluginMetadataCell(PaperPluginSelectionDialog dialog) {
 		pmcCB = new CheckBox();
 		pmcCB.selectedProperty().bindBidirectional(selectedProperty);
 		pmcCB.selectedProperty().addListener((observable, oldValue, newValue) -> {
@@ -34,7 +34,6 @@ public class PluginMetadataCell extends ListCell<PaperPluginMetadata> {
 		pmcCM = new ContextMenu();
 		MenuItem setActive = new MenuItem("Set Active Plugin");
 		setActive.setOnAction(e -> {
-			dialog.activePluginMetadataProperty().set(getItem());
 			pmcCB.setSelected(true);
 		});
 

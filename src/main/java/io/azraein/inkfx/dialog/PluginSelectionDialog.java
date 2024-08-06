@@ -7,7 +7,7 @@ import java.util.List;
 
 import org.tinylog.Logger;
 
-import io.azraein.inkfx.controls.cells.PluginMetadataCell;
+import io.azraein.inkfx.controls.cells.EditorPluginMetadataCell;
 import io.azraein.paperfx.system.io.SaveSystem;
 import io.azraein.paperfx.system.io.plugins.PaperPluginMetadata;
 import javafx.beans.property.ObjectProperty;
@@ -29,17 +29,20 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.util.Pair;
 
 // TODO: If Player selects a plugin that requires dependencies, disable the OK Button until they're selected, currently you can load the databases without them, and that would most likely break a few things.
 
-public class PluginSelectionDialog
-		extends Dialog<Pair<List<PaperPluginMetadata>, Pair<List<String>, PaperPluginMetadata>>> {
+/**
+ * Pair<List<PaperPluginMetadata>, Pair<List<String>, PaperPluginMetadata>> The
+ * returns are as followed in order selectedPlugins selectedPluginPaths
+ * activePluginMetadata
+ */
+public class PluginSelectionDialog extends Dialog<PluginSelectionResult> {
 
 	private ListView<PaperPluginMetadata> loadablePluginList;
 	private ListView<String> pluginDeps;
 
-	private TextArea pluginDescription;
+	private TextArea pluginDescriptionArea;
 	private TextField pluginIdFld, pluginNameFld, pluginAuthorFld, pluginVersionFld;
 
 	private ObservableList<PaperPluginMetadata> selectedPlugins;
@@ -52,10 +55,10 @@ public class PluginSelectionDialog
 		selectedPlugins = FXCollections.observableArrayList();
 		selectedPluginPaths = new ArrayList<>();
 
-		pluginDescription = new TextArea();
-		pluginDescription.setPromptText("Plugin Description");
-		pluginDescription.setWrapText(true);
-		pluginDescription.setEditable(false);
+		pluginDescriptionArea = new TextArea();
+		pluginDescriptionArea.setPromptText("Plugin Description");
+		pluginDescriptionArea.setWrapText(true);
+		pluginDescriptionArea.setEditable(false);
 
 		pluginIdFld = new TextField();
 		pluginIdFld.setPromptText("Plugin ID");
@@ -102,7 +105,7 @@ public class PluginSelectionDialog
 		pluginDeps = new ListView<>();
 		loadablePluginList = new ListView<>();
 		loadablePluginList
-				.setCellFactory((ListView<PaperPluginMetadata> param) -> new PluginMetadataCell(pluginSelectionDialog));
+				.setCellFactory((ListView<PaperPluginMetadata> param) -> new EditorPluginMetadataCell(pluginSelectionDialog));
 
 		loadablePluginList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
 
@@ -119,7 +122,7 @@ public class PluginSelectionDialog
 				pluginNameFld.setText(metadata.getPluginName());
 				pluginAuthorFld.setText(metadata.getPluginAuthor());
 				pluginVersionFld.setText(metadata.getPluginVersion());
-				pluginDescription.setText(metadata.getPluginDescription());
+				pluginDescriptionArea.setText(metadata.getPluginDescription());
 				isMainPlugin.setSelected(metadata.isPluginMainFile());
 
 				pluginDeps.getItems().clear();
@@ -154,16 +157,15 @@ public class PluginSelectionDialog
 		setResultConverter(btnType -> {
 
 			if (btnType == ButtonType.OK) {
-				return new Pair<>(selectedPlugins,
-						new Pair<>(selectedPluginPaths,
-								activePluginMetadataProperty.get()));
+				return new PluginSelectionResult(selectedPlugins, selectedPluginPaths,
+						activePluginMetadataProperty.get());
 			}
 
 			return null;
 		});
 
 		GridPane gp = new GridPane();
-		GridPane.setColumnSpan(pluginDescription, 2);
+		GridPane.setColumnSpan(pluginDescriptionArea, 2);
 		GridPane.setColumnSpan(activePluginFld, 1);
 		gp.setPadding(new Insets(15));
 		gp.setHgap(10);
@@ -172,7 +174,7 @@ public class PluginSelectionDialog
 		gp.add(pluginNameFld, 1, 0);
 		gp.add(pluginAuthorFld, 0, 1);
 		gp.add(pluginVersionFld, 1, 1);
-		gp.add(pluginDescription, 0, 2);
+		gp.add(pluginDescriptionArea, 0, 2);
 		gp.add(activePluginFld, 0, 3);
 		gp.add(isMainPlugin, 1, 3);
 		gp.add(clearActivePluginBtn, 0, 4);
@@ -205,8 +207,8 @@ public class PluginSelectionDialog
 		return pluginDeps;
 	}
 
-	public TextArea getPluginDescription() {
-		return pluginDescription;
+	public TextArea getPluginDescriptionArea() {
+		return pluginDescriptionArea;
 	}
 
 	public TextField getPluginIdFld() {

@@ -13,7 +13,6 @@ import io.azraein.paperfx.system.actors.stats.Stat;
 import io.azraein.paperfx.system.inventory.Inventory;
 
 // TODO: Stat Implementation still needs work
-// TODO: More Stat information needs to be added
 public class ActorState implements Serializable {
 
 	private static final long serialVersionUID = -2984008478151078486L;

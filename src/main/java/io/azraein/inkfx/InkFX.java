@@ -10,6 +10,7 @@ import org.tinylog.Logger;
 
 import io.azraein.inkfx.dialog.AboutAlert;
 import io.azraein.inkfx.dialog.PluginSelectionDialog;
+import io.azraein.inkfx.dialog.PluginSelectionResult;
 import io.azraein.inkfx.screens.PaperEditorScreen;
 import io.azraein.inkfx.screens.PluginContentEditorScreen;
 import io.azraein.inkfx.screens.PluginMetadataScreen;
@@ -170,20 +171,20 @@ public class InkFX extends Application {
 
 	private void openPlugin() {
 		PluginSelectionDialog psd = new PluginSelectionDialog();
-		Optional<Pair<List<PaperPluginMetadata>, Pair<List<String>, PaperPluginMetadata>>> depsAndMetadata = psd
+		Optional<PluginSelectionResult> depsAndMetadata = psd
 				.showAndWait();
 		if (depsAndMetadata.isPresent()) {
-			if (depsAndMetadata.get().getKey() != null) {
-				List<String> pluginDependencyPaths = depsAndMetadata.get().getValue().getKey();
-				List<PaperPluginMetadata> pluginDependencies = depsAndMetadata.get().getKey();
+			if (depsAndMetadata.get().getSelectedPlugins() != null) {
+				List<String> pluginDependencyPaths = depsAndMetadata.get().getSelectedPluginPaths();
+				List<PaperPluginMetadata> pluginDependencies = depsAndMetadata.get().getSelectedPlugins();
 				PluginMetadataScreen pmd = ((PluginMetadataScreen) editorScreens.get(PLUGIN_METADATA_SCREEN));
 
 				for (String str : ppl.getLoadedPlugins().keySet()) {
 					Logger.debug("Loaded Plugin: " + str);
 				}
 
-				if (depsAndMetadata.get().getValue().getValue() != null) {
-					PaperPluginMetadata pluginMetadata = depsAndMetadata.get().getValue().getValue();
+				if (depsAndMetadata.get().getActivePlugin() != null) {
+					PaperPluginMetadata pluginMetadata = depsAndMetadata.get().getActivePlugin();
 					try {
 						currentPluginProperty.set(SaveSystem.loadPlugin(pluginMetadata.getPluginPath()));
 						mergeDatabase(ppl.loadPlugins(pluginDependencyPaths));

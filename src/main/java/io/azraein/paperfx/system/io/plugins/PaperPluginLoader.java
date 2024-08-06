@@ -21,6 +21,8 @@ public class PaperPluginLoader {
 
 	private final Map<String, PaperPlugin> loadedPlugins;
 
+	private String pluginMainScript;
+
 	public PaperPluginLoader() {
 		loadedPlugins = new HashMap<>();
 	}
@@ -106,6 +108,13 @@ public class PaperPluginLoader {
 				if (!sortedPlugins.contains(metadata.getPluginId())) {
 					Logger.debug("Adding Plugin: " + metadata.getPluginId());
 					sortedPlugins.add(metadata.getPluginId());
+
+					// We set the main plugin script here. If there are multiple MAIN plugins loaded
+					// with one, the last one to be loaded will have it's script ran instead
+					if (!metadata.getPluginMainScript().equals("") || !metadata.getPluginMainScript().isEmpty()) {
+						pluginMainScript = metadata.getPluginMainScript();
+					}
+
 				}
 			}
 		}
@@ -121,8 +130,9 @@ public class PaperPluginLoader {
 		return sortedPluginPaths;
 	}
 
-	private void topologicalSort(final String pluginId, final Map<String, List<String>> dependencyGraph, final Set<String> visited,
-			final Set<String> visiting, final List<String> sortedPlugins) throws MissingPluginDependencyException {
+	private void topologicalSort(final String pluginId, final Map<String, List<String>> dependencyGraph,
+			final Set<String> visited, final Set<String> visiting, final List<String> sortedPlugins)
+			throws MissingPluginDependencyException {
 		// Detect circular dependencies
 		if (visiting.contains(pluginId)) {
 			throw new IllegalStateException("Circular dependency detected involving plugin: " + pluginId);
@@ -161,6 +171,10 @@ public class PaperPluginLoader {
 
 	public Map<String, PaperPlugin> getLoadedPlugins() {
 		return loadedPlugins;
+	}
+
+	public String getPluginMainScript() {
+		return pluginMainScript;
 	}
 
 }

@@ -17,6 +17,7 @@ public class PaperLib extends TwoArgFunction {
         paper.set("_VERSION", PaperFX.PAPER_VERSION);
         paper.set("database", CoerceJavaToLua.coerce(Paper.DATABASE));
         paper.set("ppl", CoerceJavaToLua.coerce(Paper.PPL));
+        paper.set("ini", CoerceJavaToLua.coerce(Paper.INI));
 
         // Set Globals
         setGlobal(env, "paper", paper);

@@ -34,14 +34,11 @@ public class PaperGlobals {
         paperGlobals.load(new JseIoLib());
         paperGlobals.load(new JseOsLib());
         paperGlobals.load(new LuajavaLib());
+        paperGlobals.load(new PaperLib());
         LoadState.install(paperGlobals);
         LuaC.install(paperGlobals);
 
-        // Set Path
         paperGlobals.load("package.path = '/paper/data/scripts/?.lua;'").call();
-        
-        // Any Other Custom made Lua Libraries get added here.
-        paperGlobals.load(new PaperLib());
     }
 
     public Globals getPaperGlobals() {

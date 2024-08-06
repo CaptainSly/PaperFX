@@ -42,3 +42,4 @@ A [TODO](technical_documents/Paper%20Engine%20TODO%20List.txt) list detailing wh
 * ZStd
 * JavaFX
 * TinyLog2
+* LuaJ 3.0.1 (Needs to be swapped for a reliable fork)
