@@ -87,4 +87,36 @@ public class Utils {
 		return totalXp;
 	}
 
+	public static int getLevelFromXp(int givenXP, Stat<?> stat) {
+		int level = 1;
+		int totalXP = 0;
+
+		while (true) {
+			int xpForCurrentLevel = (int) (stat.getBaseExp() * Math.pow(level, stat.getExponent()));
+			totalXP += xpForCurrentLevel;
+
+			if (totalXP >= givenXP) {
+				return level;
+			}
+
+			level++;
+		}
+	}
+
+	public static int getLevelFromXP(int givenXP, int baseExp, double exponent) {
+		int level = 1;
+		int totalXP = 0;
+
+		while (true) {
+			int xpForCurrentLevel = (int) (baseExp * Math.pow(level, exponent));
+			totalXP += xpForCurrentLevel;
+
+			if (totalXP >= givenXP) {
+				return level;
+			}
+
+			level++;
+		}
+	}
+
 }

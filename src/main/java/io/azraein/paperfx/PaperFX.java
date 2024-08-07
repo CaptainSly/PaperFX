@@ -10,7 +10,8 @@ import org.tinylog.Logger;
 
 import io.azraein.inkfx.dialog.PluginSelectionResult;
 import io.azraein.paperfx.controls.dialog.PaperPluginSelectionDialog;
-import io.azraein.paperfx.screens.PaperGameScreen;
+import io.azraein.paperfx.screens.GameScreen;
+import io.azraein.paperfx.screens.MainMenuScreen;
 import io.azraein.paperfx.screens.PaperScreen;
 import io.azraein.paperfx.system.Paper;
 import io.azraein.paperfx.system.io.Database;
@@ -46,15 +47,15 @@ public class PaperFX extends Application {
 		Paper.SE = new ScriptEngine();
 
 		paperScreens = new HashMap<>();
-		paperScreens.put("game", new PaperGameScreen(this));
+		paperScreens.put("mainMenu", new MainMenuScreen(this));
+		paperScreens.put("game", new GameScreen(this));
 	}
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		primaryScene = new Scene(paperScreens.get("game"), 1280, 720);
+		primaryScene = new Scene(paperScreens.get("mainMenu"), 1280, 720);
 		primaryStage.setTitle("Paper Engine");
 		primaryStage.setScene(primaryScene);
-		primaryStage.show();
 
 		// Check to see if the INI contains a list of loadable plugins
 		// #region Default Plugin Loading
@@ -66,10 +67,8 @@ public class PaperFX extends Application {
 				Paper.DATABASE.mergeDatabase(Paper.PPL.loadPlugins(pluginPaths));
 
 				List<String> selectedPlugins = new ArrayList<>();
-				for (PaperPluginMetadata metadata : plugins.get().getSelectedPlugins()) {
-					selectedPlugins.add(metadata.getPluginId());
-				}
-
+				Paper.PPL.getLoadedPlugins().values()
+						.forEach(plugin -> selectedPlugins.add(plugin.getMetadata().getPluginId()));
 				Paper.INI.updateSelectedPluginsList(selectedPlugins);
 			}
 		} else {
@@ -91,11 +90,19 @@ public class PaperFX extends Application {
 			Paper.DATABASE.mergeDatabase(Paper.PPL.loadPlugins(pluginPaths));
 		}
 		// #endregion
-	
+
+		primaryStage.show();
+
+		// Run Plugin Script Initialization
+		Paper.SE.runFunction(Paper.PPL.getPluginMainScript(), "onInit");
 	}
 
 	public void swapScreens(String screenId) {
 		primaryScene.setRoot(paperScreens.get(screenId));
+	}
+
+	public Map<String, PaperScreen> getScreens() {
+		return paperScreens;
 	}
 
 }

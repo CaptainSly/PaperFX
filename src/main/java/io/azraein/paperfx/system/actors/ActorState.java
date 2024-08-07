@@ -4,7 +4,6 @@ import java.io.Serializable;
 
 import org.tinylog.Logger;
 
-import io.azraein.paperfx.system.Utils;
 import io.azraein.paperfx.system.actors.classes.ActorClass;
 import io.azraein.paperfx.system.actors.classes.ActorRace;
 import io.azraein.paperfx.system.actors.stats.Attribute;
@@ -61,49 +60,46 @@ public class ActorState implements Serializable {
 		actorAttributes = new Stat[Attribute.values().length];
 		actorSkills = new Stat[Skill.values().length];
 
-		for (Attribute attribute : Attribute.values()) {
-			int baseExp = 300;
-			double exponent = 1.763;
-
-			if (actorClass.getActorClassFavoredAttributes().contains(attribute)) {
-				baseExp = 250;
-				exponent = 1.623;
-			}
-
-			actorAttributes[attribute.ordinal()] = new Stat<>(attribute, attribute.name(), baseExp, exponent);
-			int totalXp = Utils.getTotalXPForLevel(actorAttributes[attribute.ordinal()],
-					actorRace.getActorRaceBaseAttribute(attribute));
-			actorAttributes[attribute.ordinal()].addXp(totalXp);
-		}
-
-		for (Skill skill : Skill.values()) {
-			int baseExp = 225;
-			double exponent = 1.648;
-
-			if (actorClass.getActorClassSkills().contains(skill)) {
-				baseExp = 185;
-				exponent = 1.572;
-			}
-
-			actorSkills[skill.ordinal()] = new Stat<>(skill, skill.name(), baseExp, exponent);
-			int totalXp = Utils.getTotalXPForLevel(actorSkills[skill.ordinal()],
-					actorRace.getActorRaceBaseSkill(skill));
-			totalXp += Utils.getTotalXPForLevel(actorSkills[skill.ordinal()],
-					actorClass.getActorClassBaseSkills()[skill.ordinal()]);
-			actorSkills[skill.ordinal()].addXp(totalXp);
-		}
+		initializeAttributes();
+		initializeSkills();
 
 		actorCarryWeight = actorAttributes[Attribute.STRENGTH.ordinal()].getLevel() * 5;
 	}
 
-	private int getXpForNextLevel() {
+	private void initializeAttributes() {
+		for (Attribute attribute : Attribute.values()) {
+			int baseExp = actorClass.getActorClassFavoredAttributes().contains(attribute) ? 250 : 300;
+			double exponent = actorClass.getActorClassFavoredAttributes().contains(attribute) ? 1.623 : 1.763;
+			Stat<Attribute> stat = new Stat<>(attribute, attribute.name(), baseExp, exponent);
+			stat.addXp(actorRace.getActorRaceBaseAttribute(attribute));
+			actorAttributes[attribute.ordinal()] = stat;
+		}
+	}
+
+	private void initializeSkills() {
+		for (Skill skill : Skill.values()) {
+			int baseExp = actorClass.getActorClassSkills().contains(skill) ? 185 : 225;
+			double exponent = actorClass.getActorClassSkills().contains(skill) ? 1.572 : 1.648;
+			Stat<Skill> stat = new Stat<>(skill, skill.name(), baseExp, exponent);
+
+			Logger.debug(
+					"Skill: " + skill.name() + " baseExp: " + stat.getBaseExp() + ", exponent: " + stat.getExponent());
+
+			int raceBaseSkill = actorRace.getActorRaceBaseSkill(skill);
+			int classBaseSkill = actorClass.getActorClassBaseSkills()[skill.ordinal()];
+			stat.addXp(raceBaseSkill + classBaseSkill);
+			actorSkills[skill.ordinal()] = stat;
+		}
+	}
+
+	public int getExpForNextLevel() {
 		return (int) (BASE_EXP * Math.pow(actorLevel + 1, EXPONENT));
 	}
 
 	public void addXp(int xp) {
 		actorExp += xp;
-		while (actorExp >= getXpForNextLevel()) {
-			actorExp -= getXpForNextLevel();
+		while (actorExp >= getExpForNextLevel()) {
+			actorExp -= getExpForNextLevel();
 			levelUp();
 		}
 	}

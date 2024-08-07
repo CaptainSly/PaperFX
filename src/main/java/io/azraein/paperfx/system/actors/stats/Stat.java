@@ -4,49 +4,34 @@ import java.io.Serializable;
 
 import org.tinylog.Logger;
 
-import io.azraein.paperfx.system.Utils;
-
 public class Stat<T> implements Serializable {
 
-	private static final long serialVersionUID = 8889867311180368598L;
+	private static final long serialVersionUID = 1L;
 
-	private String statName;
-	private T stat;
-
-	private int currentExp;
-	private int level;
+	private T type;
+	private String name;
 
 	private int baseExp;
 	private double exponent;
 
-	public Stat(T skill, String statName, int baseXp, double exponent) {
-		this.stat = skill;
-		this.statName = Utils.toNormalCase(statName);
-		this.baseExp = baseXp;
+	private int currentExp;
+	private int level;
+
+	public Stat(T type, String name, int baseExp, double exponent) {
+		this.type = type;
+		this.name = name;
+		this.baseExp = baseExp;
 		this.exponent = exponent;
 		this.currentExp = 0;
 		this.level = 1;
 	}
 
-	private int getXpForNextLevel() {
-		return (int) (baseExp * Math.pow(level+1, exponent));
+	public T getType() {
+		return type;
 	}
 
-	public void addXp(int xp) {
-		currentExp += xp;
-		while (currentExp >= getXpForNextLevel()) {
-			currentExp -= getXpForNextLevel();
-			levelUp();
-		}
-	}
-
-	public void levelUp() {
-		level++;
-		Logger.debug("Stat: " + statName + " has leveled up to: " + level);
-	}
-
-	public T getStat() {
-		return stat;
+	public String getName() {
+		return name;
 	}
 
 	public int getBaseExp() {
@@ -57,15 +42,44 @@ public class Stat<T> implements Serializable {
 		return exponent;
 	}
 
-	public String getStatName() {
-		return statName;
-	}
-
-	public int getCurrentXp() {
+	public int getCurrentExp() {
 		return currentExp;
 	}
 
 	public int getLevel() {
 		return level;
+	}
+
+	public int getExpForNextLevel() {
+		return (int) (baseExp * Math.pow(level + 1, exponent));
+	}
+
+	public void addXp(int xp) {
+		currentExp += xp;
+		while (currentExp >= getExpForNextLevel()) {
+			currentExp -= getExpForNextLevel();
+			levelUp();
+		}
+	}
+
+	public void levelUp() {
+		level++;
+		// You can add additional logic here for what happens on level up, such as
+		// increasing stats.
+
+		Logger.debug(name + " level: " + level);
+	}
+
+	public int getTotalXpForLevel(int targetLevel) {
+		int totalXP = 0;
+		for (int level = 1; level <= targetLevel; level++) {
+			totalXP += (int) (baseExp * Math.pow(level, exponent));
+		}
+		return totalXP;
+	}
+
+	public void addXpForLevel(int targetLevel) {
+		int totalXp = getTotalXpForLevel(targetLevel);
+		addXp(totalXp - currentExp); // Adjust current XP to match the target level XP
 	}
 }

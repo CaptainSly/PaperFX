@@ -37,7 +37,7 @@ public class ActorTypeAdapter extends TypeAdapter<Actor> {
     public Actor read(JsonReader in) throws IOException {
         JsonObject jsonObject = JsonParser.parseReader(in).getAsJsonObject();
         String type = jsonObject.get("type").getAsString();
-
+        
         Actor actor = null;
 
         switch (type) {

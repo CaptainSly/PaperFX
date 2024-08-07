@@ -18,10 +18,10 @@ public class PaperLib extends TwoArgFunction {
         paper.set("database", CoerceJavaToLua.coerce(Paper.DATABASE));
         paper.set("ppl", CoerceJavaToLua.coerce(Paper.PPL));
         paper.set("ini", CoerceJavaToLua.coerce(Paper.INI));
+        paper.set("location", CoerceJavaToLua.coerce(Paper.PAPER_LOCATION_PROPERTY));
 
         // Set Globals
         setGlobal(env, "paper", paper);
-        setGlobal(env, "print", new LuaDebugFunction());
         setGlobal(env, "class", new LuaClassFunction());
         return paper;
     }

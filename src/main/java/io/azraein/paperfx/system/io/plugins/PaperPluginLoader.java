@@ -94,27 +94,26 @@ public class PaperPluginLoader {
 		for (final String pluginId : dependencyGraph.keySet()) {
 			Logger.debug("Working on plugin: " + pluginId);
 			if (!visited.contains(pluginId)) {
-				try {
-					topologicalSort(pluginId, dependencyGraph, visited, visiting, sortedPlugins);
-				} catch (final MissingPluginDependencyException e) {
-					Logger.error("Missing plugin dependency detected: " + e.getMessage());
-				}
-			}
-		}
 
-		// Add Plugins with no dependencies (MAIN Plugins usually)
-		for (final PaperPluginMetadata metadata : metadataList) {
-			if (metadata.isPluginMainFile() && !sortedPlugins.contains(metadata.getPluginId())) {
-				if (!sortedPlugins.contains(metadata.getPluginId())) {
-					Logger.debug("Adding Plugin: " + metadata.getPluginId());
-					sortedPlugins.add(metadata.getPluginId());
-
-					// We set the main plugin script here. If there are multiple MAIN plugins loaded
-					// with one, the last one to be loaded will have it's script ran instead
-					if (!metadata.getPluginMainScript().equals("") || !metadata.getPluginMainScript().isEmpty()) {
-						pluginMainScript = metadata.getPluginMainScript();
+				// Add Plugins with no dependencies (MAIN Plugins usually)
+				for (final PaperPluginMetadata metadata : metadataList) {
+					if (metadata.isPluginMainFile() && !sortedPlugins.contains(metadata.getPluginId())) {
+						if (!sortedPlugins.contains(metadata.getPluginId())) {
+							Logger.debug("Adding MAIN Plugin: " + metadata.getPluginId());
+							Logger.debug("MAIN Plugin Main Script: " + metadata.getPluginMainScript());
+							pluginMainScript = metadata.getPluginMainScript();
+							sortedPlugins.add(metadata.getPluginId());
+							visited.add(pluginId);
+							break;
+						}
 					}
-
+				}
+				if (!visited.contains(pluginId)) {
+					try {
+						topologicalSort(pluginId, dependencyGraph, visited, visiting, sortedPlugins);
+					} catch (final MissingPluginDependencyException e) {
+						Logger.error("Missing plugin dependency detected: " + e.getMessage());
+					}
 				}
 			}
 		}

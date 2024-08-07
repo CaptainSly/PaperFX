@@ -33,6 +33,10 @@ public class Database implements Serializable {
 		return globalList.get(globalId);
 	}
 
+	public void setGlobal(String globalId, Object global) {
+		globalList.replace(globalId, global);
+	}
+
 	public void addGlobal(String globalId, Object global) {
 		globalList.put(globalId, global);
 	}

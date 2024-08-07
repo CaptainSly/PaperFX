@@ -295,17 +295,20 @@ public class NpcTab extends PaperEditorTab {
 
             npc.getActorState().setActorDescription(npcActorDescriptionArea.getText());
 
+            // Set the NPC's skills
             for (Skill skill : Skill.values()) {
                 Stat<Skill> npcStat = npc.getActorState().getActorSkill(skill);
-                int skillXp = Utils.getTotalXPForLevel(npcStat, npcActorSkillSpinners[skill.ordinal()].getValue());
-                npc.getActorState().getActorSkill(skill).addXp(skillXp);
+                int skillLevel = npcActorSkillSpinners[skill.ordinal()].getValue();
+                int skillXp = Utils.getTotalXPForLevel(npcStat, skillLevel);
+                npcStat.addXp(skillXp - npcStat.getCurrentExp()); // Adjust XP to match the level
             }
 
+            // Set the NPC's attributes
             for (Attribute attr : Attribute.values()) {
                 Stat<Attribute> npcAttribute = npc.getActorState().getActorAttribute(attr);
-                int attrXp = Utils.getTotalXPForLevel(npcAttribute,
-                        npcActorAttributeSpinners[attr.ordinal()].getValue());
-                npc.getActorState().getActorAttribute(attr).addXp(attrXp);
+                int attrLevel = npcActorAttributeSpinners[attr.ordinal()].getValue();
+                int attrXp = Utils.getTotalXPForLevel(npcAttribute, attrLevel);
+                npcAttribute.addXp(attrXp - npcAttribute.getCurrentExp()); // Adjust XP to match the level
             }
 
             inkFX.currentPluginProperty().get().getPluginDatabase().addActor(npc);

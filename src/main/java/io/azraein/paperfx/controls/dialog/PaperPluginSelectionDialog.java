@@ -128,7 +128,7 @@ public class PaperPluginSelectionDialog extends Dialog<PluginSelectionResult> {
         rootContainer.getChildren().addAll(loadablePluginList, new Separator(Orientation.VERTICAL), gp);
 
         setTitle("Paper - Plugin Selection");
-        setHeaderText("Select Plugins to Load");
+        setHeaderText("We couldn't find any default plugins to load, select them with the check box and the click okay.");
         getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
         getDialogPane().setContent(rootContainer);
 

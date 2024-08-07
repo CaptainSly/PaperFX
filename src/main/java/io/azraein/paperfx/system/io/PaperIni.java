@@ -68,6 +68,11 @@ public class PaperIni {
 	public List<String> getSelectedPluginsList() {
 		List<String> selectedPluginsList = new ArrayList<>();
 		String selectedPlugins = ini.get(SYSTEM_SECTION, SYSTEM_SELECTED_PLUGINS);
+
+		if (selectedPlugins == null || selectedPlugins.isEmpty()) {
+			return new ArrayList<String>();
+		}
+
 		String[] splitPlugins = selectedPlugins.split(";");
 
 		for (String str : splitPlugins) {

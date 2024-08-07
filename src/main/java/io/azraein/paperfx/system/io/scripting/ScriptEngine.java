@@ -1,23 +1,68 @@
 package io.azraein.paperfx.system.io.scripting;
 
+import org.luaj.vm2.Globals;
+import org.luaj.vm2.LoadState;
+import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.Varargs;
+import org.luaj.vm2.compiler.LuaC;
+import org.luaj.vm2.lib.Bit32Lib;
+import org.luaj.vm2.lib.CoroutineLib;
+import org.luaj.vm2.lib.PackageLib;
+import org.luaj.vm2.lib.StringLib;
+import org.luaj.vm2.lib.TableLib;
+import org.luaj.vm2.lib.jse.JseBaseLib;
+import org.luaj.vm2.lib.jse.JseIoLib;
+import org.luaj.vm2.lib.jse.JseMathLib;
+import org.luaj.vm2.lib.jse.JseOsLib;
+import org.luaj.vm2.lib.jse.LuajavaLib;
 import org.tinylog.Logger;
 
 import io.azraein.paperfx.system.io.SaveSystem;
+import io.azraein.paperfx.system.io.scripting.lib.PaperLib;
 
 public class ScriptEngine {
 
-    private PaperGlobals paperGlobals;
+    private final Globals paperGlobals = new Globals();
 
     public ScriptEngine() {
-        paperGlobals = new PaperGlobals();
+
+        // TODO Probably Sandbox the Scripting Engine.
+
+        paperGlobals.load(new JseBaseLib());
+        paperGlobals.load(new PackageLib());
+        paperGlobals.load(new Bit32Lib());
+        paperGlobals.load(new TableLib());
+        paperGlobals.load(new StringLib());
+        paperGlobals.load(new CoroutineLib());
+        paperGlobals.load(new JseMathLib());
+        paperGlobals.load(new JseIoLib());
+        paperGlobals.load(new JseOsLib());
+        paperGlobals.load(new LuajavaLib());
+        paperGlobals.load(new PaperLib());
+        LoadState.install(paperGlobals);
+        LuaC.install(paperGlobals);
+
+        paperGlobals.load("package.path = package.path..';paper/data/scripts/?.lua;'").call();
     }
 
-    public void runScript(String scriptName) {
+    public LuaValue runScript(String scriptName) {
         Logger.debug("Running Lua Script: " + scriptName);
-        paperGlobals.getPaperGlobals().loadfile(SaveSystem.PAPER_SCRIPT_FOLDER + scriptName).call();
+        return getPaperGlobals().loadfile(SaveSystem.PAPER_SCRIPT_FOLDER + scriptName).call();
     }
 
-    public PaperGlobals getPaperGlobals() {
+    public Varargs runFunction(String scriptName, String functionName) {
+        getPaperGlobals().get("dofile").call(LuaValue.valueOf(SaveSystem.PAPER_SCRIPT_FOLDER + scriptName));
+        LuaValue function = getPaperGlobals().get(functionName);
+        return function.call();
+    }
+
+    public Varargs runFunction(String scriptName, String functionName, LuaValue... arguments) {
+        getPaperGlobals().get("dofile").call(LuaValue.valueOf(SaveSystem.PAPER_SCRIPT_FOLDER + scriptName));
+        LuaValue function = getPaperGlobals().get(functionName);
+        return function.invoke(arguments);
+    }
+
+    public Globals getPaperGlobals() {
         return paperGlobals;
     }
 

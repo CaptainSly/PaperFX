@@ -35,10 +35,10 @@ public class SaveSystem {
 	public static final String PAPER_SAVE_FILE_EXTENSION = ".pesf";
 
 	public static final String PAPER_FOLDER = "paper/";
-	public static final String PAPER_DATA_FOLDER = PAPER_FOLDER + "/data/";
+	public static final String PAPER_DATA_FOLDER = PAPER_FOLDER + "data/";
 	public static final String PAPER_SCRIPT_FOLDER = PAPER_DATA_FOLDER + "scripts/";
 
-	public static final String[] PAPER_DATA_FOLDERS = { "data/", "data/scripts/", "saves/", };
+	public static final String[] PAPER_DATA_FOLDERS = { "data/", "data/scripts/", "saves/", "logs", };
 
 	static {
 		SAVE_GSON = new GsonBuilder().registerTypeAdapter(Actor.class, new ActorTypeAdapter(new Gson())).create();
