@@ -20,4 +20,5 @@ Add a flag for non-editable MAIN Plugins. I.e. Game Plugins that are published s
 
 SCRIPTING STUFF
 
-Get started on the LuaScripting Engine
+Keep working on the Documentation for the Scripting Engine
+

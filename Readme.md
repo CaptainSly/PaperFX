@@ -19,7 +19,7 @@ One of the main focuses for PaperFX is to provide a way for people to play Textb
 
 ## How to build
 
-WIP 
+Run the Gradle Tasks - inkFX-FatJar and paperFX-FatJar respectively for each program. Run them through a console using java -jar *.jar. Will update when a better option is present. 
 
 ## How to use the Editor
 A work in progress document is being made as the features and functionality are added. 
@@ -35,6 +35,8 @@ A [doc](technical_documents/File%20Formats.txt) that describes the File Formats 
 
 A [TODO](technical_documents/Paper%20Engine%20TODO%20List.txt) list detailing what I want to tackle for a myriad of different topics. 
 
+A [Script Tutorial](technical_documents/ScriptingTutorial.md) of sorts. I'll try to write it as I fill out the engine. 
+
 
 ## Used Libraries
 * Gson
@@ -43,3 +45,4 @@ A [TODO](technical_documents/Paper%20Engine%20TODO%20List.txt) list detailing wh
 * JavaFX
 * TinyLog2
 * LuaJ 3.0.1 (Needs to be swapped for a reliable fork)
+* Gluon RichTextArea

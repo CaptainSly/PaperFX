@@ -1,9 +1,16 @@
 package io.azraein.paperfx.system;
 
+import java.io.InputStream;
+
 import io.azraein.paperfx.system.actors.ActorState;
 import io.azraein.paperfx.system.actors.stats.Stat;
 
 public class Utils {
+
+	public static InputStream getFileFromResources(String fileName) {
+        ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+		return classloader.getResourceAsStream(fileName);
+	}
 
 	public static String toNormalCase(String input) {
 		if (input == null || input.isEmpty()) {

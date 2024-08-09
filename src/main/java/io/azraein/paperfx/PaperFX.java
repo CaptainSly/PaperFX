@@ -29,6 +29,8 @@ public class PaperFX extends Application {
 	public static final String PAPER_VERSION = "0.0.1";
 
 	private Map<String, PaperScreen> paperScreens;
+
+	private Stage primaryStage;
 	private Scene primaryScene;
 
 	@Override
@@ -53,6 +55,7 @@ public class PaperFX extends Application {
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
+		this.primaryStage = primaryStage;
 		primaryScene = new Scene(paperScreens.get("mainMenu"), 1280, 720);
 		primaryStage.setTitle("Paper Engine");
 		primaryStage.setScene(primaryScene);
@@ -99,6 +102,14 @@ public class PaperFX extends Application {
 
 	public void swapScreens(String screenId) {
 		primaryScene.setRoot(paperScreens.get(screenId));
+	}
+
+	public void setTitle(String title) {
+		primaryStage.setTitle(title);
+	}
+
+	public String getTitle() {
+		return primaryStage.getTitle();
 	}
 
 	public Map<String, PaperScreen> getScreens() {

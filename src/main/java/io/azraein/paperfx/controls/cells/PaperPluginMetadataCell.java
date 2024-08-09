@@ -14,8 +14,6 @@ public class PaperPluginMetadataCell extends ListCell<PaperPluginMetadata> {
 	private final BooleanProperty selectedProperty = new SimpleBooleanProperty(false);
 
 	private final CheckBox pmcCB;
-	private final ContextMenu pmcCM;
-
 	public PaperPluginMetadataCell(PaperPluginSelectionDialog dialog) {
 		pmcCB = new CheckBox();
 		pmcCB.selectedProperty().bindBidirectional(selectedProperty);
@@ -31,13 +29,10 @@ public class PaperPluginMetadataCell extends ListCell<PaperPluginMetadata> {
 			}
 		});
 
-		pmcCM = new ContextMenu();
 		MenuItem setActive = new MenuItem("Set Active Plugin");
 		setActive.setOnAction(e -> {
 			pmcCB.setSelected(true);
 		});
-
-		pmcCM.getItems().add(setActive);
 	}
 
 	@Override
@@ -53,7 +48,6 @@ public class PaperPluginMetadataCell extends ListCell<PaperPluginMetadata> {
 				pluginType = "ADDON";
 
 			setGraphic(pmcCB);
-			setContextMenu(pmcCM);
 			setText(item.getPluginId() + " " + pluginType + " : " + getIndex());
 		} else {
 			setGraphic(null);

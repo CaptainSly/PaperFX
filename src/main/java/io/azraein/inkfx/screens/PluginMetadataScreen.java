@@ -222,6 +222,7 @@ public class PluginMetadataScreen extends PaperEditorScreen {
 				pluginAuthorFld.setText("");
 				pluginDescription.setText("");
 				pluginVersionFld.setText("");
+				pluginMainScriptFld.setText("");
 				pluginMainFileCB.setSelected(false);
 
 			}

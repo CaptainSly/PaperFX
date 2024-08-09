@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.tinylog.Logger;
 
@@ -38,7 +39,6 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import javafx.util.Pair;
 
 public class InkFX extends Application {
 
@@ -171,8 +171,7 @@ public class InkFX extends Application {
 
 	private void openPlugin() {
 		PluginSelectionDialog psd = new PluginSelectionDialog();
-		Optional<PluginSelectionResult> depsAndMetadata = psd
-				.showAndWait();
+		Optional<PluginSelectionResult> depsAndMetadata = psd.showAndWait();
 		if (depsAndMetadata.isPresent()) {
 			if (depsAndMetadata.get().getSelectedPlugins() != null) {
 				List<String> pluginDependencyPaths = depsAndMetadata.get().getSelectedPluginPaths();
@@ -218,40 +217,48 @@ public class InkFX extends Application {
 	}
 
 	private void savePlugin() {
-		if (currentPluginProperty.get() == null) {
-			currentPluginProperty.set(new PaperPlugin());
-			Logger.debug("Created new plugin");
-		}
-		// Create a Plugin object set it to current and give it data to save to the
-		// list.
-		PaperPlugin plugin = currentPluginProperty.get();
 
-		// Get the Metadata Screen data
-		PluginMetadataScreen pmd = (PluginMetadataScreen) editorScreens.get(PLUGIN_METADATA_SCREEN);
+		final ReentrantLock lock = new ReentrantLock();
 
-		if (pmd.getPluginIdFld() != null && pmd.getPluginNameFld() != null && pmd.getPluginAuthorFld() != null
-				&& pmd.getPluginDescription() != null && pmd.getPluginMainFileCB() != null
-				&& pmd.getDependencyListView() != null) {
+		lock.lock();
+		try {
+			// Create a Plugin object set it to current and give it data to save to the
+			// list.
+			if (currentPluginProperty.get() == null) {
+				currentPluginProperty.set(new PaperPlugin());
+				Logger.debug("Created new plugin");
+			}
+			PaperPlugin plugin = currentPluginProperty.get();
 
-			plugin.getMetadata().setPluginId(pmd.getPluginIdFld().getText());
-			plugin.getMetadata().setPluginName(pmd.getPluginNameFld().getText());
-			plugin.getMetadata().setPluginAuthor(pmd.getPluginAuthorFld().getText());
-			plugin.getMetadata().setPluginVersion(pmd.getPluginVersionFld().getText());
-			plugin.getMetadata().setPluginDescription(pmd.getPluginDescription().getText());
-			plugin.getMetadata().setPluginMainFile(pmd.getPluginMainFileCB().isSelected());
+			// Get the Metadata Screen data
+			PluginMetadataScreen pmd = (PluginMetadataScreen) editorScreens.get(PLUGIN_METADATA_SCREEN);
 
-			List<String> dependencyList = new ArrayList<>();
-			for (PaperPluginMetadata dependency : pmd.getDependencyListView().getItems())
-				dependencyList.add(dependency.getPluginId());
+			if (pmd.getPluginIdFld() != null && pmd.getPluginNameFld() != null && pmd.getPluginAuthorFld() != null
+					&& pmd.getPluginDescription() != null && pmd.getPluginMainFileCB() != null
+					&& pmd.getDependencyListView() != null) {
 
-			plugin.getMetadata().setPluginDependencies(dependencyList);
+				plugin.getMetadata().setPluginId(pmd.getPluginIdFld().getText());
+				plugin.getMetadata().setPluginName(pmd.getPluginNameFld().getText());
+				plugin.getMetadata().setPluginAuthor(pmd.getPluginAuthorFld().getText());
+				plugin.getMetadata().setPluginVersion(pmd.getPluginVersionFld().getText());
+				plugin.getMetadata().setPluginDescription(pmd.getPluginDescription().getText());
+				plugin.getMetadata().setPluginMainFile(pmd.getPluginMainFileCB().isSelected());
 
-			String fileName = plugin.getMetadata().isPluginMainFile()
-					? plugin.getMetadata().getPluginId() + SaveSystem.PAPER_PLUGIN_MAIN_FILE_EXTENSION
-					: plugin.getMetadata().getPluginId() + SaveSystem.PAPER_PLUGIN_ADDON_FILE_EXTENSION;
+				List<String> dependencyList = new ArrayList<>();
+				for (PaperPluginMetadata dependency : pmd.getDependencyListView().getItems())
+					dependencyList.add(dependency.getPluginId());
 
-			String filePath = SaveSystem.PAPER_DATA_FOLDER + fileName;
-			SaveSystem.savePlugin(plugin, filePath);
+				plugin.getMetadata().setPluginDependencies(dependencyList);
+
+				String fileName = plugin.getMetadata().isPluginMainFile()
+						? plugin.getMetadata().getPluginId() + SaveSystem.PAPER_PLUGIN_MAIN_FILE_EXTENSION
+						: plugin.getMetadata().getPluginId() + SaveSystem.PAPER_PLUGIN_ADDON_FILE_EXTENSION;
+
+				String filePath = SaveSystem.PAPER_DATA_FOLDER + fileName;
+				SaveSystem.savePlugin(plugin, filePath);
+			}
+		} finally {
+			lock.unlock();
 		}
 	}
 

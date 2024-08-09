@@ -2,7 +2,6 @@ package io.azraein.paperfx.system.io.plugins;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Map;
 
 public class PaperPluginMetadata implements Serializable {
 
@@ -21,8 +20,8 @@ public class PaperPluginMetadata implements Serializable {
 	private List<String> pluginDependencies;
 
 	public PaperPluginMetadata(String pluginId, String pluginName, String pluginAuthor, String pluginDescription,
-			String pluginVersion, List<String> pluginDependencies, 
-			String pluginPath, boolean isMainFile, String pluginMainScript) {
+			String pluginVersion, List<String> pluginDependencies, String pluginPath, boolean isMainFile,
+			String pluginMainScript) {
 		this.pluginId = pluginId;
 		this.pluginName = pluginName;
 		this.pluginAuthor = pluginAuthor;
@@ -63,6 +62,7 @@ public class PaperPluginMetadata implements Serializable {
 	public List<String> getPluginDependencies() {
 		return pluginDependencies;
 	}
+
 	public String getPluginVersion() {
 		return pluginVersion;
 	}

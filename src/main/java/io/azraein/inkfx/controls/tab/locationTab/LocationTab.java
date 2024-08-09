@@ -34,6 +34,7 @@ public class LocationTab extends PaperEditorTab {
     private ListView<Npc> locationNpcsLV;
 
     private TextField[] locationNeighborIdFlds;
+    private ComboBox<Location>[] locationNeighborSelectors;
 
     public LocationTab(InkFX inkFX) {
         super(inkFX);
@@ -79,13 +80,16 @@ public class LocationTab extends PaperEditorTab {
                 locationNameFld.setText(newValue.getLocationState().getLocationName());
                 locationDescriptionArea.setText(newValue.getLocationState().getLocationDescription());
 
+                locationNpcsLV.getItems().clear();
                 for (String npcId : newValue.getLocationState().getLocationNpcIds()) {
                     Npc npc = ((Npc) inkFX.getActorList().get(npcId));
                     locationNpcsLV.getItems().add(npc);
                 }
 
                 for (Direction dir : Direction.values()) {
+                    locationNeighborIdFlds[dir.ordinal()].setText("");
                     Location neighbor = inkFX.getLocationList().get(newValue.getLocationNeighbors()[dir.ordinal()]);
+                    locationNeighborSelectors[dir.ordinal()].getSelectionModel().select(dir.ordinal());
                     if (neighbor != null) {
                         locationNeighborIdFlds[dir.ordinal()].setText(neighbor.getLocationId());
                     }
@@ -200,7 +204,7 @@ public class LocationTab extends PaperEditorTab {
         });
 
         Label[] locationNeighborIdLbls = new Label[4];
-        ComboBox<Location>[] locationNeighborSelectors = new ComboBox[4];
+        locationNeighborSelectors = new ComboBox[4];
         Button[] locationNeighborSelectorBtns = new Button[4];
         locationNeighborIdFlds = new TextField[4];
         for (int i = 0; i < 4; i++) {
@@ -221,6 +225,7 @@ public class LocationTab extends PaperEditorTab {
 
             locationNeighborSelectors[i] = new ComboBox<Location>();
             locationNeighborSelectors[i].getItems().addAll(inkFX.getLocationList().values());
+            locationNeighborSelectors[i].getSelectionModel().select(Direction.values()[i].ordinal());
             locationNeighborSelectors[i].setConverter(new StringConverter<Location>() {
 
                 @Override
@@ -245,6 +250,8 @@ public class LocationTab extends PaperEditorTab {
 
         Button saveLocationBtn = new Button("Save Location");
         saveLocationBtn.setOnAction(event -> {
+            Location selectIndex = dbLocationLV.getSelectionModel().getSelectedItem();
+
             Location location = new Location(locationIdFld.getText(), locationNameFld.getText(),
                     locationDescriptionArea.getText());
             locationNpcsLV.getItems()
@@ -253,25 +260,21 @@ public class LocationTab extends PaperEditorTab {
             Logger.debug("location to be saved: " + location.getLocationId());
 
             for (Direction dir : Direction.values()) {
-                Database curPluginDb = inkFX.currentPluginProperty().get().getPluginDatabase();
                 String locationId = locationNeighborIdFlds[dir.ordinal()].getText();
 
                 Location neighbor;
-                if (curPluginDb.getLocationList().containsKey(locationId)) {
-                    neighbor = curPluginDb.getLocationList().get(locationId);
-                } else {
-                    neighbor = inkFX.getLocationList().get(locationId);
-                }
+                neighbor = inkFX.getLocationList().get(locationId);
 
-                // if we're null, fuck it. 
+                // if we're null, fuck it.
                 if (neighbor == null)
                     continue;
 
-                // oh wait, we're trying to add ourself to as a neighbor? Nah fuck it 
+                // oh wait, we're trying to add ourself to as a neighbor? Nah fuck it
                 if (neighbor.getLocationId().equals(location.getLocationId()))
                     continue;
 
                 location.setNeighborLocation(dir, neighbor);
+                dbLocationLV.getSelectionModel().select(selectIndex);
             }
 
             // TODO: Buildings and Creatures once they're implemented

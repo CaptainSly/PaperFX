@@ -23,10 +23,7 @@ dependencies {
     
     // ZStd - Compression
     implementation("com.github.luben:zstd-jni:1.5.6-3")
-    
-    // Gluon RichTextArea
-    implementation("com.gluonhq:rich-text-area:1.2.0")
-    
+        
     // Gson
     implementation("com.google.code.gson:gson:2.10.1")
 
@@ -43,4 +40,41 @@ java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(21)
     }
+}
+
+val paperFXMain = "io.azraein.paperfx.Main" 
+val inkFXMain = "io.azraein.inkfx.Main"
+
+tasks {
+  register("inkFX-FatJar", Jar::class.java) {
+    archiveClassifier.set("beta")
+    archiveBaseName.set("InkFX")
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    manifest {
+      attributes("Main-Class" to inkFXMain)
+    }
+    from(configurations.runtimeClasspath.get()
+        .onEach { println("add from dependencies: ${it.name}") }
+        .map { if (it.isDirectory) it else zipTree(it) })
+    val sourcesMain = sourceSets.main.get()
+    sourcesMain.allSource.forEach { println("add from sources: ${it.name}") }
+    from(sourcesMain.output)
+  }
+}
+
+tasks {
+  register("paperFX-FatJar", Jar::class.java) {
+    archiveClassifier.set("beta")
+    archiveBaseName.set("PaperFX")
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    manifest {
+      attributes("Main-Class" to paperFXMain)
+    }
+    from(configurations.runtimeClasspath.get()
+        .onEach { println("add from dependencies: ${it.name}") }
+        .map { if (it.isDirectory) it else zipTree(it) })
+    val sourcesMain = sourceSets.main.get()
+    sourcesMain.allSource.forEach { println("add from sources: ${it.name}") }
+    from(sourcesMain.output)
+  }
 }
