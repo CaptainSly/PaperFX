@@ -16,10 +16,13 @@ import com.google.gson.GsonBuilder;
 
 import io.azraein.paperfx.system.actors.Actor;
 import io.azraein.paperfx.system.exceptions.IncompatiblePluginVersionException;
+import io.azraein.paperfx.system.exceptions.IncompatibleSaveVersionException;
 import io.azraein.paperfx.system.exceptions.PluginCorruptionException;
+import io.azraein.paperfx.system.exceptions.SaveCorruptionException;
 import io.azraein.paperfx.system.io.plugins.PaperPlugin;
 import io.azraein.paperfx.system.io.plugins.PaperPluginMetadata;
 import io.azraein.paperfx.system.io.type_adapters.ActorTypeAdapter;
+import io.azraein.paperfx.system.world.World;
 
 public class SaveSystem {
 
@@ -37,8 +40,10 @@ public class SaveSystem {
 	public static final String PAPER_FOLDER = "paper/";
 	public static final String PAPER_DATA_FOLDER = PAPER_FOLDER + "data/";
 	public static final String PAPER_SCRIPT_FOLDER = PAPER_DATA_FOLDER + "scripts/";
-
+    public static final String PAPER_SAVE_FOLDER = PAPER_FOLDER + "saves/";
+	
 	public static final String[] PAPER_DATA_FOLDERS = { "data/", "data/scripts/", "saves/", "logs", };
+
 
 	static {
 		SAVE_GSON = new GsonBuilder().registerTypeAdapter(Actor.class, new ActorTypeAdapter(new Gson())).create();
@@ -56,6 +61,64 @@ public class SaveSystem {
 			}
 
 		}
+	}
+
+	public static void savePlayerFile(World world, String path) {
+		try (DataOutputStream worldOutputStream = new DataOutputStream(new FileOutputStream(path))) {
+
+			// Write Save Identifier
+			worldOutputStream.writeUTF(PAPER_SAVE_FILE_IDENTIFIER);
+
+			// Write Save File Version
+			worldOutputStream.writeUTF(PAPER_SAVE_FILE_VERSION);
+
+			// Write the World to a json string then convert it to bytes.
+			String worldJson = SAVE_GSON.toJson(world);
+			byte[] uncompressedWorldBytes = worldJson.getBytes();
+
+			// Get the size of the uncompressed bytes.
+			int uncompressedWorldSize = uncompressedWorldBytes.length;
+			worldOutputStream.writeInt(uncompressedWorldSize);
+
+			// Compress and Write the World to the file.
+			byte[] compressedWorldBytes = Zstd.compress(uncompressedWorldBytes);
+			worldOutputStream.write(compressedWorldBytes);
+
+			worldOutputStream.flush();
+			worldOutputStream.close();
+		} catch (IOException e) {
+
+		}
+	}
+
+	public static World loadPlayerFile(String path) throws SaveCorruptionException, IncompatibleSaveVersionException {
+		World world = null;
+		try (DataInputStream worldInputStream = new DataInputStream(new FileInputStream(path))) {
+
+			String worldFileIdentifier = worldInputStream.readUTF();
+			if (!worldFileIdentifier.equals(PAPER_SAVE_FILE_IDENTIFIER))
+				throw new SaveCorruptionException(
+						"The File Identifier does not match, the file could be corrupted or malformed");
+
+			String pluginFileVersion = worldInputStream.readUTF();
+			if (!pluginFileVersion.equals(PAPER_PLUGIN_FILE_VERSION))
+				throw new IncompatibleSaveVersionException(
+						"The loaded plugins version is incompatible with this version of Paper");
+
+			int uncompressedWorldSize = worldInputStream.readInt();
+			byte[] uncompressedWorld = worldInputStream.readAllBytes();
+
+			byte[] worldBytes = Zstd.decompress(uncompressedWorld, uncompressedWorldSize);
+			String worldJson = new String(worldBytes);
+
+			world = SAVE_GSON.fromJson(worldJson, World.class);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return world;
 	}
 
 	public static void savePlugin(PaperPlugin plugin, String path) {
@@ -90,6 +153,7 @@ public class SaveSystem {
 			pluginOutputStream.write(compressedMetadataBytes);
 			pluginOutputStream.write(compressedDatabaseBytes);
 
+			pluginOutputStream.flush();
 			pluginOutputStream.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();

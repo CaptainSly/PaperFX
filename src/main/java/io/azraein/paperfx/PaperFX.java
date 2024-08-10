@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 
 import org.tinylog.Logger;
@@ -45,12 +46,18 @@ public class PaperFX extends Application {
 		Paper.INI = new PaperIni();
 		Paper.DATABASE = new Database();
 
-		// Initialize Scripting Engine last.
-		Paper.SE = new ScriptEngine();
-
+		// Create the Screens HashMap and throw in the default screens
 		paperScreens = new HashMap<>();
 		paperScreens.put("mainMenu", new MainMenuScreen(this));
 		paperScreens.put("game", new GameScreen(this));
+
+		// Create the Default Globals
+		Paper.DATABASE.addGlobal("currentQuestId", "");
+		Paper.DATABASE.addGlobal("currentQuestStage", "");
+
+		// Initialize Scripting Engine last.
+		Paper.SE = new ScriptEngine();
+
 	}
 
 	@Override
@@ -98,6 +105,14 @@ public class PaperFX extends Application {
 
 		// Run Plugin Script Initialization
 		Paper.SE.runFunction(Paper.PPL.getPluginMainScript(), "onInit");
+
+		// If the Main Script pushed any global variables, we'll finally copy those into
+		// the global observable
+		for (Entry<String, Object> entry : Paper.DATABASE.getGlobalList().entrySet()) {
+			Logger.debug("tossing global: " + entry.getKey() + " into the observable");
+			Paper.PAPER_GAME_GLOBALS.put(entry.getKey(), entry.getValue());
+		}
+
 	}
 
 	public void swapScreens(String screenId) {
@@ -114,6 +129,10 @@ public class PaperFX extends Application {
 
 	public Map<String, PaperScreen> getScreens() {
 		return paperScreens;
+	}
+
+	public Stage getPrimaryStage() {
+		return primaryStage;
 	}
 
 }

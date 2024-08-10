@@ -45,3 +45,49 @@ onInit() is called after Plugin Load, but before game start. You have access to 
 ## What can I not do inside onNewGame()?
 
 onNewGame() is called once the New Game Button in the Main Menu is clicked. You should set the location and setup anything you think needs to be setup before the player gets to create their character. Once the new game button is clicked and the player creates their character, most of the engines features should be available to the scripting engine. 
+
+## Default Scripting Globals
+
+The "Engine" provides a few Scripting Globals that you can call straight from Lua without requiring any special files. Here is a list of them, if they state they provide a java object, look at the class that has the same name (if the global differs from the class name, the class name will be provided)
+
+    * paper - The Lua Table that holds the Paper Scripting Globals
+        * _VERSION - The current version of the Paper Engine | String
+        * database - Reference to the database | Java Object
+        * ppl - Reference to the Plugin Loader | Java Object | PaperPluginLoader
+        * ini - Reference to the Ini file | Java Object | PaperIni
+        * location - Reference to the Location Property | Java Object 
+
+    * class - A small lua snippet that allows you to create class like objects
+
+To call the a Java Method from lua do the following
+
+```lua
+paper.database:getGlobal("")
+paper.database:getLocation()
+```
+
+The equivalent java code would look like this
+```java
+Paper.DATABASE.getGlobal("")
+Paper.DATABASE.getLocation("")
+```
+
+Java Methods are called with the ':' accessor, and the '.' accessors reference members. 
+
+## Default Variable Globals
+
+The "Engine" itself, contains a HashMap that holds various globals for game purposes. Here is a list of default ones that you can guarentee exists:
+
+    * currentQuestId - String
+    * currentQuestStage - String
+    
+
+To use one of the variable globals you would use the following depending on what you want to do
+
+```lua
+paper.database:addGlobal("") -- Adds a global (Best to only be done inside the onInit function, as this will not add it to the observable map)
+paper.database:getGlobal("globalName") -- Getting the Global
+paper.database:setGlobal("globalName", 42) -- Setting the Global
+```
+
+Setting the global updates it in two places, once in the main Database, and then once inside an Observable Map

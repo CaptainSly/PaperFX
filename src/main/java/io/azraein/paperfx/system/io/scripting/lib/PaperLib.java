@@ -10,25 +10,32 @@ import io.azraein.paperfx.system.Paper;
 
 public class PaperLib extends TwoArgFunction {
 
+    private LuaTable paperTable;
+
     @Override
     public LuaValue call(LuaValue mod, LuaValue env) {
         // Create the Paper Table
-        LuaTable paper = new LuaTable();
-        paper.set("_VERSION", PaperFX.PAPER_VERSION);
-        paper.set("database", CoerceJavaToLua.coerce(Paper.DATABASE));
-        paper.set("ppl", CoerceJavaToLua.coerce(Paper.PPL));
-        paper.set("ini", CoerceJavaToLua.coerce(Paper.INI));
-        paper.set("location", CoerceJavaToLua.coerce(Paper.PAPER_LOCATION_PROPERTY));
+        paperTable = new LuaTable();
+        paperTable.set("_VERSION", PaperFX.PAPER_VERSION);
+        paperTable.set("database", CoerceJavaToLua.coerce(Paper.DATABASE));
+        paperTable.set("ppl", CoerceJavaToLua.coerce(Paper.PPL));
+        paperTable.set("ini", CoerceJavaToLua.coerce(Paper.INI));
+        paperTable.set("location", CoerceJavaToLua.coerce(Paper.PAPER_LOCATION_PROPERTY));
+        paperTable.set("calendar", CoerceJavaToLua.coerce(Paper.CALENDAR));
 
         // Set Globals
-        setGlobal(env, "paper", paper);
+        setGlobal(env, "paper", paperTable);
         setGlobal(env, "class", new LuaClassFunction());
-        return paper;
+        return paperTable;
     }
 
     private void setGlobal(LuaValue env, String globalName, LuaValue globalValue) {
         env.set(globalName, globalValue);
         env.get("package").get("loaded").set(globalName, globalValue);
+    }
+
+    public LuaTable getPaperTable() {
+        return paperTable;
     }
 
 }

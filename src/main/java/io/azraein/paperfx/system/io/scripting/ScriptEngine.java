@@ -24,9 +24,13 @@ public class ScriptEngine {
 
     private final Globals paperGlobals = new Globals();
 
+    private PaperLib paperLib;
+
     public ScriptEngine() {
 
         // TODO Probably Sandbox the Scripting Engine.
+
+        paperLib = new PaperLib();
 
         paperGlobals.load(new JseBaseLib());
         paperGlobals.load(new PackageLib());
@@ -38,11 +42,20 @@ public class ScriptEngine {
         paperGlobals.load(new JseIoLib());
         paperGlobals.load(new JseOsLib());
         paperGlobals.load(new LuajavaLib());
-        paperGlobals.load(new PaperLib());
+        paperGlobals.load(paperLib);
         LoadState.install(paperGlobals);
         LuaC.install(paperGlobals);
 
         paperGlobals.load("package.path = package.path..';paper/data/scripts/?.lua;'").call();
+    }
+
+    public void setGlobal(String globalName, LuaValue globalValue) {
+        paperGlobals.set(globalName, globalValue);
+        paperGlobals.get("package").get("loaded").set(globalName, globalValue);
+    }
+
+    public void setPaperGlobal(String globalName, LuaValue globalValue) {
+        paperLib.getPaperTable().set(globalName, globalValue);
     }
 
     public LuaValue runScript(String scriptName) {

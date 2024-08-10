@@ -4,11 +4,14 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import io.azraein.paperfx.system.Paper;
 import io.azraein.paperfx.system.actors.Actor;
 import io.azraein.paperfx.system.actors.classes.ActorClass;
 import io.azraein.paperfx.system.actors.classes.ActorRace;
 import io.azraein.paperfx.system.inventory.items.Item;
 import io.azraein.paperfx.system.locations.Location;
+
+// TODO: Fix up this global mess. It's understandable that World has one so it can save the state of the global, but why do we have 3 now? 
 
 public class Database implements Serializable {
 
@@ -35,6 +38,8 @@ public class Database implements Serializable {
 
 	public void setGlobal(String globalId, Object global) {
 		globalList.replace(globalId, global);
+		Paper.PAPER_GAME_GLOBALS.replace(globalId, global);
+		Paper.PAPER_WORLD_PROPERTY.get().getWorldGlobalsMap().replace(globalId, global);
 	}
 
 	public void addGlobal(String globalId, Object global) {
@@ -82,7 +87,7 @@ public class Database implements Serializable {
 		this.getLocationList().putAll(database.getLocationList());
 	}
 
-	public void mergeDatabase(Database...databases) {
+	public void mergeDatabase(Database... databases) {
 		for (Database database : databases)
 			mergeDatabase(database);
 	}

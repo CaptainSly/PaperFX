@@ -1,9 +1,19 @@
 package io.azraein.paperfx.screens;
 
+import java.io.File;
+
+import org.luaj.vm2.lib.jse.CoerceJavaToLua;
+
 import io.azraein.paperfx.PaperFX;
 import io.azraein.paperfx.system.Paper;
+import io.azraein.paperfx.system.exceptions.IncompatibleSaveVersionException;
+import io.azraein.paperfx.system.exceptions.SaveCorruptionException;
+import io.azraein.paperfx.system.io.SaveSystem;
+import io.azraein.paperfx.system.world.World;
 import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 
 public class MainMenuScreen extends PaperScreen {
 
@@ -31,14 +41,43 @@ public class MainMenuScreen extends PaperScreen {
     }
 
     public void startNewGame() {
+        // Setup the World
+        World world = new World();
+        Paper.PAPER_WORLD_PROPERTY.set(world);
+        Paper.CALENDAR = world.getCalendar();
+        Paper.SE.setPaperGlobal("calendar", CoerceJavaToLua.coerce(Paper.CALENDAR));
         Paper.SE.runFunction(Paper.PPL.getPluginMainScript(), "onNewGame");
         ((GameScreen) paperFX.getScreens().get("game")).startGameLoop();
         paperFX.swapScreens("game");
     }
 
     public void loadGame() {
-        // Load a Save File, set the gamescreens world and start it's loop and swap to it.
-        
+        // Load a Save File, set the gamescreens world and start it's loop and swap to
+        // it.
+        try {
+            FileChooser fc = new FileChooser();
+            fc.setInitialDirectory(new File(SaveSystem.PAPER_SAVE_FOLDER));
+            fc.getExtensionFilters()
+                    .add(new ExtensionFilter("Paper Engine Save File", "*" + SaveSystem.PAPER_SAVE_FILE_EXTENSION));
+
+            File f = fc.showOpenDialog(paperFX.getPrimaryStage().getOwner());
+            if (f != null) {
+                World saveGameWorld = SaveSystem.loadPlayerFile(f.getPath());
+
+                if (saveGameWorld != null) {
+                    Paper.CALENDAR = saveGameWorld.getCalendar();
+                }
+
+                Paper.PAPER_WORLD_PROPERTY.set(saveGameWorld);
+                Paper.CALENDAR = saveGameWorld.getCalendar();
+                ((GameScreen) paperFX.getScreens().get("game")).startGameLoop();
+                paperFX.swapScreens("game");
+            }
+        } catch (SaveCorruptionException | IncompatibleSaveVersionException e) {
+            // TODO: Figure out what to do if the save game is corrupted or incompatible
+            e.printStackTrace();
+        }
+
     }
 
     public void options() {
