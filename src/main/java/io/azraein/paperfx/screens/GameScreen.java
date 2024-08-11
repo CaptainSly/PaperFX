@@ -10,7 +10,9 @@ import io.azraein.paperfx.PaperFX;
 import io.azraein.paperfx.controls.LocationMover;
 import io.azraein.paperfx.controls.LocationView;
 import io.azraein.paperfx.controls.PaperClock;
+import io.azraein.paperfx.controls.PlayerControls;
 import io.azraein.paperfx.controls.dialog.SavePlayerFileDialog;
+import io.azraein.paperfx.controls.dialog.player.PlayerJournalDialog;
 import io.azraein.paperfx.system.Paper;
 import io.azraein.paperfx.system.actors.ActorState;
 import io.azraein.paperfx.system.actors.Npc;
@@ -36,6 +38,10 @@ public class GameScreen extends PaperScreen {
     private LocationView locationView;
     private LocationMover locationMover;
     private PaperClock paperClock;
+    private PlayerControls playerControls;
+
+    // Paper Dialogs
+    private PlayerJournalDialog playerJournalDialog;
 
     // Paper System Stuff
 
@@ -52,11 +58,15 @@ public class GameScreen extends PaperScreen {
     public GameScreen(PaperFX paperFX) {
         super(paperFX);
         gameLoop = createGameLoop();
+    }
 
+    public void init() {
         locationView = new LocationView(paperFX);
         locationMover = new LocationMover();
         paperClock = new PaperClock();
+        playerControls = new PlayerControls(this);
 
+        // #region Listeners
         Paper.PAPER_LOCATION_PROPERTY.addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 World world = Paper.PAPER_WORLD_PROPERTY.get();
@@ -79,7 +89,6 @@ public class GameScreen extends PaperScreen {
         Paper.PAPER_WORLD_PROPERTY.addListener((observable, oldValue, newValue) -> {
 
             if (newValue != null) {
-                Logger.debug(newValue.getCurrentLocationId());
                 // Loading a Saved Game
                 Paper.PAPER_LOCATION_PROPERTY.set(Paper.DATABASE.getLocation((newValue.getCurrentLocationId())));
                 Paper.PAPER_GAME_GLOBALS.putAll(newValue.getWorldGlobalsMap());
@@ -89,22 +98,37 @@ public class GameScreen extends PaperScreen {
                         .entrySet())
                     Paper.DATABASE.getLocation(entry.getKey()).setLocationState(entry.getValue());
 
+                // Load the Actor States in to the Actors
                 for (Entry<String, ActorState> entry : Paper.PAPER_WORLD_PROPERTY.get().getWorldActorStates()
                         .entrySet())
                     Paper.DATABASE.getActor(entry.getKey()).setActorState(entry.getValue());
+
+                if (newValue.getPlayer() != null) {
+                    Paper.PAPER_PLAYER_PROPERTY.set(newValue.getPlayer());
+                }
 
             }
 
         });
 
+        Paper.PAPER_PLAYER_PROPERTY.addListener((observable, oldValue, newValue) -> {
+
+            if (newValue != null) {
+                playerJournalDialog = new PlayerJournalDialog();
+            }
+
+        });
+        // #endregion
+
         HBox playerControlsContainer = new HBox();
         playerControlsContainer.setPadding(new Insets(15));
-        playerControlsContainer.getChildren().addAll(locationMover);
+        playerControlsContainer.getChildren().addAll(locationMover, playerControls);
 
         VBox mainContainer = new VBox();
         mainContainer.setPadding(new Insets(15));
         mainContainer.getChildren().addAll(locationView, playerControlsContainer);
 
+        // #region - Menu Bar
         MenuBar gameScreenMenuBar = new MenuBar();
         Menu fileMenu = new Menu("File");
         MenuItem saveGame = new MenuItem("Save Game");
@@ -138,6 +162,7 @@ public class GameScreen extends PaperScreen {
         });
         fileMenu.getItems().addAll(saveGame, loadGame);
         gameScreenMenuBar.getMenus().addAll(fileMenu, paperClock);
+        // #endregion
 
         setTop(gameScreenMenuBar);
         setCenter(mainContainer);
@@ -169,8 +194,12 @@ public class GameScreen extends PaperScreen {
     }
 
     private void update(float delta) {
-        Paper.PAPER_WORLD_PROPERTY.get().update(delta);
+        // Update the PaperClock MenuItem to keep it up to date.
         paperClock.update(Paper.PAPER_WORLD_PROPERTY.get().getCalendar());
+
+        Paper.PAPER_WORLD_PROPERTY.get().update(delta);
+        Paper.PAPER_LOCATION_PROPERTY.get().update();
+
     }
 
     public void startGameLoop() {
@@ -181,6 +210,10 @@ public class GameScreen extends PaperScreen {
 
     public void stopGameLoop() {
         gameLoop.stop();
+    }
+
+    public PlayerJournalDialog getPlayerJournalDialog() {
+        return playerJournalDialog;
     }
 
 }

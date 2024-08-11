@@ -4,6 +4,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.azraein.paperfx.system.Paper;
+import io.azraein.paperfx.system.actors.Npc;
+
 public class Location implements Serializable {
 
 	private static final long serialVersionUID = 1285907871914440413L;
@@ -21,6 +24,17 @@ public class Location implements Serializable {
 
 		locationNeighbors = new String[4];
 		locationBuildingIds = new ArrayList<>();
+	}
+
+	public void update() {
+
+		for (String npcId : locationState.getLocationNpcIds()) {
+			Npc npc = ((Npc) Paper.DATABASE.getActor(npcId));
+			npc.updateActor();
+		}
+
+		// Update the location buildings as well just incase they have npcs.
+
 	}
 
 	public String getLocationId() {

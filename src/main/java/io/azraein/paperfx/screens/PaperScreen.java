@@ -1,12 +1,11 @@
 package io.azraein.paperfx.screens;
 
 import io.azraein.paperfx.PaperFX;
-import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.layout.BorderPane;
 
-public class PaperScreen extends Parent {
+public abstract class PaperScreen extends Parent {
 
 	protected PaperFX paperFX;
 	protected BorderPane container;
@@ -14,9 +13,10 @@ public class PaperScreen extends Parent {
 	public PaperScreen(PaperFX paperFX) {
 		this.paperFX = paperFX;
 		container = new BorderPane();
-		container.setPadding(new Insets(15));
 		getChildren().add(container);
 	}
+
+	public abstract void init();
 
 	protected void setTop(Node node) {
 		container.setTop(node);

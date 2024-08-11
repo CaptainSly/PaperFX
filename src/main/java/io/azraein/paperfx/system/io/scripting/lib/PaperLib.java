@@ -22,6 +22,8 @@ public class PaperLib extends TwoArgFunction {
         paperTable.set("ini", CoerceJavaToLua.coerce(Paper.INI));
         paperTable.set("location", CoerceJavaToLua.coerce(Paper.PAPER_LOCATION_PROPERTY));
         paperTable.set("calendar", CoerceJavaToLua.coerce(Paper.CALENDAR));
+        paperTable.set("world", CoerceJavaToLua.coerce(Paper.PAPER_WORLD_PROPERTY));
+        paperTable.set("player", CoerceJavaToLua.coerce(Paper.PAPER_PLAYER_PROPERTY));
 
         // Set Globals
         setGlobal(env, "paper", paperTable);

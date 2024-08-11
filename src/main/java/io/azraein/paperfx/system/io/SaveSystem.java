@@ -14,6 +14,8 @@ import com.github.luben.zstd.Zstd;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import io.azraein.paperfx.system.Options;
+import io.azraein.paperfx.system.Paper;
 import io.azraein.paperfx.system.actors.Actor;
 import io.azraein.paperfx.system.exceptions.IncompatiblePluginVersionException;
 import io.azraein.paperfx.system.exceptions.IncompatibleSaveVersionException;
@@ -40,10 +42,12 @@ public class SaveSystem {
 	public static final String PAPER_FOLDER = "paper/";
 	public static final String PAPER_DATA_FOLDER = PAPER_FOLDER + "data/";
 	public static final String PAPER_SCRIPT_FOLDER = PAPER_DATA_FOLDER + "scripts/";
-    public static final String PAPER_SAVE_FOLDER = PAPER_FOLDER + "saves/";
-	
+	public static final String PAPER_SAVE_FOLDER = PAPER_FOLDER + "saves/";
+
 	public static final String[] PAPER_DATA_FOLDERS = { "data/", "data/scripts/", "saves/", "logs", };
 
+	public static final String PAPER_AUTOSAVE_NAME = "paper_autosave_";
+	private static int autoSaveCounter = 0;
 
 	static {
 		SAVE_GSON = new GsonBuilder().registerTypeAdapter(Actor.class, new ActorTypeAdapter(new Gson())).create();
@@ -61,6 +65,15 @@ public class SaveSystem {
 			}
 
 		}
+	}
+
+	public static void autoSave() {
+		if (autoSaveCounter > Options.maxAutoSaves)
+			autoSaveCounter = 0;
+
+		String savePath = PAPER_SAVE_FOLDER + PAPER_AUTOSAVE_NAME + autoSaveCounter + PAPER_SAVE_FILE_EXTENSION;
+		savePlayerFile(Paper.PAPER_WORLD_PROPERTY.get(), savePath);
+		autoSaveCounter++;
 	}
 
 	public static void savePlayerFile(World world, String path) {

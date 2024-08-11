@@ -48,6 +48,9 @@ public class Calendar implements Serializable {
                     if (currentDaySelector >= days.length)
                         currentDaySelector = 0;
 
+                    if (currentDay > days.length * weeksInMonth)
+                        currentDay = 1;
+
                     if (currentWeek > weeksInMonth) {
                         currentWeek = 1;
                         currentMonth++;

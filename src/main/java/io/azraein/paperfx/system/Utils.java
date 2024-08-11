@@ -8,7 +8,7 @@ import io.azraein.paperfx.system.actors.stats.Stat;
 public class Utils {
 
 	public static InputStream getFileFromResources(String fileName) {
-        ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+		ClassLoader classloader = Thread.currentThread().getContextClassLoader();
 		return classloader.getResourceAsStream(fileName);
 	}
 
@@ -58,6 +58,11 @@ public class Utils {
 	public static float getCalendarUpdateInterval(int minutesPerDay) {
 		float updateInterval = (float) ((minutesPerDay * 60) / 24) / 60;
 		return Utils.formatToDecimalPlace(2, updateInterval);
+	}
+
+	public static float getAutoSaveInterval(int minutes) {
+		float updateInterval = minutes * 60;
+		return updateInterval;
 	}
 
 	/**

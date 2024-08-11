@@ -1,5 +1,6 @@
 package io.azraein.paperfx.system;
 
+import io.azraein.paperfx.system.actors.Player;
 import io.azraein.paperfx.system.io.Database;
 import io.azraein.paperfx.system.io.PaperIni;
 import io.azraein.paperfx.system.io.plugins.PaperPluginLoader;
@@ -31,6 +32,7 @@ public class Paper {
 
     public static final ObjectProperty<Location> PAPER_LOCATION_PROPERTY = new SimpleObjectProperty<>();
     public static final ObjectProperty<World> PAPER_WORLD_PROPERTY = new SimpleObjectProperty<>();
+    public static final ObjectProperty<Player> PAPER_PLAYER_PROPERTY = new SimpleObjectProperty<>();
 
     // Global Observables
 

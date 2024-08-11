@@ -7,14 +7,17 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 
+import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 import org.tinylog.Logger;
 
 import io.azraein.inkfx.dialog.PluginSelectionResult;
+import io.azraein.paperfx.controls.dialog.CharacterCreationDialog;
 import io.azraein.paperfx.controls.dialog.PaperPluginSelectionDialog;
 import io.azraein.paperfx.screens.GameScreen;
 import io.azraein.paperfx.screens.MainMenuScreen;
 import io.azraein.paperfx.screens.PaperScreen;
 import io.azraein.paperfx.system.Paper;
+import io.azraein.paperfx.system.Utils;
 import io.azraein.paperfx.system.io.Database;
 import io.azraein.paperfx.system.io.PaperIni;
 import io.azraein.paperfx.system.io.SaveSystem;
@@ -23,6 +26,7 @@ import io.azraein.paperfx.system.io.plugins.PaperPluginMetadata;
 import io.azraein.paperfx.system.io.scripting.ScriptEngine;
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 public class PaperFX extends Application {
@@ -66,6 +70,11 @@ public class PaperFX extends Application {
 		primaryScene = new Scene(paperScreens.get("mainMenu"), 1280, 720);
 		primaryStage.setTitle("Paper Engine");
 		primaryStage.setScene(primaryScene);
+		primaryStage.getIcons().add(new Image(Utils.getFileFromResources("paper-icon32.png")));
+
+		// Initialize Screens
+		for (PaperScreen screen : paperScreens.values())
+			screen.init();
 
 		// Check to see if the INI contains a list of loadable plugins
 		// #region Default Plugin Loading
@@ -82,7 +91,6 @@ public class PaperFX extends Application {
 				Paper.INI.updateSelectedPluginsList(selectedPlugins);
 			}
 		} else {
-
 			List<String> pluginPaths = new ArrayList<>();
 			for (String pluginId : Paper.INI.getSelectedPluginsList()) {
 				String path = SaveSystem.PAPER_DATA_FOLDER + pluginId + SaveSystem.PAPER_PLUGIN_MAIN_FILE_EXTENSION;
@@ -102,6 +110,8 @@ public class PaperFX extends Application {
 		// #endregion
 
 		primaryStage.show();
+
+		Paper.SE.setPaperGlobal("characterCreation", CoerceJavaToLua.coerce(new CharacterCreationDialog()));
 
 		// Run Plugin Script Initialization
 		Paper.SE.runFunction(Paper.PPL.getPluginMainScript(), "onInit");

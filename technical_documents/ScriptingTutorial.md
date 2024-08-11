@@ -41,6 +41,10 @@ The onInit method is called once the Engine has fully loaded all the plugins and
 
 onInit() is called after Plugin Load, but before game start. You have access to the JavaFX thread and components, but the Game World is not yet loaded in.
 
+DO NOT SET ANY OF THE FOLLOWING IN onInit!
+    * calendar
+
+
 
 ## What can I not do inside onNewGame()?
 
@@ -56,6 +60,7 @@ The "Engine" provides a few Scripting Globals that you can call straight from Lu
         * ppl - Reference to the Plugin Loader | Java Object | PaperPluginLoader
         * ini - Reference to the Ini file | Java Object | PaperIni
         * location - Reference to the Location Property | Java Object 
+        * calendar - Reference to the Calendar | Java Object | Calendar
 
     * class - A small lua snippet that allows you to create class like objects
 
@@ -91,3 +96,21 @@ paper.database:setGlobal("globalName", 42) -- Setting the Global
 ```
 
 Setting the global updates it in two places, once in the main Database, and then once inside an Observable Map
+
+
+## Calendar
+
+The In Game Calendar System is used to control how Npcs interact with their world. It holds the date and time of the game world. When you create your main script file, you can do the following inside the onNewGame function
+
+
+```lua
+local days = { "day1", "day2", "day3", "day4", "day5", "dayEtc..."}
+local months = { "month1", "month2", "month3", "etc..." }
+
+function onNewGame()
+    paper.calendar:setDays()
+    paper.calendar:setMonths()
+end
+```
+
+Theoretically you can add as many days and months as you like, though it'll make your years take forever as each month is 4 weeks. It's recommended to keep it to at least 7 days, 12 months or smaller. Days can not have differing number of days, as they the engine isn't programmed for that. Each month will have numOfDays * 4. 

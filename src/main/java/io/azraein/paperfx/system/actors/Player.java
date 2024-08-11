@@ -11,5 +11,8 @@ public class Player extends Actor {
 		super("PLAYER_ACTOR", "player", actorName, charClass, charRace);
 	}
 
+	@Override
+	public void updateActor() {
+	}
 
 }

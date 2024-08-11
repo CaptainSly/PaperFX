@@ -15,4 +15,8 @@ public class Npc extends Actor {
 		super(actorId, "npc", actorState);
 	}
 
+	@Override
+	public void updateActor() {
+	}
+
 }

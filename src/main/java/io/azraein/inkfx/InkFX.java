@@ -15,6 +15,7 @@ import io.azraein.inkfx.dialog.PluginSelectionResult;
 import io.azraein.inkfx.screens.PaperEditorScreen;
 import io.azraein.inkfx.screens.PluginContentEditorScreen;
 import io.azraein.inkfx.screens.PluginMetadataScreen;
+import io.azraein.paperfx.system.Utils;
 import io.azraein.paperfx.system.actors.Actor;
 import io.azraein.paperfx.system.actors.classes.ActorClass;
 import io.azraein.paperfx.system.actors.classes.ActorRace;
@@ -37,6 +38,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
@@ -94,6 +96,7 @@ public class InkFX extends Application {
 		primaryStage.setScene(new Scene(rootPane, 1366, 768));
 		primaryStage.setTitle("Ink");
 		primaryStage.show();
+		primaryStage.getIcons().add(new Image(Utils.getFileFromResources("ink-icon32.png")));
 	}
 
 	private void createFileMenu() {

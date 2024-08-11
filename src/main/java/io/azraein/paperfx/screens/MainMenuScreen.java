@@ -10,6 +10,7 @@ import io.azraein.paperfx.system.exceptions.IncompatibleSaveVersionException;
 import io.azraein.paperfx.system.exceptions.SaveCorruptionException;
 import io.azraein.paperfx.system.io.SaveSystem;
 import io.azraein.paperfx.system.world.World;
+import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
@@ -19,24 +20,25 @@ public class MainMenuScreen extends PaperScreen {
 
     public MainMenuScreen(PaperFX paperFX) {
         super(paperFX);
+    }
 
+    @Override
+    public void init() {
         GridPane rootContainer = new GridPane(10, 10);
 
         Button startNewGameBtn = new Button("Start New Game");
         Button loadGameBtn = new Button("Load Game");
-        Button optionsBtn = new Button("Options");
         Button exitBtn = new Button("Exit");
 
         startNewGameBtn.setOnAction(event -> startNewGame());
         loadGameBtn.setOnAction(event -> loadGame());
-        optionsBtn.setOnAction(event -> options());
         exitBtn.setOnAction(event -> System.exit(0));
 
         rootContainer.add(startNewGameBtn, 0, 0);
         rootContainer.add(loadGameBtn, 0, 1);
-        rootContainer.add(optionsBtn, 0, 2);
-        rootContainer.add(exitBtn, 0, 3);
+        rootContainer.add(exitBtn, 0, 2);
 
+        container.setPadding(new Insets(15));
         setLeft(rootContainer);
     }
 
@@ -77,10 +79,6 @@ public class MainMenuScreen extends PaperScreen {
             // TODO: Figure out what to do if the save game is corrupted or incompatible
             e.printStackTrace();
         }
-
-    }
-
-    public void options() {
 
     }
 

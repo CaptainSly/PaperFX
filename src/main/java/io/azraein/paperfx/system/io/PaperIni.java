@@ -8,6 +8,8 @@ import java.util.List;
 import org.ini4j.Ini;
 import org.tinylog.Logger;
 
+import io.azraein.paperfx.system.Options;
+
 public class PaperIni {
 
 	private Ini ini;
@@ -25,6 +27,9 @@ public class PaperIni {
 
 	// System
 	public static final String SYSTEM_SELECTED_PLUGINS = "slLoadedPlugins";
+	public static final String SYSTEM_AUTO_SAVE_DURATION = "iAutoSaveDuration";
+	public static final String SYSTEM_MAX_AUTO_SAVES = "iMaxAutoSaves";
+	public static final String SYSTEM_DO_AUTO_SAVE = "bDoAutoSave";
 
 	// Editor
 
@@ -39,6 +44,11 @@ public class PaperIni {
 				ini = new Ini();
 				ini.setComment("PaperFX INI - Contains Options for both the Game Engine and the Game Editor");
 				ini.setFile(iniFile);
+
+				put(SYSTEM_SECTION, SYSTEM_AUTO_SAVE_DURATION, Options.autoSaveDuration);
+				put(SYSTEM_SECTION, SYSTEM_MAX_AUTO_SAVES, Options.maxAutoSaves);
+				put(SYSTEM_SECTION, SYSTEM_DO_AUTO_SAVE, Options.doAutoSave);
+
 				ini.store();
 			}
 		} catch (IOException e) {
@@ -49,6 +59,7 @@ public class PaperIni {
 			ini = new Ini();
 			ini.setFile(new File(INI_NAME));
 		}
+
 	}
 
 	public void put(String section, String key, Object value) throws IOException {

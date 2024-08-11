@@ -25,6 +25,8 @@ public abstract class Actor implements Serializable {
 		this.actorState = actorState;
 	}
 
+	public abstract void updateActor();
+
 	public String getActorId() {
 		return actorId;
 	}

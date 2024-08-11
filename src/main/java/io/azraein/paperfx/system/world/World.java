@@ -4,10 +4,12 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import io.azraein.paperfx.system.Options;
 import io.azraein.paperfx.system.Utils;
 import io.azraein.paperfx.system.actors.Actor;
 import io.azraein.paperfx.system.actors.ActorState;
 import io.azraein.paperfx.system.actors.Player;
+import io.azraein.paperfx.system.io.SaveSystem;
 import io.azraein.paperfx.system.locations.Location;
 import io.azraein.paperfx.system.locations.LocationState;
 
@@ -26,6 +28,7 @@ public class World implements Serializable {
     private Map<String, Object> worldGlobals;
 
     private transient float lastClockUpdate = 0;
+    private transient float lastAutoSaveUpdate = 0;
 
     public World() {
         worldLocationStates = new HashMap<>();
@@ -43,6 +46,14 @@ public class World implements Serializable {
             lastClockUpdate = 0;
         }
 
+        lastAutoSaveUpdate += delta;
+        if (Options.doAutoSave && lastAutoSaveUpdate >= Utils.getAutoSaveInterval(Options.autoSaveDuration)) {
+            SaveSystem.autoSave();
+            lastAutoSaveUpdate = 0;
+        }
+
+        if (player != null)
+            player.updateActor();
     }
 
     public void addLocationState(Location location) {
