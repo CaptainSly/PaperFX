@@ -2,8 +2,6 @@ package io.azraein.paperfx.system.actors.stats;
 
 import java.io.Serializable;
 
-import org.tinylog.Logger;
-
 public class Stat<T> implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -64,10 +62,6 @@ public class Stat<T> implements Serializable {
 
 	public void levelUp() {
 		level++;
-		// You can add additional logic here for what happens on level up, such as
-		// increasing stats.
-
-		Logger.debug(name + " level: " + level);
 	}
 
 	public int getTotalXpForLevel(int targetLevel) {

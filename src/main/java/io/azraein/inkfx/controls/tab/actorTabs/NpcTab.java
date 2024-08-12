@@ -1,5 +1,7 @@
 package io.azraein.inkfx.controls.tab.actorTabs;
 
+import org.tinylog.Logger;
+
 import io.azraein.inkfx.InkFX;
 import io.azraein.inkfx.controls.converters.ActorClassStringConverter;
 import io.azraein.inkfx.controls.converters.ActorRaceStringConverter;
@@ -17,7 +19,18 @@ import io.azraein.paperfx.system.io.Database;
 import javafx.collections.MapChangeListener.Change;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Separator;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 
@@ -295,20 +308,24 @@ public class NpcTab extends PaperEditorTab {
 
             npc.getActorState().setActorDescription(npcActorDescriptionArea.getText());
 
+            Logger.debug("About to set Npc Skills");
+
+            ActorState npcActorState = npc.getActorState();
+
             // Set the NPC's skills
             for (Skill skill : Skill.values()) {
-                Stat<Skill> npcStat = npc.getActorState().getActorSkill(skill);
-                int skillLevel = npcActorSkillSpinners[skill.ordinal()].getValue();
-                int skillXp = Utils.getTotalXPForLevel(npcStat, skillLevel);
-                npcStat.addXp(skillXp - npcStat.getCurrentExp()); // Adjust XP to match the level
+                npcActorSkillSpinners[skill.ordinal()].getValueFactory()
+                        .setValue(npcActorState.getActorSkill(skill).getLevel());
             }
+
+            Logger.debug("About to set Npc Attributes");
 
             // Set the NPC's attributes
             for (Attribute attr : Attribute.values()) {
-                Stat<Attribute> npcAttribute = npc.getActorState().getActorAttribute(attr);
-                int attrLevel = npcActorAttributeSpinners[attr.ordinal()].getValue();
-                int attrXp = Utils.getTotalXPForLevel(npcAttribute, attrLevel);
-                npcAttribute.addXp(attrXp - npcAttribute.getCurrentExp()); // Adjust XP to match the level
+                npcActorAttributeSpinners[attr.ordinal()].getValueFactory()
+                        .setValue(npcActorState.getActorAttribute(attr).getLevel());
+
+                Logger.debug(attr.name() + " is level: " + npc.getActorState().getActorAttribute(attr).getLevel());
             }
 
             inkFX.currentPluginProperty().get().getPluginDatabase().addActor(npc);
@@ -320,8 +337,8 @@ public class NpcTab extends PaperEditorTab {
             npcActorIdFld.setText("");
             npcActorNameFld.setText("");
             npcActorDescriptionArea.setText("");
-            npcActorRaceCB.getSelectionModel().select(0);
-            npcActorClassCB.getSelectionModel().select(0);
+            npcActorRaceCB.getSelectionModel().select(null);
+            npcActorClassCB.getSelectionModel().select(null);
 
             for (Skill skill : Skill.values())
                 npcActorSkillSpinners[skill.ordinal()].getValueFactory().setValue(1);

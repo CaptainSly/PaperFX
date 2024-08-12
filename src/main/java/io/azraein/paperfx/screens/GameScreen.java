@@ -4,8 +4,6 @@ import java.io.File;
 import java.util.Map.Entry;
 import java.util.Optional;
 
-import org.tinylog.Logger;
-
 import io.azraein.paperfx.PaperFX;
 import io.azraein.paperfx.controls.LocationMover;
 import io.azraein.paperfx.controls.LocationView;
@@ -31,6 +29,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
+
+// TODO: Implement Game Screen State Machine
 
 public class GameScreen extends PaperScreen {
 
@@ -141,7 +141,7 @@ public class GameScreen extends PaperScreen {
                 SaveSystem.savePlayerFile(Paper.PAPER_WORLD_PROPERTY.get(), filePath);
             }
 
-        });
+        }); 
         MenuItem loadGame = new MenuItem("Load Game");
         loadGame.setOnAction(event -> {
             FileChooser fc = new FileChooser();

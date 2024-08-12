@@ -19,21 +19,17 @@ public class PaperIni {
 	// Sections
 	public static final String SYSTEM_SECTION = "System";
 
-	public static final String EDITOR_SECTION = "Editor";
-
-	public static final String GAME_SECTION = "Game";
+	public static final String PLUGIN_SECTION = "PluginLoader";
 
 	// Keys
 
 	// System
-	public static final String SYSTEM_SELECTED_PLUGINS = "slLoadedPlugins";
 	public static final String SYSTEM_AUTO_SAVE_DURATION = "iAutoSaveDuration";
 	public static final String SYSTEM_MAX_AUTO_SAVES = "iMaxAutoSaves";
 	public static final String SYSTEM_DO_AUTO_SAVE = "bDoAutoSave";
 
-	// Editor
-
-	// Game
+	// Plugin Loader
+	public static final String PPL_SELECTED_PLUGINS = "slLoadedPlugins";
 
 	public PaperIni() {
 		try {
@@ -73,12 +69,12 @@ public class PaperIni {
 			slLoadedPlugins += pluginId + ";";
 		}
 
-		put(SYSTEM_SECTION, SYSTEM_SELECTED_PLUGINS, slLoadedPlugins);
+		put(PLUGIN_SECTION, PPL_SELECTED_PLUGINS, slLoadedPlugins);
 	}
 
 	public List<String> getSelectedPluginsList() {
 		List<String> selectedPluginsList = new ArrayList<>();
-		String selectedPlugins = ini.get(SYSTEM_SECTION, SYSTEM_SELECTED_PLUGINS);
+		String selectedPlugins = ini.get(PLUGIN_SECTION, PPL_SELECTED_PLUGINS);
 
 		if (selectedPlugins == null || selectedPlugins.isEmpty()) {
 			return new ArrayList<String>();

@@ -36,7 +36,7 @@ public class ActorClassTab extends PaperEditorTab {
 		Label[] actorClassBaseSkillLbls = new Label[Skill.values().length];
 		for (Skill skill : Skill.values()) {
 			actorClassBaseSkillLbls[skill.ordinal()] = new Label(Utils.toNormalCase(skill.name()) + " Bonus");
-			actorClassBaseSkillsSpinners[skill.ordinal()] = new Spinner<>(5, 100, 5);
+			actorClassBaseSkillsSpinners[skill.ordinal()] = new Spinner<>(5, 10, 5);
 			actorClassBaseSkillsSpinners[skill.ordinal()].setMaxWidth(80);
 		}
 
@@ -203,12 +203,6 @@ public class ActorClassTab extends PaperEditorTab {
 
 						if (inkFX.currentPluginProperty().get() != null) {
 							Database curPluginDb = inkFX.currentPluginProperty().get().getPluginDatabase();
-
-							// TODO: this needs fixing. It won't mess up any other plugins, but if you
-							// delete something that exists both in the plugin and dep, but comes from the
-							// dep
-							// it'll show back up after the plugin saves, quits and reloads.
-
 							if (curPluginDb.getActorClassList().containsKey(ac.getActorClassId())) {
 								curPluginDb.getActorClassList().remove(ac.getActorClassId());
 								inkFX.getActorClassList().remove(ac.getActorClassId());
@@ -348,10 +342,8 @@ public class ActorClassTab extends PaperEditorTab {
 					.setValue(newValue.getActorClassBaseSkills()[skill.ordinal()]);
 		}
 
-		actorClassFavoredAttributeOneCB
-				.setValue((Attribute) newValue.getActorClassFavoredAttributes().toArray()[0]);
-		actorClassFavoredAttributeTwoCB
-				.setValue((Attribute) newValue.getActorClassFavoredAttributes().toArray()[1]);
+		actorClassFavoredAttributeOneCB.setValue((Attribute) newValue.getActorClassFavoredAttributes().toArray()[0]);
+		actorClassFavoredAttributeTwoCB.setValue((Attribute) newValue.getActorClassFavoredAttributes().toArray()[1]);
 
 		for (Object obj : newValue.getActorClassSkills().toArray()) {
 			if (obj instanceof Skill skill)

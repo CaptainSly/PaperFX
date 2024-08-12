@@ -35,7 +35,7 @@ public class ActorRaceTab extends PaperEditorTab {
 		Spinner<Integer>[] actorRaceBaseAttrSpinners = new Spinner[Attribute.values().length];
 		Label[] actorRaceBaseAttrLbls = new Label[Attribute.values().length];
 		for (Attribute attr : Attribute.values()) {
-			actorRaceBaseAttrSpinners[attr.ordinal()] = new Spinner<>(1, 50, 1);
+			actorRaceBaseAttrSpinners[attr.ordinal()] = new Spinner<>(10, 50, 10);
 			actorRaceBaseAttrLbls[attr.ordinal()] = new Label(Utils.toNormalCase(attr.name()));
 		}
 
@@ -43,7 +43,7 @@ public class ActorRaceTab extends PaperEditorTab {
 		Spinner<Integer>[] actorRaceSkillBonusesSpinner = new Spinner[Skill.values().length];
 		Label[] actorRaceSkillBonusesLbls = new Label[Skill.values().length];
 		for (Skill skill : Skill.values()) {
-			actorRaceSkillBonusesSpinner[skill.ordinal()] = new Spinner<>(1, 15, 1);
+			actorRaceSkillBonusesSpinner[skill.ordinal()] = new Spinner<>(5, 10, 5);
 			actorRaceSkillBonusesLbls[skill.ordinal()] = new Label(Utils.toNormalCase(skill.name()));
 		}
 

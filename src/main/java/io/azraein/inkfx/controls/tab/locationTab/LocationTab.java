@@ -119,15 +119,7 @@ public class LocationTab extends PaperEditorTab {
                     MenuItem removeNpcItem = new MenuItem();
                     removeNpcItem.setOnAction(event -> {
                         Npc npc = locationNpcsLV.getSelectionModel().getSelectedItem();
-
-                        if (inkFX.currentPluginProperty().get() != null) {
-                            Database curPluginDb = inkFX.currentPluginProperty().get().getPluginDatabase();
-                            if (curPluginDb.getActorList().containsKey(npc.getActorId())) {
-                                curPluginDb.getActorList().remove(npc.getActorId());
-                                inkFX.getActorList().remove(npc.getActorId());
-                            }
-                        }
-
+                        locationNpcsLV.getItems().remove(npc);
                     });
 
                     cm.getItems().add(removeNpcItem);

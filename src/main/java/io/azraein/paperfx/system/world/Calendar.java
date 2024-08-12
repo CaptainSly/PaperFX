@@ -16,6 +16,8 @@ public class Calendar implements Serializable {
     private int daysInMonth = 24;
     private int weeksInMonth = 4;
 
+    private String era = "";
+
     private String amPmString = "AM";
 
     private String[] months = { "Janurary", "February", "March", "April", "May", "June", "July", "August", "September",
@@ -79,12 +81,17 @@ public class Calendar implements Serializable {
         this.months = months;
     }
 
+    public void setEra(String era) {
+        this.era = era;
+    }
+
     public String getTimeAsString() {
         return String.format("%02d:%02d %s", getNormalHour(), currentMinute, amPmString);
     }
 
     public String getDateAsString() {
-        return String.format("%s the %s of %s, %04d", getDay(), Utils.getSuffix(currentDay), getMonth(), currentYear);
+        return String.format("%s the %s of %s, %04d%s", getDay(), Utils.getSuffix(currentDay), getMonth(), currentYear,
+                era);
     }
 
     public int getCurrentMinute() {

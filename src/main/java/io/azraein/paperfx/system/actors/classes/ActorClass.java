@@ -20,6 +20,8 @@ public class ActorClass implements Serializable {
 	private Set<Attribute> actorClassFavoredAttributes;
 	private Set<Skill> actorClassSkills;
 
+	public static final transient int CLASS_SKILL_BASE_LEVEL = 15;
+
 	public ActorClass(String actorClassId, String actorClassName) {
 		this.actorClassId = actorClassId;
 		this.actorClassName = actorClassName;
@@ -39,11 +41,11 @@ public class ActorClass implements Serializable {
 	public String getActorClassDescription() {
 		return actorClassDescription;
 	}
-	
+
 	public int[] getActorClassBaseSkills() {
 		return actorClassBaseSkills;
 	}
-	
+
 	public Set<Attribute> getActorClassFavoredAttributes() {
 		return actorClassFavoredAttributes;
 	}
@@ -51,7 +53,7 @@ public class ActorClass implements Serializable {
 	public Set<Skill> getActorClassSkills() {
 		return actorClassSkills;
 	}
-	
+
 	public void setActorClassId(String actorClassId) {
 		this.actorClassId = actorClassId;
 	}
@@ -67,7 +69,7 @@ public class ActorClass implements Serializable {
 	public void setActorClassSkills(List<Skill> actorSkills) {
 		actorClassSkills.addAll(actorSkills);
 	}
-	
+
 	public void setActorClassFavoredAttribute(Attribute attr1, Attribute attr2) {
 		actorClassFavoredAttributes.add(attr1);
 		actorClassFavoredAttributes.add(attr2);

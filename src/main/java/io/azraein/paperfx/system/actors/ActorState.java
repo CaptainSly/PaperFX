@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import org.tinylog.Logger;
 
+import io.azraein.paperfx.system.Utils;
 import io.azraein.paperfx.system.actors.classes.ActorClass;
 import io.azraein.paperfx.system.actors.classes.ActorRace;
 import io.azraein.paperfx.system.actors.stats.Attribute;
@@ -71,7 +72,7 @@ public class ActorState implements Serializable {
 			int baseExp = actorClass.getActorClassFavoredAttributes().contains(attribute) ? 250 : 300;
 			double exponent = actorClass.getActorClassFavoredAttributes().contains(attribute) ? 1.623 : 1.763;
 			Stat<Attribute> stat = new Stat<>(attribute, attribute.name(), baseExp, exponent);
-			stat.addXp(actorRace.getActorRaceBaseAttribute(attribute));
+			stat.addXp(Utils.getTotalXPForLevel(stat, actorRace.getActorRaceBaseAttribute(attribute)));
 			actorAttributes[attribute.ordinal()] = stat;
 		}
 	}
@@ -81,14 +82,18 @@ public class ActorState implements Serializable {
 			int baseExp = actorClass.getActorClassSkills().contains(skill) ? 185 : 225;
 			double exponent = actorClass.getActorClassSkills().contains(skill) ? 1.572 : 1.648;
 			Stat<Skill> stat = new Stat<>(skill, skill.name(), baseExp, exponent);
+			int totalLevel = 0;
 
-			Logger.debug(
-					"Skill: " + skill.name() + " baseExp: " + stat.getBaseExp() + ", exponent: " + stat.getExponent());
+			if (actorClass.getActorClassSkills().contains(skill))
+				totalLevel += ActorClass.CLASS_SKILL_BASE_LEVEL;
 
-			int raceBaseSkill = actorRace.getActorRaceBaseSkill(skill);
-			int classBaseSkill = actorClass.getActorClassBaseSkills()[skill.ordinal()];
-			stat.addXp(raceBaseSkill + classBaseSkill);
+			totalLevel += actorRace.getActorRaceBaseSkill(skill);
+			totalLevel += actorClass.getActorClassBaseSkills()[skill.ordinal()];
+
+			stat.addXp(Utils.getTotalXPForLevel(stat, totalLevel));
+
 			actorSkills[skill.ordinal()] = stat;
+			Logger.debug(skill.name() + " is " + actorSkills[skill.ordinal()].getLevel());
 		}
 	}
 
@@ -111,9 +116,8 @@ public class ActorState implements Serializable {
 	public void levelUp() {
 		actorLevel++;
 
-		// Adjust Stats on level up. I dunno how yet.
+		// TODO Adjust Stats on level up. I dunno how yet.
 
-		Logger.debug(actorName + " is now level " + actorLevel);
 	}
 
 	public void useSkill(Skill skill, int expGained) {

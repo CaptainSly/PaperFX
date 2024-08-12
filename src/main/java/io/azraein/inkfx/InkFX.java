@@ -97,6 +97,7 @@ public class InkFX extends Application {
 		primaryStage.setTitle("Ink");
 		primaryStage.show();
 		primaryStage.getIcons().add(new Image(Utils.getFileFromResources("ink-icon32.png")));
+
 	}
 
 	private void createFileMenu() {
