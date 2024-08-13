@@ -178,10 +178,10 @@ public class ActorClassTab extends PaperEditorTab {
 		actorClassDescriptionArea.setWrapText(true);
 
 		ListView<ActorClass> actorClassList = new ListView<>();
-		actorClassList.getItems().addAll(inkFX.getActorClassList().values());
-		inkFX.getActorClassList().addListener((Change<? extends String, ? extends ActorClass> change) -> {
+		actorClassList.getItems().addAll(inkFX.getObservableActorClassRegistry().values());
+		inkFX.getObservableActorClassRegistry().addListener((Change<? extends String, ? extends ActorClass> change) -> {
 			if (change.wasAdded()) {
-				if (inkFX.currentPluginProperty().get().getPluginDatabase().getActorClassList()
+				if (inkFX.currentPluginProperty().get().getPluginDatabase().getActorClassRegistry()
 						.containsKey(change.getKey()))
 					actorClassList.getItems().remove(change.getValueRemoved());
 				actorClassList.getItems().add(change.getValueAdded());
@@ -203,9 +203,9 @@ public class ActorClassTab extends PaperEditorTab {
 
 						if (inkFX.currentPluginProperty().get() != null) {
 							Database curPluginDb = inkFX.currentPluginProperty().get().getPluginDatabase();
-							if (curPluginDb.getActorClassList().containsKey(ac.getActorClassId())) {
-								curPluginDb.getActorClassList().remove(ac.getActorClassId());
-								inkFX.getActorClassList().remove(ac.getActorClassId());
+							if (curPluginDb.getActorClassRegistry().containsKey(ac.getActorClassId())) {
+								curPluginDb.getActorClassRegistry().remove(ac.getActorClassId());
+								inkFX.getObservableActorClassRegistry().remove(ac.getActorClassId());
 							}
 						}
 
@@ -247,8 +247,8 @@ public class ActorClassTab extends PaperEditorTab {
 			String actorClassName = actorClassNameFld.getText();
 
 			ActorClass actorClass = null;
-			if (inkFX.getActorClassList().containsKey(actorClassId)) {
-				actorClass = inkFX.getActorClassList().get(actorClassId);
+			if (inkFX.getObservableActorClassRegistry().containsKey(actorClassId)) {
+				actorClass = inkFX.getObservableActorClassRegistry().get(actorClassId);
 			}
 
 			if (actorClass == null)
@@ -265,7 +265,7 @@ public class ActorClassTab extends PaperEditorTab {
 						.getValue();
 
 			inkFX.currentPluginProperty().get().getPluginDatabase().addActorClass(actorClass);
-			inkFX.getActorClassList().put(actorClass.getActorClassId(), actorClass);
+			inkFX.getObservableActorClassRegistry().put(actorClass.getActorClassId(), actorClass);
 		});
 
 		Label actorClassBaseSkillsLbl = new Label("Class Skill Bonus");

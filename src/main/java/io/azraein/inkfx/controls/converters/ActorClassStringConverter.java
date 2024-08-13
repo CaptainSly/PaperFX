@@ -22,7 +22,7 @@ public class ActorClassStringConverter extends StringConverter<ActorClass> {
 
     @Override
     public ActorClass fromString(String string) {
-        return inkFX.getActorClassList().get(string);
+        return inkFX.getObservableActorClassRegistry().get(string);
     }
 
 }

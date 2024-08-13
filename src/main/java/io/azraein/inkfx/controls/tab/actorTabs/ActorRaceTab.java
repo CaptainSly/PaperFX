@@ -64,9 +64,9 @@ public class ActorRaceTab extends PaperEditorTab {
 
 							if (inkFX.currentPluginProperty().get() != null) {
 								Database curPluginDb = inkFX.currentPluginProperty().get().getPluginDatabase();
-								if (curPluginDb.getRaceList().containsKey(ar.getActorRaceId())) {
-									curPluginDb.getRaceList().remove(ar.getActorRaceId());
-									inkFX.getRaceList().remove(ar.getActorRaceId());
+								if (curPluginDb.getActorRaceRegistry().containsKey(ar.getActorRaceId())) {
+									curPluginDb.getActorRaceRegistry().remove(ar.getActorRaceId());
+									inkFX.getObservableActorRaceRegistry().remove(ar.getActorRaceId());
 								}
 							}
 
@@ -99,10 +99,10 @@ public class ActorRaceTab extends PaperEditorTab {
 							.setValue(newValue.getActorRaceBaseAttribute(attr));
 			}
 		});
-		actorRaceList.getItems().addAll(inkFX.getRaceList().values());
-		inkFX.getRaceList().addListener((Change<? extends String, ? extends ActorRace> change) -> {
+		actorRaceList.getItems().addAll(inkFX.getObservableActorRaceRegistry().values());
+		inkFX.getObservableActorRaceRegistry().addListener((Change<? extends String, ? extends ActorRace> change) -> {
 			if (change.wasAdded()) {
-				if (inkFX.currentPluginProperty().get().getPluginDatabase().getRaceList()
+				if (inkFX.currentPluginProperty().get().getPluginDatabase().getActorRaceRegistry()
 						.containsKey(change.getKey())) {
 					actorRaceList.getItems().remove(change.getValueRemoved());
 					actorRaceList.getItems().add(change.getValueAdded());
@@ -140,8 +140,8 @@ public class ActorRaceTab extends PaperEditorTab {
 			String actorRaceId = actorRaceIdFld.getText();
 
 			ActorRace actorRace = null;
-			if (inkFX.getRaceList().containsKey(actorRaceId)) {
-				actorRace = inkFX.getRaceList().get(actorRaceId);
+			if (inkFX.getObservableActorRaceRegistry().containsKey(actorRaceId)) {
+				actorRace = inkFX.getObservableActorRaceRegistry().get(actorRaceId);
 			}
 
 			if (actorRace == null)
@@ -160,7 +160,7 @@ public class ActorRaceTab extends PaperEditorTab {
 						.getValue();
 
 			inkFX.currentPluginProperty().get().getPluginDatabase().addCharacterRace(actorRace);
-			inkFX.getRaceList().put(actorRace.getActorRaceId(), actorRace);
+			inkFX.getObservableActorRaceRegistry().put(actorRace.getActorRaceId(), actorRace);
 		});
 
 		GridPane raceInfoPane = new GridPane();

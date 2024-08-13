@@ -14,7 +14,6 @@ import io.azraein.paperfx.system.actors.classes.ActorClass;
 import io.azraein.paperfx.system.actors.classes.ActorRace;
 import io.azraein.paperfx.system.actors.stats.Attribute;
 import io.azraein.paperfx.system.actors.stats.Skill;
-import io.azraein.paperfx.system.actors.stats.Stat;
 import io.azraein.paperfx.system.io.Database;
 import javafx.collections.MapChangeListener.Change;
 import javafx.geometry.Insets;
@@ -70,9 +69,9 @@ public class NpcTab extends PaperEditorTab {
 
                         if (inkFX.currentPluginProperty().get() != null) {
                             Database curPluginDb = inkFX.currentPluginProperty().get().getPluginDatabase();
-                            if (curPluginDb.getActorList().containsKey(npc.getActorId())) {
-                                curPluginDb.getActorList().remove(npc.getActorId());
-                                inkFX.getLocationList().remove(npc.getActorId());
+                            if (curPluginDb.getNpcRegistry().containsKey(npc.getActorId())) {
+                                curPluginDb.getNpcRegistry().remove(npc.getActorId());
+                                inkFX.getObservableLocationRegistry().remove(npc.getActorId());
                             }
                         }
                     });
@@ -94,8 +93,8 @@ public class NpcTab extends PaperEditorTab {
                 npcActorNameFld.setText(actorState.getActorName());
                 npcActorDescriptionArea.setText(actorState.getActorDescription());
 
-                ActorRace race = inkFX.getRaceList().get(actorState.getActorRaceId());
-                ActorClass clazz = inkFX.getActorClassList().get(actorState.getActorClassId());
+                ActorRace race = inkFX.getObservableActorRaceRegistry().get(actorState.getActorRaceId());
+                ActorClass clazz = inkFX.getObservableActorClassRegistry().get(actorState.getActorClassId());
 
                 npcActorRaceCB.getSelectionModel().select(race);
                 npcActorClassCB.getSelectionModel().select(clazz);
@@ -109,19 +108,19 @@ public class NpcTab extends PaperEditorTab {
                             .setValue(actorState.getActorSkill(skill).getLevel());
             }
         });
-        inkFX.getActorList().values().forEach(npc -> dbNpcLV.getItems().add((Npc) npc));
-        inkFX.getActorList().addListener((Change<? extends String, ? extends Actor> change) -> {
+        inkFX.getObservableNpcRegistry().values().forEach(npc -> dbNpcLV.getItems().add(npc));
+        inkFX.getObservableNpcRegistry().addListener((Change<? extends String, ? extends Npc> change) -> {
 
             if (change.wasAdded()) {
-                if (inkFX.currentPluginProperty().get().getPluginDatabase().getActorList()
+                if (inkFX.currentPluginProperty().get().getPluginDatabase().getNpcRegistry()
                         .containsKey(change.getKey())) {
-                    dbNpcLV.getItems().remove((Npc) change.getValueRemoved());
-                    dbNpcLV.getItems().add((Npc) change.getValueAdded());
+                    dbNpcLV.getItems().remove(change.getValueRemoved());
+                    dbNpcLV.getItems().add(change.getValueAdded());
                 } else {
-                    dbNpcLV.getItems().add((Npc) change.getValueAdded());
+                    dbNpcLV.getItems().add(change.getValueAdded());
                 }
             } else if (change.wasRemoved()) {
-                dbNpcLV.getItems().remove((Npc) change.getValueRemoved());
+                dbNpcLV.getItems().remove(change.getValueRemoved());
             }
         });
 
@@ -172,9 +171,9 @@ public class NpcTab extends PaperEditorTab {
             }
 
         });
-        inkFX.getRaceList().addListener((Change<? extends String, ? extends ActorRace> change) -> {
+        inkFX.getObservableActorRaceRegistry().addListener((Change<? extends String, ? extends ActorRace> change) -> {
             if (change.wasAdded()) {
-                if (inkFX.currentPluginProperty().get().getPluginDatabase().getRaceList()
+                if (inkFX.currentPluginProperty().get().getPluginDatabase().getActorRaceRegistry()
                         .containsKey(change.getKey())) {
                     npcActorRaceCB.getItems().remove(change.getValueRemoved());
                     npcActorRaceCB.getItems().add(change.getValueAdded());
@@ -222,9 +221,9 @@ public class NpcTab extends PaperEditorTab {
             }
 
         });
-        inkFX.getActorClassList().addListener((Change<? extends String, ? extends ActorClass> change) -> {
+        inkFX.getObservableActorClassRegistry().addListener((Change<? extends String, ? extends ActorClass> change) -> {
             if (change.wasAdded()) {
-                if (inkFX.currentPluginProperty().get().getPluginDatabase().getActorClassList()
+                if (inkFX.currentPluginProperty().get().getPluginDatabase().getActorClassRegistry()
                         .containsKey(change.getKey())) {
                     npcActorClassCB.getItems().remove(change.getValueRemoved());
                     npcActorClassCB.getItems().add(change.getValueAdded());
@@ -313,23 +312,16 @@ public class NpcTab extends PaperEditorTab {
             ActorState npcActorState = npc.getActorState();
 
             // Set the NPC's skills
-            for (Skill skill : Skill.values()) {
+            for (Skill skill : Skill.values())
                 npcActorSkillSpinners[skill.ordinal()].getValueFactory()
                         .setValue(npcActorState.getActorSkill(skill).getLevel());
-            }
-
-            Logger.debug("About to set Npc Attributes");
-
             // Set the NPC's attributes
-            for (Attribute attr : Attribute.values()) {
+            for (Attribute attr : Attribute.values())
                 npcActorAttributeSpinners[attr.ordinal()].getValueFactory()
                         .setValue(npcActorState.getActorAttribute(attr).getLevel());
 
-                Logger.debug(attr.name() + " is level: " + npc.getActorState().getActorAttribute(attr).getLevel());
-            }
-
-            inkFX.currentPluginProperty().get().getPluginDatabase().addActor(npc);
-            inkFX.getActorList().put(npc.getActorId(), npc);
+            inkFX.currentPluginProperty().get().getPluginDatabase().addNpc(npc);
+            inkFX.getObservableNpcRegistry().put(npc.getActorId(), npc);
         });
 
         Button clearNpcFormBtn = new Button("Clear Npc Form");

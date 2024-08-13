@@ -1,9 +1,9 @@
+# Implementation of class()
 http://lua-users.org/wiki/SimpleLuaClasses
-
-Implementation of class()
 
 class() uses two tricks. It allows you to construct a class using the call notation (like Dog('fido') above) by giving the class itself a metatable which defines __call. It handles inheritance by copying the fields of the base class into the derived class. This isn't the only way of doing inheritance; we could make __index a function which explicitly tries to look a function up in the base class(es). But this method will give better performance, at a cost of making the class objects somewhat fatter. Each derived class does keep a field _base that contains the base class, but this is to implement is_a. 
 
+```lua
 -- class.lua
 -- Compatible with Lua 5.1 (not 5.0).
 function class(base, init)
@@ -49,12 +49,14 @@ function class(base, init)
    setmetatable(c, mt)
    return c
 end
+```
 
---------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 
 
 TO USE WITH PAPER FOLLOW THE FOLLOWING SYNTAX
 
+```lua
 Animal = class(function(a,name)
    a.name = name
 end)
@@ -83,4 +85,4 @@ Lion = class(Cat)
 function Lion:speak()
   return 'roar'
 end
-
+```

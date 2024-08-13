@@ -50,7 +50,7 @@ public class LocationView extends Region {
 
         locationNpcs.getItems().clear();
         for (String str : location.getLocationState().getLocationNpcIds()) {
-            Npc npc = ((Npc) Paper.DATABASE.getActor(str));
+            Npc npc = ((Npc) Paper.DATABASE.getNpc(str));
             locationNpcs.getItems().add(npc);
         }
 

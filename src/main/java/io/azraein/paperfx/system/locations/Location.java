@@ -6,6 +6,7 @@ import java.util.List;
 
 import io.azraein.paperfx.system.Paper;
 import io.azraein.paperfx.system.actors.Npc;
+import io.azraein.paperfx.system.locations.buildings.Building;
 
 public class Location implements Serializable {
 
@@ -29,11 +30,15 @@ public class Location implements Serializable {
 	public void update() {
 
 		for (String npcId : locationState.getLocationNpcIds()) {
-			Npc npc = ((Npc) Paper.DATABASE.getActor(npcId));
+			Npc npc = Paper.DATABASE.getNpc(npcId);
 			npc.updateActor();
 		}
 
 		// Update the location buildings as well just incase they have npcs.
+		for (String buildingId : locationBuildingIds) {
+			Building building = Paper.DATABASE.getBuilding(buildingId);
+			building.update();
+		}
 
 	}
 

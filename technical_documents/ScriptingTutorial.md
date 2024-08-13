@@ -1,6 +1,6 @@
 # Putting Pen to Paper - A Shitty Half Assed Scripting Tutorial 
 
-PaperFX Uses Lua as it's scripting engine, the Scripting Todo List.txt holds all of the Globals that are introduced with the engine. Here is how to use each new added feature along with how to create scripts that work with PaperFX. 
+PaperFX Uses LuaJ as it's scripting engine, the Scripting Todo List.txt holds all of the Globals that are introduced with the engine. Here is how to use each new added feature along with how to create scripts that work with PaperFX. 
 
 # The Main Script Template
 
@@ -64,7 +64,7 @@ The "Engine" provides a few Scripting Globals that you can call straight from Lu
 
     * class - A small lua snippet that allows you to create class like objects
 
-To call the a Java Method from lua do the following
+To call a Java Method from lua do the following
 
 ```lua
 paper.database:getGlobal("")

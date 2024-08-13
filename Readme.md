@@ -31,9 +31,12 @@ WIP
 
 
 ## Technical Documents
+
+A [markdown document](technical_documents/LuaSimpleClass.md) that describes the Lua Simple Class implementation. 
+
 A [doc](technical_documents/File%20Formats.txt) that describes the File Formats used by both Paper and Ink.
 
-A [TODO](technical_documents/Paper%20Engine%20TODO%20List.txt) list detailing what I want to tackle for a myriad of different topics. 
+A [TODO](technical_documents/todolist.md) list detailing what I want to tackle for a myriad of different topics. 
 
 A [Script Tutorial](technical_documents/ScriptingTutorial.md) of sorts. I'll try to write it as I fill out the engine. 
 

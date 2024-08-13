@@ -43,7 +43,7 @@ public class CharacterCreationDialog extends Dialog<Player> {
         playerNameFld = new TextField();
 
         playerRaceBox = new ComboBox<>();
-        playerRaceBox.getItems().addAll(Paper.DATABASE.getRaceList().values());
+        playerRaceBox.getItems().addAll(Paper.DATABASE.getActorRaceRegistry().values());
         playerRaceBox.setConverter(new StringConverter<ActorRace>() {
 
             @Override
@@ -69,7 +69,7 @@ public class CharacterCreationDialog extends Dialog<Player> {
         });
 
         playerClassBox = new ComboBox<>();
-        playerClassBox.getItems().addAll(Paper.DATABASE.getActorClassList().values());
+        playerClassBox.getItems().addAll(Paper.DATABASE.getActorClassRegistry().values());
         playerClassBox.setConverter(new StringConverter<ActorClass>() {
 
             @Override
@@ -181,16 +181,17 @@ public class CharacterCreationDialog extends Dialog<Player> {
         getDialogPane().setMaxHeight(650);
     }
 
-    public Player showDialog() {
+    public void showDialog() {
         Optional<Player> player = this.showAndWait();
 
         if (player.isPresent()) {
             Player p = player.get();
             Paper.PAPER_PLAYER_PROPERTY.set(p);
-            return p;
+        } else {
+            Logger.debug("FUCK, Can't load player");
+            return;
         }
 
-        return null;
     }
 
 }

@@ -118,7 +118,7 @@ public class PaperFX extends Application {
 
 		// If the Main Script pushed any global variables, we'll finally copy those into
 		// the global observable
-		for (Entry<String, Object> entry : Paper.DATABASE.getGlobalList().entrySet()) {
+		for (Entry<String, Object> entry : Paper.DATABASE.getGlobalRegistry().entrySet()) {
 			Logger.debug("tossing global: " + entry.getKey() + " into the observable");
 			Paper.PAPER_GAME_GLOBALS.put(entry.getKey(), entry.getValue());
 		}

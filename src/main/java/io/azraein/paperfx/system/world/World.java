@@ -12,6 +12,8 @@ import io.azraein.paperfx.system.actors.Player;
 import io.azraein.paperfx.system.io.SaveSystem;
 import io.azraein.paperfx.system.locations.Location;
 import io.azraein.paperfx.system.locations.LocationState;
+import io.azraein.paperfx.system.locations.buildings.Building;
+import io.azraein.paperfx.system.locations.buildings.BuildingState;
 
 public class World implements Serializable {
 
@@ -23,8 +25,8 @@ public class World implements Serializable {
     private String currentLocationId;
 
     private Map<String, LocationState> worldLocationStates;
+    private Map<String, BuildingState> worldBuildingStates;
     private Map<String, ActorState> worldActorStates;
-
     private Map<String, Object> worldGlobals;
 
     private transient float lastClockUpdate = 0;
@@ -32,6 +34,8 @@ public class World implements Serializable {
 
     public World() {
         worldLocationStates = new HashMap<>();
+        worldBuildingStates = new HashMap<>();
+
         worldActorStates = new HashMap<>();
         worldGlobals = new HashMap<>();
 
@@ -62,6 +66,13 @@ public class World implements Serializable {
         }
 
         worldLocationStates.put(location.getLocationId(), location.getLocationState());
+    }
+
+    public void addBuildingState(Building building) {
+        if (worldBuildingStates.containsValue(building.getBuildingState()))
+            worldBuildingStates.remove(building.getBuildingId());
+
+        worldBuildingStates.put(building.getBuildingId(), building.getBuildingState());
     }
 
     public void addActorState(Actor actor) {
@@ -96,6 +107,10 @@ public class World implements Serializable {
 
     public Map<String, LocationState> getWorldLocationStates() {
         return worldLocationStates;
+    }
+
+    public Map<String, BuildingState> getWorldBuildingStates() {
+        return worldBuildingStates;
     }
 
     public Map<String, ActorState> getWorldActorStates() {

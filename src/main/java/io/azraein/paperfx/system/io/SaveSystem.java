@@ -7,6 +7,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Map.Entry;
 
 import org.tinylog.Logger;
 
@@ -17,6 +18,7 @@ import com.google.gson.GsonBuilder;
 import io.azraein.paperfx.system.Options;
 import io.azraein.paperfx.system.Paper;
 import io.azraein.paperfx.system.actors.Actor;
+import io.azraein.paperfx.system.actors.ActorState;
 import io.azraein.paperfx.system.exceptions.IncompatiblePluginVersionException;
 import io.azraein.paperfx.system.exceptions.IncompatibleSaveVersionException;
 import io.azraein.paperfx.system.exceptions.PluginCorruptionException;
@@ -24,6 +26,8 @@ import io.azraein.paperfx.system.exceptions.SaveCorruptionException;
 import io.azraein.paperfx.system.io.plugins.PaperPlugin;
 import io.azraein.paperfx.system.io.plugins.PaperPluginMetadata;
 import io.azraein.paperfx.system.io.type_adapters.ActorTypeAdapter;
+import io.azraein.paperfx.system.locations.LocationState;
+import io.azraein.paperfx.system.locations.buildings.BuildingState;
 import io.azraein.paperfx.system.world.World;
 
 public class SaveSystem {
@@ -130,6 +134,22 @@ public class SaveSystem {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+
+		// Load All the Saved states to the objects it needs to.
+		for (Entry<String, LocationState> worldLS : world.getWorldLocationStates().entrySet())
+			Paper.DATABASE.getLocation(worldLS.getKey()).setLocationState(worldLS.getValue());
+
+		for (Entry<String, BuildingState> worldBS : world.getWorldBuildingStates().entrySet())
+			Paper.DATABASE.getBuilding(worldBS.getKey()).setBuildingState(worldBS.getValue());
+
+		for (Entry<String, ActorState> worldAS : world.getWorldActorStates().entrySet())
+			Paper.DATABASE.getNpc(worldAS.getKey()).setActorState(worldAS.getValue());
+
+		// Load the Data from the Save into the objects
+		Paper.CALENDAR = world.getCalendar();
+		Paper.PAPER_GAME_GLOBALS.putAll(world.getWorldGlobalsMap());
+		Paper.PAPER_PLAYER_PROPERTY.set(world.getPlayer());
+		Paper.PAPER_LOCATION_PROPERTY.set(Paper.DATABASE.getLocation((world.getCurrentLocationId())));
 
 		return world;
 	}

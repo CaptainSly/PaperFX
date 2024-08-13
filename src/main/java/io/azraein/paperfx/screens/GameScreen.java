@@ -1,7 +1,6 @@
 package io.azraein.paperfx.screens;
 
 import java.io.File;
-import java.util.Map.Entry;
 import java.util.Optional;
 
 import io.azraein.paperfx.PaperFX;
@@ -12,13 +11,12 @@ import io.azraein.paperfx.controls.PlayerControls;
 import io.azraein.paperfx.controls.dialog.SavePlayerFileDialog;
 import io.azraein.paperfx.controls.dialog.player.PlayerJournalDialog;
 import io.azraein.paperfx.system.Paper;
-import io.azraein.paperfx.system.actors.ActorState;
 import io.azraein.paperfx.system.actors.Npc;
 import io.azraein.paperfx.system.exceptions.IncompatibleSaveVersionException;
 import io.azraein.paperfx.system.exceptions.SaveCorruptionException;
 import io.azraein.paperfx.system.io.SaveSystem;
 import io.azraein.paperfx.system.io.plugins.PaperPlugin;
-import io.azraein.paperfx.system.locations.LocationState;
+import io.azraein.paperfx.system.locations.buildings.Building;
 import io.azraein.paperfx.system.world.World;
 import javafx.animation.AnimationTimer;
 import javafx.geometry.Insets;
@@ -77,8 +75,15 @@ public class GameScreen extends PaperScreen {
                     // Throw the Old Location's State into the Worlds
                     world.addLocationState(oldValue);
 
+                    // Get the Buildings from the old location and add their states as well.
+                    for (String buildingId : oldValue.getLocationBuildingIds()) {
+                        Building building = Paper.DATABASE.getBuilding(buildingId);
+                        world.addBuildingState(building);
+                    }
+
+                    // Finally add all the npc states that were there.
                     for (String npcId : oldValue.getLocationState().getLocationNpcIds()) {
-                        Npc npc = ((Npc) Paper.DATABASE.getActor(npcId));
+                        Npc npc = Paper.DATABASE.getNpc(npcId);
                         world.addActorState(npc);
                     }
                 }
@@ -86,34 +91,10 @@ public class GameScreen extends PaperScreen {
             }
         });
 
-        Paper.PAPER_WORLD_PROPERTY.addListener((observable, oldValue, newValue) -> {
-
-            if (newValue != null) {
-                // Loading a Saved Game
-                Paper.PAPER_LOCATION_PROPERTY.set(Paper.DATABASE.getLocation((newValue.getCurrentLocationId())));
-                Paper.PAPER_GAME_GLOBALS.putAll(newValue.getWorldGlobalsMap());
-
-                // Load the Location States in to the Locations
-                for (Entry<String, LocationState> entry : Paper.PAPER_WORLD_PROPERTY.get().getWorldLocationStates()
-                        .entrySet())
-                    Paper.DATABASE.getLocation(entry.getKey()).setLocationState(entry.getValue());
-
-                // Load the Actor States in to the Actors
-                for (Entry<String, ActorState> entry : Paper.PAPER_WORLD_PROPERTY.get().getWorldActorStates()
-                        .entrySet())
-                    Paper.DATABASE.getActor(entry.getKey()).setActorState(entry.getValue());
-
-                if (newValue.getPlayer() != null) {
-                    Paper.PAPER_PLAYER_PROPERTY.set(newValue.getPlayer());
-                }
-
-            }
-
-        });
-
         Paper.PAPER_PLAYER_PROPERTY.addListener((observable, oldValue, newValue) -> {
 
             if (newValue != null) {
+                Paper.PAPER_WORLD_PROPERTY.get().setPlayer(newValue);
                 playerJournalDialog = new PlayerJournalDialog();
             }
 
@@ -141,7 +122,7 @@ public class GameScreen extends PaperScreen {
                 SaveSystem.savePlayerFile(Paper.PAPER_WORLD_PROPERTY.get(), filePath);
             }
 
-        }); 
+        });
         MenuItem loadGame = new MenuItem("Load Game");
         loadGame.setOnAction(event -> {
             FileChooser fc = new FileChooser();
@@ -153,6 +134,7 @@ public class GameScreen extends PaperScreen {
             if (saveFile.exists()) {
                 try {
                     World world = SaveSystem.loadPlayerFile(saveFile.getAbsolutePath());
+                    Paper.CALENDAR = world.getCalendar();
                     Paper.PAPER_WORLD_PROPERTY.set(world);
                 } catch (SaveCorruptionException | IncompatibleSaveVersionException e) {
                     e.printStackTrace();

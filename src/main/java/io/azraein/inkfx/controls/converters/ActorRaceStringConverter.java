@@ -22,7 +22,7 @@ public class ActorRaceStringConverter extends StringConverter<ActorRace> {
 
     @Override
     public ActorRace fromString(String string) {
-        return inkFX.getRaceList().get(string);
+        return inkFX.getObservableActorRaceRegistry().get(string);
     }
 
 }

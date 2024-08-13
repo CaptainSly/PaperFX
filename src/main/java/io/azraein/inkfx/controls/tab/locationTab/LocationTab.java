@@ -5,7 +5,6 @@ import org.tinylog.Logger;
 import io.azraein.inkfx.InkFX;
 import io.azraein.inkfx.controls.tab.PaperEditorTab;
 import io.azraein.paperfx.system.Utils;
-import io.azraein.paperfx.system.actors.Actor;
 import io.azraein.paperfx.system.actors.Npc;
 import io.azraein.paperfx.system.io.Database;
 import io.azraein.paperfx.system.locations.Direction;
@@ -57,9 +56,9 @@ public class LocationTab extends PaperEditorTab {
 
                         if (inkFX.currentPluginProperty().get() != null) {
                             Database curPluginDb = inkFX.currentPluginProperty().get().getPluginDatabase();
-                            if (curPluginDb.getLocationList().containsKey(location.getLocationId())) {
-                                curPluginDb.getLocationList().remove(location.getLocationId());
-                                inkFX.getLocationList().remove(location.getLocationId());
+                            if (curPluginDb.getLocationRegistry().containsKey(location.getLocationId())) {
+                                curPluginDb.getLocationRegistry().remove(location.getLocationId());
+                                inkFX.getObservableLocationRegistry().remove(location.getLocationId());
                             }
                         }
                     });
@@ -82,13 +81,14 @@ public class LocationTab extends PaperEditorTab {
 
                 locationNpcsLV.getItems().clear();
                 for (String npcId : newValue.getLocationState().getLocationNpcIds()) {
-                    Npc npc = ((Npc) inkFX.getActorList().get(npcId));
+                    Npc npc = inkFX.getObservableNpcRegistry().get(npcId);
                     locationNpcsLV.getItems().add(npc);
                 }
 
                 for (Direction dir : Direction.values()) {
                     locationNeighborIdFlds[dir.ordinal()].setText("");
-                    Location neighbor = inkFX.getLocationList().get(newValue.getLocationNeighbors()[dir.ordinal()]);
+                    Location neighbor = inkFX.getObservableLocationRegistry()
+                            .get(newValue.getLocationNeighbors()[dir.ordinal()]);
                     locationNeighborSelectors[dir.ordinal()].getSelectionModel().select(dir.ordinal());
                     if (neighbor != null) {
                         locationNeighborIdFlds[dir.ordinal()].setText(neighbor.getLocationId());
@@ -98,7 +98,7 @@ public class LocationTab extends PaperEditorTab {
                 // TODO Implement Buildings and Creature class, then finish this.
             }
         });
-        dbLocationLV.getItems().addAll(inkFX.getLocationList().values());
+        dbLocationLV.getItems().addAll(inkFX.getObservableLocationRegistry().values());
 
         locationIdFld = new TextField();
         locationNameFld = new TextField();
@@ -133,9 +133,7 @@ public class LocationTab extends PaperEditorTab {
         });
 
         ComboBox<Npc> locationNpcSelector = new ComboBox<>();
-        for (Actor actor : inkFX.getActorList().values()) {
-            locationNpcSelector.getItems().add((Npc) actor);
-        }
+        locationNpcSelector.getItems().addAll(inkFX.getObservableNpcRegistry().values());
         locationNpcSelector.setConverter(new StringConverter<Npc>() {
 
             @Override
@@ -147,7 +145,7 @@ public class LocationTab extends PaperEditorTab {
 
             @Override
             public Npc fromString(String string) {
-                return null;
+                return inkFX.getObservableNpcRegistry().get(string);
             }
         });
         locationNpcSelector.setCellFactory((listView) -> new ListCell<Npc>() {
@@ -163,23 +161,18 @@ public class LocationTab extends PaperEditorTab {
             }
 
         });
-        inkFX.getActorList().addListener(new MapChangeListener<String, Actor>() {
+        inkFX.getObservableNpcRegistry().addListener((MapChangeListener<String, Npc>) change -> {
 
-            @Override
-            public void onChanged(Change<? extends String, ? extends Actor> change) {
-
-                if (change.wasAdded()) {
-                    if (inkFX.currentPluginProperty().get().getPluginDatabase().getActorList()
-                            .containsKey(change.getKey())) {
-                        locationNpcSelector.getItems().remove((Npc) change.getValueRemoved());
-                        locationNpcSelector.getItems().add((Npc) change.getValueAdded());
-                    } else {
-                        locationNpcSelector.getItems().add((Npc) change.getValueAdded());
-                    }
-                } else if (change.wasRemoved()) {
-                    locationNpcSelector.getItems().remove((Npc) change.getValueRemoved());
+            if (change.wasAdded()) {
+                if (inkFX.currentPluginProperty().get().getPluginDatabase().getNpcRegistry()
+                        .containsKey(change.getKey())) {
+                    locationNpcSelector.getItems().remove(change.getValueRemoved());
+                    locationNpcSelector.getItems().add(change.getValueAdded());
+                } else {
+                    locationNpcSelector.getItems().add(change.getValueAdded());
                 }
-
+            } else if (change.wasRemoved()) {
+                locationNpcSelector.getItems().remove(change.getValueRemoved());
             }
 
         });
@@ -216,7 +209,7 @@ public class LocationTab extends PaperEditorTab {
             });
 
             locationNeighborSelectors[i] = new ComboBox<Location>();
-            locationNeighborSelectors[i].getItems().addAll(inkFX.getLocationList().values());
+            locationNeighborSelectors[i].getItems().addAll(inkFX.getObservableLocationRegistry().values());
             locationNeighborSelectors[i].getSelectionModel().select(Direction.values()[i].ordinal());
             locationNeighborSelectors[i].setConverter(new StringConverter<Location>() {
 
@@ -230,7 +223,7 @@ public class LocationTab extends PaperEditorTab {
 
                 @Override
                 public Location fromString(String string) {
-                    return null;
+                    return inkFX.getObservableLocationRegistry().get(string);
                 }
 
             });
@@ -255,7 +248,7 @@ public class LocationTab extends PaperEditorTab {
                 String locationId = locationNeighborIdFlds[dir.ordinal()].getText();
 
                 Location neighbor;
-                neighbor = inkFX.getLocationList().get(locationId);
+                neighbor = inkFX.getObservableLocationRegistry().get(locationId);
 
                 // if we're null, fuck it.
                 if (neighbor == null)
@@ -272,7 +265,7 @@ public class LocationTab extends PaperEditorTab {
             // TODO: Buildings and Creatures once they're implemented
 
             inkFX.currentPluginProperty().get().getPluginDatabase().addLocation(location);
-            inkFX.getLocationList().put(location.getLocationId(), location);
+            inkFX.getObservableLocationRegistry().put(location.getLocationId(), location);
         });
 
         Button clearLocationFormBtn = new Button("Clear Location");
@@ -292,12 +285,12 @@ public class LocationTab extends PaperEditorTab {
             }
         });
 
-        inkFX.getLocationList().addListener(new MapChangeListener<String, Location>() {
+        inkFX.getObservableLocationRegistry().addListener(new MapChangeListener<String, Location>() {
 
             @Override
             public void onChanged(Change<? extends String, ? extends Location> change) {
                 if (change.wasAdded()) {
-                    if (inkFX.currentPluginProperty().get().getPluginDatabase().getLocationList()
+                    if (inkFX.currentPluginProperty().get().getPluginDatabase().getLocationRegistry()
                             .containsKey(change.getKey())) {
                         dbLocationLV.getItems().remove(change.getValueRemoved());
                         dbLocationLV.getItems().add(change.getValueAdded());
