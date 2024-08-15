@@ -17,5 +17,4 @@ jobs:
       - name: Run snapshot action
         uses: mikepenz/gradle-dependency-submission@{latest}
         with:
-          gradle-project-path: "gradle-example"
-          gradle-build-module: ":app"
+          gradle-project-path: "PaperFX/"
