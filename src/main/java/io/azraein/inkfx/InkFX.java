@@ -22,6 +22,7 @@ import io.azraein.paperfx.system.actors.classes.ActorRace;
 import io.azraein.paperfx.system.exceptions.IncompatiblePluginVersionException;
 import io.azraein.paperfx.system.exceptions.PluginCorruptionException;
 import io.azraein.paperfx.system.inventory.items.Item;
+import io.azraein.paperfx.system.inventory.items.Lootlist;
 import io.azraein.paperfx.system.io.Database;
 import io.azraein.paperfx.system.io.SaveSystem;
 import io.azraein.paperfx.system.io.plugins.PaperPlugin;
@@ -29,6 +30,7 @@ import io.azraein.paperfx.system.io.plugins.PaperPluginLoader;
 import io.azraein.paperfx.system.io.plugins.PaperPluginMetadata;
 import io.azraein.paperfx.system.locations.Location;
 import io.azraein.paperfx.system.locations.buildings.Building;
+import io.azraein.paperfx.system.quest.Quest;
 import javafx.application.Application;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -60,11 +62,13 @@ public class InkFX extends Application {
 	// Everything gets loaded here, but nothing gets saved.
 	private final ObservableMap<String, Object> observableGlobalRegistry = FXCollections.observableHashMap();
 	private final ObservableMap<String, Item> observableItemRegistry = FXCollections.observableHashMap();
+	private final ObservableMap<String, Lootlist> observableLootlistRegistry = FXCollections.observableHashMap();
 	private final ObservableMap<String, ActorRace> observableActorRaceRegistry = FXCollections.observableHashMap();
 	private final ObservableMap<String, ActorClass> observableActorClassRegistry = FXCollections.observableHashMap();
 	private final ObservableMap<String, Npc> observableNpcRegistry = FXCollections.observableHashMap();
 	private final ObservableMap<String, Building> observableBuildingRegistry = FXCollections.observableHashMap();
 	private final ObservableMap<String, Location> observableLocationRegistry = FXCollections.observableHashMap();
+	private final ObservableMap<String, Quest> observableQuestRegistry = FXCollections.observableHashMap();
 
 	public static final String PLUGIN_METADATA_SCREEN = "pluginMetadata";
 	public static final String PLUGIN_CONTENT_EDITOR_SCREEN = "pluginContent";
@@ -276,6 +280,8 @@ public class InkFX extends Application {
 		this.getObservableNpcRegistry().putAll(database.getNpcRegistry());
 		this.getObservableBuildingRegistry().putAll(database.getBuildingRegistry());
 		this.getObservableLocationRegistry().putAll(database.getLocationRegistry());
+		this.getObservableQuestRegistry().putAll(database.getQuestRegistry());
+		this.getObservableLootlistRegistry().putAll(database.getLootlistRegistry());
 	}
 
 	public void clearDatabase() {
@@ -286,6 +292,8 @@ public class InkFX extends Application {
 		this.getObservableNpcRegistry().clear();
 		this.getObservableLocationRegistry().clear();
 		this.getObservableBuildingRegistry().clear();
+		this.getObservableQuestRegistry().clear();
+		this.getObservableLootlistRegistry().clear();
 	}
 
 	public void swapScreens(String screenId) {
@@ -308,12 +316,20 @@ public class InkFX extends Application {
 		return observableGlobalRegistry;
 	}
 
+	public ObservableMap<String, Quest> getObservableQuestRegistry() {
+		return observableQuestRegistry;
+	}
+
 	public ObservableMap<String, Building> getObservableBuildingRegistry() {
 		return observableBuildingRegistry;
 	}
 
 	public ObservableMap<String, Item> getObservableItemRegistry() {
 		return observableItemRegistry;
+	}
+
+	public ObservableMap<String, Lootlist> getObservableLootlistRegistry() {
+		return observableLootlistRegistry;
 	}
 
 	public ObservableMap<String, ActorRace> getObservableActorRaceRegistry() {

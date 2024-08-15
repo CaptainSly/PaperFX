@@ -7,6 +7,11 @@ import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 
 import io.azraein.paperfx.PaperFX;
 import io.azraein.paperfx.system.Paper;
+import io.azraein.paperfx.system.io.scripting.lib.PaperUtilFunctions.PaperLuaLocationSetter;
+import io.azraein.paperfx.system.io.scripting.lib.PaperUtilFunctions.PaperLuaSetCalendarDate;
+import io.azraein.paperfx.system.io.scripting.lib.PaperUtilFunctions.PaperLuaSetCalendarDaysMonths;
+import io.azraein.paperfx.system.io.scripting.lib.PaperUtilFunctions.PaperLuaSetCalendarTime;
+import io.azraein.paperfx.system.io.scripting.lib.PaperUtilFunctions.PaperLuaSetCalendarYear;
 
 public class PaperLib extends TwoArgFunction {
 
@@ -20,10 +25,19 @@ public class PaperLib extends TwoArgFunction {
         paperTable.set("database", CoerceJavaToLua.coerce(Paper.DATABASE));
         paperTable.set("ppl", CoerceJavaToLua.coerce(Paper.PPL));
         paperTable.set("ini", CoerceJavaToLua.coerce(Paper.INI));
-        paperTable.set("location", CoerceJavaToLua.coerce(Paper.PAPER_LOCATION_PROPERTY));
         paperTable.set("calendar", CoerceJavaToLua.coerce(Paper.CALENDAR));
         paperTable.set("world", CoerceJavaToLua.coerce(Paper.PAPER_WORLD_PROPERTY));
         paperTable.set("player", CoerceJavaToLua.coerce(Paper.PAPER_PLAYER_PROPERTY));
+
+        // Location Helper Methods (functions)
+        paperTable.set("setLocation", new PaperLuaLocationSetter());
+
+        // Calendar Helper Methods (functions)
+        paperTable.set("setCalendarDM", new PaperLuaSetCalendarDaysMonths());
+        paperTable.set("setCalendarYear", new PaperLuaSetCalendarYear());
+        paperTable.set("setCalendarTime", new PaperLuaSetCalendarTime());
+        paperTable.set("setCalendarDate", new PaperLuaSetCalendarDate());
+
 
         // Set Globals
         setGlobal(env, "paper", paperTable);

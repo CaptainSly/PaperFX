@@ -6,8 +6,8 @@ PaperFX Uses LuaJ as it's scripting engine, the Scripting Todo List.txt holds al
 
 If you're creating a game for Paper, chances are you're going to want to actually start the game or create some system critical things for it. Well to do so you're going to need to create a Main Script File. It can be called whatever you want, and you're able to select the script when you create a plugin using Ink. The Main Script has some special functions that need to be present in order for it to be able to operate correctly. 
 
-* The onInit() function
-* The onNewGame() function
+* The ```onInit()``` function
+* The ```onNewGame()``` function
 
 Below is a template for the Main Script File
 
@@ -33,22 +33,22 @@ function onNewGame()
 end
 ```
 
-The onInit method is called once the Engine has fully loaded all the plugins and is ready to switch to the Main Menu. Right before switching, it initializes the Main Script. 
+The ```onInit``` method is called once the Engine has fully loaded all the plugins and is ready to switch to the Main Menu. Right before switching, it initializes the Main Script. 
 
 **WARNING IF YOU LOAD MULTIPLE MAIN PLUGINS WITH A MAIN SCRIPT FILE, THE LAST LOADED PLUGIN WILL HAVE ITS SCRIPT TAKE EFFECT, THIS IS TO ENSURE COMPATIBILITY**
 
-## What can I not do inside onInit()? 
+## What can I not do inside ```onInit()```? 
 
-onInit() is called after Plugin Load, but before game start. You have access to the JavaFX thread and components, but the Game World is not yet loaded in.
+```onInit()``` is called after Plugin Load, but before game start. You have access to the JavaFX thread and components, but the Game World is not yet loaded in.
 
-DO NOT SET ANY OF THE FOLLOWING IN onInit!
+DO NOT SET ANY OF THE FOLLOWING IN ```onInit()```!
     * calendar
 
 
 
-## What can I not do inside onNewGame()?
+## What can I not do inside ```onNewGame()```?
 
-onNewGame() is called once the New Game Button in the Main Menu is clicked. You should set the location and setup anything you think needs to be setup before the player gets to create their character. Once the new game button is clicked and the player creates their character, most of the engines features should be available to the scripting engine. 
+```onNewGame()``` is called once the New Game Button in the Main Menu is clicked. You should set the location and setup anything you think needs to be setup before the player gets to create their character. Once the new game button is clicked and the player creates their character, most of the engines features should be available to the scripting engine. 
 
 ## Default Scripting Globals
 
@@ -114,3 +114,29 @@ end
 ```
 
 Theoretically you can add as many days and months as you like, though it'll make your years take forever as each month is 4 weeks. It's recommended to keep it to at least 7 days, 12 months or smaller. Days can not have differing number of days, as they the engine isn't programmed for that. Each month will have numOfDays * 4. 
+
+
+## Items
+
+Item scripts need to have an ```onUse(player)``` function to be able to work. 
+
+Example Consumable Item Script
+
+```lua
+
+--[[
+
+    Name: Paper Engine Item Script File Template. 
+    Author: Insert Your Name Here
+    Type: Item Script File
+    Plugin: Plugin Id
+
+--]]
+
+local healAmount = 25
+
+function onUse(player)
+    player:getActorState():addHp(healAmount)
+end
+
+```

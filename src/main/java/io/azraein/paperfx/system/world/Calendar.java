@@ -8,13 +8,12 @@ public class Calendar implements Serializable {
 
     private static final long serialVersionUID = 1861797232380365886L;
 
-    private int currentMinute, currentHour, currentDay, currentWeek, currentMonth, currentYear;
+    private int currentMinute, currentHour, currentDay, currentMonth, currentYear;
 
     private int currentDaySelector = 0;
     private int currentMonthSelector = 0;
 
     private int daysInMonth = 24;
-    private int weeksInMonth = 4;
 
     private String era = "";
 
@@ -27,44 +26,39 @@ public class Calendar implements Serializable {
 
     public Calendar() {
         currentMinute = 0;
-        currentHour = 12;
+        currentHour = 0;
         currentDay = 1;
-        currentWeek = 1;
         currentMonth = 1;
         currentYear = 1;
     }
 
     public void update() {
         currentMinute++;
-        if (currentMinute >= 60) {
-            currentMinute = 0;
-            currentHour++;
-            if (currentHour >= 24) {
-                currentHour = 0;
-                currentDay++;
-                if (currentDay > daysInMonth) {
-                    currentDay = 1;
-                    currentWeek++;
-                    currentDaySelector++;
+        if (currentMinute >= 60) { // We've gone over an hour
+            currentMinute = 0; // Set minutes back to 0
+            currentHour++; // Increase hour by 1
 
-                    if (currentDaySelector >= days.length)
-                        currentDaySelector = 0;
+            if (currentHour >= 24) { // It's been an entire day!
+                currentHour = 0; // Set the hour back to 0
+                currentDay++; // Increase day by 1
+                currentDaySelector++; // Increase the dayselector by 1
 
-                    if (currentDay > days.length * weeksInMonth)
-                        currentDay = 1;
+                if (currentDaySelector >= days.length) // Is the dayselector greater than or equal to it's length?
+                    currentDaySelector = 0; // Set it back to 0
 
-                    if (currentWeek > weeksInMonth) {
-                        currentWeek = 1;
-                        currentMonth++;
-                        currentMonthSelector++;
+                if (currentDay > daysInMonth) { // Did the days surpass the amount in a month?
+                    currentDay = 1; // Back to day 1
+                    currentMonth++; // increase the month by 1
+                    currentMonthSelector++; // Increase the month selector by 1
 
-                        if (currentMonthSelector >= months.length)
-                            currentMonthSelector = 0;
+                    if (currentMonthSelector >= months.length) // Is the monthselector greater than or equal to it's
+                                                               // length?
+                        currentMonthSelector = 0; // Set it back to 0
 
-                        if (currentMonth > months.length) {
-                            currentMonth = 1;
-                            currentYear++;
-                        }
+                    if (currentMonth > months.length) { // Did the amount of days surpass the amount of months the
+                                                        // exist?
+                        currentMonth = 1; // Welp set it back to 1
+                        currentYear++; // Increase the year by 1
                     }
                 }
             }
@@ -83,6 +77,28 @@ public class Calendar implements Serializable {
 
     public void setEra(String era) {
         this.era = era;
+    }
+
+    public void setYear(int currentYear) {
+        this.currentYear = currentYear;
+    }
+
+    public void setCurrentMonth(int currentMonth) {
+        this.currentMonth = currentMonth;
+        currentMonthSelector = currentMonth - 1;
+    }
+
+    public void setCurrentDay(int currentDay) {
+        this.currentDay = currentDay;
+        currentDaySelector = currentDay - 1;
+    }
+
+    public void setCurrentMinute(int currentMinute) {
+        this.currentMinute = currentMinute;
+    }
+
+    public void setCurrentHour(int currentHour) {
+        this.currentHour = currentHour;
     }
 
     public String getTimeAsString() {
@@ -106,10 +122,6 @@ public class Calendar implements Serializable {
         return currentDay;
     }
 
-    public int getCurrentWeek() {
-        return currentWeek;
-    }
-
     public int getCurrentMonth() {
         return currentMonth;
     }
@@ -118,14 +130,13 @@ public class Calendar implements Serializable {
         return currentYear;
     }
 
-    public int getWeeksInMonth() {
-        return weeksInMonth;
-    }
-
     public int getNormalHour() {
         int curTime = currentHour;
         if (curTime > 12)
             curTime -= 12;
+
+        if (curTime == 0)
+            curTime = 12;
 
         return curTime;
     }

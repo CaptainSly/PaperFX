@@ -9,8 +9,10 @@ import io.azraein.paperfx.system.actors.Npc;
 import io.azraein.paperfx.system.actors.classes.ActorClass;
 import io.azraein.paperfx.system.actors.classes.ActorRace;
 import io.azraein.paperfx.system.inventory.items.Item;
+import io.azraein.paperfx.system.inventory.items.Lootlist;
 import io.azraein.paperfx.system.locations.Location;
 import io.azraein.paperfx.system.locations.buildings.Building;
+import io.azraein.paperfx.system.quest.Quest;
 
 public class Database implements Serializable {
 
@@ -18,11 +20,29 @@ public class Database implements Serializable {
 
 	private Map<String, Object> globalRegistry = new HashMap<>();
 	private Map<String, Item> itemRegistry = new HashMap<>();
+	private Map<String, Lootlist> lootlistRegistry = new HashMap<>();
 	private Map<String, ActorRace> actorRaceRegistry = new HashMap<>();
 	private Map<String, ActorClass> actorClassRegistry = new HashMap<>();
 	private Map<String, Npc> npcRegistry = new HashMap<>();
 	private Map<String, Building> buildingRegistry = new HashMap<>();
 	private Map<String, Location> locationRegistry = new HashMap<>();
+	private Map<String, Quest> questRegistry = new HashMap<>();
+
+	public Lootlist getLootlist(String lootlistId) {
+		return lootlistRegistry.get(lootlistId);
+	}
+
+	public void addLootlist(Lootlist lootlist) {
+		lootlistRegistry.put(lootlist.getLootlistId(), lootlist);
+	}
+
+	public void addQuest(Quest quest) {
+		questRegistry.put(quest.getQuestId(), quest);
+	}
+
+	public Quest getQuest(String questId) {
+		return questRegistry.get(questId);
+	}
 
 	public Building getBuilding(String buildingId) {
 		return buildingRegistry.get(buildingId);
@@ -94,6 +114,8 @@ public class Database implements Serializable {
 		this.getNpcRegistry().putAll(database.getNpcRegistry());
 		this.getBuildingRegistry().putAll(database.getBuildingRegistry());
 		this.getLocationRegistry().putAll(database.getLocationRegistry());
+		this.getQuestRegistry().putAll(database.getQuestRegistry());
+		this.getLootlistRegistry().putAll(database.getLootlistRegistry());
 	}
 
 	public void mergeDatabase(Database... databases) {
@@ -113,12 +135,20 @@ public class Database implements Serializable {
 		return itemRegistry;
 	}
 
+	public Map<String, Lootlist> getLootlistRegistry() {
+		return lootlistRegistry;
+	}
+
 	public Map<String, ActorRace> getActorRaceRegistry() {
 		return actorRaceRegistry;
 	}
 
 	public Map<String, ActorClass> getActorClassRegistry() {
 		return actorClassRegistry;
+	}
+
+	public Map<String, Quest> getQuestRegistry() {
+		return questRegistry;
 	}
 
 	public Map<String, Npc> getNpcRegistry() {
@@ -132,7 +162,7 @@ public class Database implements Serializable {
 	public int getDatabaseSize() {
 		return getGlobalRegistry().size() + getItemRegistry().size() + getActorClassRegistry().size()
 				+ getActorRaceRegistry().size() + getNpcRegistry().size() + getBuildingRegistry().size()
-				+ getLocationRegistry().size();
+				+ getLocationRegistry().size() + getQuestRegistry().size() + getLootlistRegistry().size();
 	}
 
 }

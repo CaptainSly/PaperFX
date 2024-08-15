@@ -4,6 +4,7 @@ import io.azraein.inkfx.InkFX;
 import io.azraein.inkfx.controls.tab.ItemGroupTab;
 import io.azraein.inkfx.controls.tab.LocationGroupTab;
 import io.azraein.inkfx.controls.tab.NpcGroupTab;
+import io.azraein.inkfx.controls.tab.QuestGroupTab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TabPane.TabDragPolicy;
 
@@ -16,6 +17,7 @@ public class PluginContentEditorScreen extends PaperEditorScreen {
 		contentEditorTabPane.getTabs().add(new NpcGroupTab(inkFX));
 		contentEditorTabPane.getTabs().add(new LocationGroupTab(inkFX));
 		contentEditorTabPane.getTabs().add(new ItemGroupTab(inkFX));
+		contentEditorTabPane.getTabs().add(new QuestGroupTab(inkFX));
 
 		setCenter(contentEditorTabPane);
 	}

@@ -10,11 +10,11 @@ public class Inventory implements Serializable {
 
 	private static final long serialVersionUID = -5957408433436832903L;
 
-	private List<ItemSlot> inventory;
+	private List<ItemSlot> itemSlots;
 	private double inventoryWeight = 0.0;
 
 	public Inventory() {
-		inventory = new ArrayList<>();
+		itemSlots = new ArrayList<>();
 	}
 
 	public void addItem(Item item, int amount) {
@@ -42,7 +42,7 @@ public class Inventory implements Serializable {
 	public ItemSlot getFreeItemSlot() {
 		ItemSlot slot = null;
 
-		for (ItemSlot s : inventory) {
+		for (ItemSlot s : itemSlots) {
 			if (s.isEmpty()) {
 				slot = s;
 				break;
@@ -50,7 +50,7 @@ public class Inventory implements Serializable {
 		}
 
 		if (slot == null) {
-			inventory.add(new ItemSlot());
+			itemSlots.add(new ItemSlot());
 			return getFreeItemSlot();
 		}
 
@@ -60,7 +60,7 @@ public class Inventory implements Serializable {
 	public ItemSlot getItemSlotFromId(String itemId) {
 		ItemSlot slot = null;
 
-		for (ItemSlot s : inventory) {
+		for (ItemSlot s : itemSlots) {
 			if (s.getItem().getItemId().equals(itemId)) {
 				slot = s;
 				break;
@@ -72,6 +72,10 @@ public class Inventory implements Serializable {
 
 	public double getInventoryWeight() {
 		return inventoryWeight;
+	}
+
+	public List<ItemSlot> getItemSlots() {
+		return itemSlots;
 	}
 
 }

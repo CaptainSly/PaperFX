@@ -22,7 +22,5 @@ FILE_VERSION - UTF String
 UNCOMPRESSED_WORLD_BYTE_SIZE - int
 COMPRESSED_WORLD_BYTES - bytes
 
-
-TODO Update this once the World class is "Finished"
-
 ___________________________________________________
+

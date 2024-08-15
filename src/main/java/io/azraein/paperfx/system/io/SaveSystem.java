@@ -48,7 +48,7 @@ public class SaveSystem {
 	public static final String PAPER_SCRIPT_FOLDER = PAPER_DATA_FOLDER + "scripts/";
 	public static final String PAPER_SAVE_FOLDER = PAPER_FOLDER + "saves/";
 
-	public static final String[] PAPER_DATA_FOLDERS = { "data/", "data/scripts/", "saves/", "logs", };
+	public static final String[] PAPER_DATA_FOLDERS = { "data/", "data/gfx/", "data/scripts/", "saves/", "logs", };
 
 	public static final String PAPER_AUTOSAVE_NAME = "paper_autosave_";
 	private static int autoSaveCounter = 0;
@@ -147,9 +147,10 @@ public class SaveSystem {
 
 		// Load the Data from the Save into the objects
 		Paper.CALENDAR = world.getCalendar();
-		Paper.PAPER_GAME_GLOBALS.putAll(world.getWorldGlobalsMap());
+		Paper.PAPER_WORLD_PROPERTY.set(world);
 		Paper.PAPER_PLAYER_PROPERTY.set(world.getPlayer());
 		Paper.PAPER_LOCATION_PROPERTY.set(Paper.DATABASE.getLocation((world.getCurrentLocationId())));
+		Paper.PAPER_GAME_GLOBALS.putAll(world.getWorldGlobalsMap());
 
 		return world;
 	}

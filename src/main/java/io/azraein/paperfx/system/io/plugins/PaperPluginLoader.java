@@ -101,7 +101,13 @@ public class PaperPluginLoader {
 						if (!sortedPlugins.contains(metadata.getPluginId())) {
 							Logger.debug("Adding MAIN Plugin: " + metadata.getPluginId());
 							Logger.debug("MAIN Plugin Main Script: " + metadata.getPluginMainScript());
-							pluginMainScript = metadata.getPluginMainScript();
+
+							// Don't want to accidentally set the Main Script to Null or "", that would fuck
+							// a lot up.
+
+							if (!metadata.getPluginMainScript().isEmpty())
+								pluginMainScript = metadata.getPluginMainScript();
+
 							sortedPlugins.add(metadata.getPluginId());
 							visited.add(pluginId);
 							break;

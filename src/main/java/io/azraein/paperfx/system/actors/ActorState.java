@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import org.tinylog.Logger;
 
+import io.azraein.paperfx.system.Paper;
 import io.azraein.paperfx.system.Utils;
 import io.azraein.paperfx.system.actors.classes.ActorClass;
 import io.azraein.paperfx.system.actors.classes.ActorRace;
@@ -65,6 +66,8 @@ public class ActorState implements Serializable {
 		initializeSkills();
 
 		actorCarryWeight = actorAttributes[Attribute.STRENGTH.ordinal()].getLevel() * 5;
+		actorCurrentHp = actorMaxHp = (actorAttributes[Attribute.CONSTITUTION.ordinal()].getLevel() * 2);
+		actorCurrentMp = actorMaxMp = (actorAttributes[Attribute.INTELLIGENCE.ordinal()].getLevel() * 2);
 	}
 
 	private void initializeAttributes() {
@@ -116,8 +119,8 @@ public class ActorState implements Serializable {
 	public void levelUp() {
 		actorLevel++;
 
-		// TODO Adjust Stats on level up. I dunno how yet.
-
+		actorMaxHp += Math.ceil(actorAttributes[Attribute.CONSTITUTION.ordinal()].getLevel() / 10);
+		actorMaxMp += Math.ceil(actorAttributes[Attribute.INTELLIGENCE.ordinal()].getLevel() / 10);
 	}
 
 	public void useSkill(Skill skill, int expGained) {
@@ -189,11 +192,11 @@ public class ActorState implements Serializable {
 	}
 
 	public ActorRace getActorCharacterRace() {
-		return actorRace;
+		return Paper.DATABASE.getCharacterRace(actorRaceId);
 	}
 
 	public ActorClass getActorCharacterClass() {
-		return actorClass;
+		return Paper.DATABASE.getActorClass(actorClassId);
 	}
 
 	public Inventory getActorInventory() {

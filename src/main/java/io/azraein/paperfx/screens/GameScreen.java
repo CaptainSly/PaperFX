@@ -40,6 +40,7 @@ public class GameScreen extends PaperScreen {
 
     // Paper Dialogs
     private PlayerJournalDialog playerJournalDialog;
+    private SavePlayerFileDialog spfd;
 
     // Paper System Stuff
 
@@ -96,6 +97,7 @@ public class GameScreen extends PaperScreen {
             if (newValue != null) {
                 Paper.PAPER_WORLD_PROPERTY.get().setPlayer(newValue);
                 playerJournalDialog = new PlayerJournalDialog();
+                spfd = new SavePlayerFileDialog();
             }
 
         });
@@ -114,8 +116,7 @@ public class GameScreen extends PaperScreen {
         Menu fileMenu = new Menu("File");
         MenuItem saveGame = new MenuItem("Save Game");
         saveGame.setOnAction(event -> {
-            SavePlayerFileDialog spfd = new SavePlayerFileDialog();
-            Optional<String> saveName = spfd.showAndWait();
+            Optional<String> saveName = spfd.showDialog();
 
             if (saveName.isPresent()) {
                 String filePath = SaveSystem.PAPER_SAVE_FOLDER + saveName.get() + SaveSystem.PAPER_SAVE_FILE_EXTENSION;
