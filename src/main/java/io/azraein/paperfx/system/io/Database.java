@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import io.azraein.paperfx.system.Action;
 import io.azraein.paperfx.system.Paper;
 import io.azraein.paperfx.system.actors.Npc;
 import io.azraein.paperfx.system.actors.classes.ActorClass;
@@ -27,6 +28,15 @@ public class Database implements Serializable {
 	private Map<String, Building> buildingRegistry = new HashMap<>();
 	private Map<String, Location> locationRegistry = new HashMap<>();
 	private Map<String, Quest> questRegistry = new HashMap<>();
+	private Map<String, Action> actionRegistry = new HashMap<>();
+
+	public void addAction(Action action) {
+		actionRegistry.put(action.getActionId(), action);
+	}
+
+	public Action getAction(String actionId) {
+		return actionRegistry.get(actionId);
+	}
 
 	public Lootlist getLootlist(String lootlistId) {
 		return lootlistRegistry.get(lootlistId);
@@ -116,11 +126,16 @@ public class Database implements Serializable {
 		this.getLocationRegistry().putAll(database.getLocationRegistry());
 		this.getQuestRegistry().putAll(database.getQuestRegistry());
 		this.getLootlistRegistry().putAll(database.getLootlistRegistry());
+		this.getActionRegistry().putAll(database.getActionRegistry());
 	}
 
 	public void mergeDatabase(Database... databases) {
 		for (Database database : databases)
 			mergeDatabase(database);
+	}
+
+	public Map<String, Action> getActionRegistry() {
+		return actionRegistry;
 	}
 
 	public Map<String, Location> getLocationRegistry() {

@@ -4,11 +4,17 @@
 Redesign the Entire UI, both the Editor and Paper itself. 
 Ultimately learn how to use FXML, and Switch everything to it. Make designing the UI 10,000 times easier and faster.
 
+Think about using Iternationalization (i18n)
+
 
 #### Paper
 
 [] Refactor a lot of the code, separate UI from Logic. 
 
+[] Add in Audio and Music. Probably need to use 3 different MediaPlayers unless JavaFX allows you to play multiple sounds/music at once. 
+* Ambient Audio - For background noises
+* Background Music - Background Music that will kick in every so often
+* Sound Effect - For any sound effects that need to play. 
 
 #### INK
 

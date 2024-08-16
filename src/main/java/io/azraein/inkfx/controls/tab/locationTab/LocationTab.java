@@ -4,11 +4,13 @@ import org.tinylog.Logger;
 
 import io.azraein.inkfx.InkFX;
 import io.azraein.inkfx.controls.tab.PaperEditorTab;
+import io.azraein.paperfx.system.Action;
 import io.azraein.paperfx.system.Utils;
 import io.azraein.paperfx.system.actors.Npc;
 import io.azraein.paperfx.system.io.Database;
 import io.azraein.paperfx.system.locations.Direction;
 import io.azraein.paperfx.system.locations.Location;
+import io.azraein.paperfx.system.locations.buildings.Building;
 import javafx.collections.MapChangeListener;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
@@ -31,8 +33,9 @@ public class LocationTab extends PaperEditorTab {
     private TextArea locationDescriptionArea;
 
     private ListView<Npc> locationNpcsLV;
+    private ListView<Building> locationBuildingsLV;
+    private ListView<Action> locationActionsLV;
 
-    private TextField[] locationNeighborIdFlds;
     private ComboBox<Location>[] locationNeighborSelectors;
 
     public LocationTab(InkFX inkFX) {
@@ -86,16 +89,19 @@ public class LocationTab extends PaperEditorTab {
                 }
 
                 for (Direction dir : Direction.values()) {
-                    locationNeighborIdFlds[dir.ordinal()].setText("");
-                    Location neighbor = inkFX.getObservableLocationRegistry()
-                            .get(newValue.getLocationNeighbors()[dir.ordinal()]);
-                    locationNeighborSelectors[dir.ordinal()].getSelectionModel().select(dir.ordinal());
-                    if (neighbor != null) {
-                        locationNeighborIdFlds[dir.ordinal()].setText(neighbor.getLocationId());
-                    }
+                    locationNeighborSelectors[dir.ordinal()].setValue(
+                            inkFX.getObservableLocationRegistry().get(newValue.getLocationNeighbors()[dir.ordinal()]));
                 }
 
-                // TODO Implement Buildings and Creature class, then finish this.
+                for (String buildingId : newValue.getLocationBuildingIds()) {
+                    locationBuildingsLV.getItems().add(inkFX.getObservableBuildingRegistry().get(buildingId));
+                }
+
+                for (String actionId : newValue.getLocationActionIds()) {
+                    locationActionsLV.getItems().add(inkFX.getObservableActionRegistry().get(actionId));
+                }
+
+                // TODO: Creatures need to be added.
             }
         });
         dbLocationLV.getItems().addAll(inkFX.getObservableLocationRegistry().values());
@@ -105,6 +111,32 @@ public class LocationTab extends PaperEditorTab {
 
         locationDescriptionArea = new TextArea();
         locationDescriptionArea.setWrapText(true);
+
+        locationActionsLV = new ListView<>();
+        locationActionsLV.setCellFactory(listView -> new ListCell<Action>() {
+
+            @Override
+            public void updateItem(Action item, boolean empty) {
+                super.updateItem(item, empty);
+
+                if (item != null) {
+                    this.setText(item.getActionId());
+                    ContextMenu cm = new ContextMenu();
+                    MenuItem removeActionItem = new MenuItem();
+                    removeActionItem.setOnAction(event -> {
+                        locationActionsLV.getItems().remove(item);
+                    });
+
+                    cm.getItems().add(removeActionItem);
+                    this.setContextMenu(cm);
+                } else {
+                    this.setText("");
+                    this.setContextMenu(null);
+                }
+
+            }
+
+        });
 
         locationNpcsLV = new ListView<>();
         locationNpcsLV.setCellFactory(listView -> new ListCell<Npc>() {
@@ -128,6 +160,124 @@ public class LocationTab extends PaperEditorTab {
                     setText("");
                     setContextMenu(null);
                 }
+            }
+
+        });
+
+        locationBuildingsLV = new ListView<>();
+        locationBuildingsLV.setCellFactory(listView -> new ListCell<Building>() {
+
+            @Override
+            public void updateItem(Building item, boolean empty) {
+                super.updateItem(item, empty);
+
+                if (item != null) {
+                    this.setText(item.getBuildingId());
+                    ContextMenu cm = new ContextMenu();
+                    MenuItem removeBuildingItem = new MenuItem("Remove " + item.getBuildingId());
+                    removeBuildingItem.setOnAction(event -> {
+                        locationBuildingsLV.getItems().remove(item);
+                    });
+
+                    cm.getItems().addAll(removeBuildingItem);
+                    this.setContextMenu(cm);
+                } else {
+                    this.setText("");
+                    this.setContextMenu(null);
+                }
+            }
+
+        });
+
+        ComboBox<Action> locationActionSelector = new ComboBox<>();
+        locationActionSelector.getItems().addAll(inkFX.getObservableActionRegistry().values());
+        locationActionSelector.setConverter(new StringConverter<Action>() {
+
+            @Override
+            public String toString(Action object) {
+                if (object != null)
+                    return object.getActionId();
+
+                return null;
+            }
+
+            @Override
+            public Action fromString(String string) {
+                return inkFX.getObservableActionRegistry().get(string);
+            }
+
+        });
+        locationActionSelector.setCellFactory(listView -> new ListCell<Action>() {
+
+            @Override
+            public void updateItem(Action item, boolean empty) {
+                super.updateItem(item, empty);
+
+                if (item != null) {
+                    setText(item.getActionId());
+                } else
+                    setText("");
+            }
+
+        });
+        inkFX.getObservableActionRegistry().addListener((MapChangeListener<String, Action>) change -> {
+            if (change.wasAdded()) {
+                if (inkFX.currentPluginProperty().get().getPluginDatabase().getActionRegistry()
+                        .containsKey(change.getKey())) {
+                    locationActionSelector.getItems().remove(change.getValueRemoved());
+                    locationActionSelector.getItems().add(change.getValueAdded());
+                } else {
+                    locationActionSelector.getItems().add(change.getValueAdded());
+                }
+            } else if (change.wasRemoved()) {
+                locationActionSelector.getItems().remove(change.getValueRemoved());
+            }
+        });
+
+        ComboBox<Building> locationBuildingSelector = new ComboBox<>();
+        locationBuildingSelector.getItems().addAll(inkFX.getObservableBuildingRegistry().values());
+        locationBuildingSelector.setConverter(new StringConverter<Building>() {
+
+            @Override
+            public String toString(Building object) {
+                if (object != null)
+                    return object.getBuildingId();
+
+                return null;
+            }
+
+            @Override
+            public Building fromString(String string) {
+                return inkFX.getObservableBuildingRegistry().get(string);
+            }
+
+        });
+        locationBuildingSelector.setCellFactory(listView -> new ListCell<Building>() {
+
+            @Override
+            public void updateItem(Building item, boolean empty) {
+                super.updateItem(item, empty);
+
+                if (item != null) {
+                    this.setText(item.getBuildingId());
+                } else
+                    setText("");
+
+            }
+
+        });
+        inkFX.getObservableBuildingRegistry().addListener((MapChangeListener<String, Building>) change -> {
+
+            if (change.wasAdded()) {
+                if (inkFX.currentPluginProperty().get().getPluginDatabase().getNpcRegistry()
+                        .containsKey(change.getKey())) {
+                    locationBuildingSelector.getItems().remove(change.getValueRemoved());
+                    locationBuildingSelector.getItems().add(change.getValueAdded());
+                } else {
+                    locationBuildingSelector.getItems().add(change.getValueAdded());
+                }
+            } else if (change.wasRemoved()) {
+                locationBuildingSelector.getItems().remove(change.getValueRemoved());
             }
 
         });
@@ -178,7 +328,16 @@ public class LocationTab extends PaperEditorTab {
         });
         locationNpcSelector.getSelectionModel().select(0);
 
-        Button addNpcBtn = new Button("Add Npc to Location");
+        Button addBuildingBtn = new Button("Add Building");
+        addBuildingBtn.setOnAction(event -> {
+            Building building = locationBuildingSelector.getValue();
+            if (building != null) {
+                if (!locationBuildingsLV.getItems().contains(building))
+                    locationBuildingsLV.getItems().add(building);
+            }
+        });
+
+        Button addNpcBtn = new Button("Add Npc");
         addNpcBtn.setOnAction(event -> {
             Npc npc = locationNpcSelector.getValue();
             if (npc != null) {
@@ -188,24 +347,23 @@ public class LocationTab extends PaperEditorTab {
             }
         });
 
+        Button addActionBtn = new Button("Add Action");
+        addActionBtn.setOnAction(event -> {
+        });
+
         Label[] locationNeighborIdLbls = new Label[4];
         locationNeighborSelectors = new ComboBox[4];
-        Button[] locationNeighborSelectorBtns = new Button[4];
-        locationNeighborIdFlds = new TextField[4];
+        Button[] locationNeighborSelectorClearBtns = new Button[4];
         for (int i = 0; i < 4; i++) {
 
             int idx = i;
             String idLblStr = Utils.toNormalCase(Direction.values()[i].name() + " Neighbor");
 
-            locationNeighborIdFlds[i] = new TextField();
             locationNeighborIdLbls[i] = new Label(idLblStr);
+            locationNeighborSelectorClearBtns[i] = new Button("Clear");
 
-            locationNeighborSelectorBtns[i] = new Button("Add Location as Neighbor");
-            locationNeighborSelectorBtns[i].setOnAction(event -> {
-                Location neighbor = locationNeighborSelectors[idx].getValue();
-                if (neighbor != null) {
-                    locationNeighborIdFlds[idx].setText(neighbor.getLocationId());
-                }
+            locationNeighborSelectorClearBtns[i].setOnAction(event -> {
+                locationNeighborSelectors[idx].getSelectionModel().select(null);
             });
 
             locationNeighborSelectors[i] = new ComboBox<Location>();
@@ -228,15 +386,10 @@ public class LocationTab extends PaperEditorTab {
 
             });
             locationNeighborSelectors[i].getSelectionModel().select(0);
-
-            locationNeighborIdFlds[i].setEditable(false);
-            locationNeighborIdFlds[i].setPromptText(Utils.toNormalCase(Direction.values()[i].name()) + " neighbor");
         }
 
         Button saveLocationBtn = new Button("Save Location");
         saveLocationBtn.setOnAction(event -> {
-            Location selectIndex = dbLocationLV.getSelectionModel().getSelectedItem();
-
             Location location = new Location(locationIdFld.getText(), locationNameFld.getText(),
                     locationDescriptionArea.getText());
             locationNpcsLV.getItems()
@@ -245,24 +398,27 @@ public class LocationTab extends PaperEditorTab {
             Logger.debug("location to be saved: " + location.getLocationId());
 
             for (Direction dir : Direction.values()) {
-                String locationId = locationNeighborIdFlds[dir.ordinal()].getText();
+                if (locationNeighborSelectors[dir.ordinal()].getValue() != null) {
 
-                Location neighbor;
-                neighbor = inkFX.getObservableLocationRegistry().get(locationId);
+                    Location neighbor = locationNeighborSelectors[dir.ordinal()].getValue();
 
-                // if we're null, fuck it.
-                if (neighbor == null)
-                    continue;
+                    // if we're null, fuck it.
+                    if (neighbor == null)
+                        continue;
 
-                // oh wait, we're trying to add ourself to as a neighbor? Nah fuck it
-                if (neighbor.getLocationId().equals(location.getLocationId()))
-                    continue;
+                    // oh wait, we're trying to add ourself to as a neighbor? Nah fuck it
+                    if (neighbor.getLocationId().equals(location.getLocationId()))
+                        continue;
 
-                location.setNeighborLocation(dir, neighbor);
-                dbLocationLV.getSelectionModel().select(selectIndex);
+                    location.setNeighborLocation(dir, neighbor);
+                }
             }
 
-            // TODO: Buildings and Creatures once they're implemented
+            // TODO: Actions and Creatures once they're implemented
+
+            for (Building building : locationBuildingsLV.getItems()) {
+                location.getLocationBuildingIds().add(building.getBuildingId());
+            }
 
             inkFX.currentPluginProperty().get().getPluginDatabase().addLocation(location);
             inkFX.getObservableLocationRegistry().put(location.getLocationId(), location);
@@ -274,9 +430,7 @@ public class LocationTab extends PaperEditorTab {
             locationNameFld.clear();
             locationDescriptionArea.clear();
             locationNpcsLV.getItems().clear();
-
-            for (Direction dir : Direction.values())
-                locationNeighborIdFlds[dir.ordinal()].clear();
+            locationBuildingsLV.getItems().clear();
         });
 
         inkFX.currentPluginProperty().addListener((observableValue, oldValue, newValue) -> {
@@ -319,33 +473,36 @@ public class LocationTab extends PaperEditorTab {
         Label locationNameLbl = new Label("Location Name");
         Label locationDescriptionLbl = new Label("Location Description");
         Label locationNpcLbl = new Label("Location Npcs");
+        Label locationBuildingLbl = new Label("Location Buildings");
 
-        GridPane gp = new GridPane();
-        GridPane.setColumnSpan(locationDescriptionArea, 3);
-        GridPane.setColumnSpan(locationNpcsLV, 2);
-        GridPane.setRowSpan(locationNpcsLV, 7);
-        gp.setHgap(10);
-        gp.setVgap(10);
+        GridPane gp = new GridPane(10, 10);
         gp.setPadding(new Insets(15));
         gp.add(locationIdLbl, 0, 0);
         gp.add(locationIdFld, 1, 0);
         gp.add(locationNameLbl, 2, 0);
         gp.add(locationNameFld, 3, 0);
         gp.add(locationDescriptionLbl, 0, 1);
-        gp.add(locationDescriptionArea, 1, 1);
-        gp.add(locationNpcLbl, 0, 2);
-        gp.add(locationNpcSelector, 1, 2);
-        gp.add(addNpcBtn, 2, 2);
-        gp.add(locationNpcsLV, 0, 3);
-        gp.add(saveLocationBtn, 0, 10);
-        gp.add(clearLocationFormBtn, 1, 10);
+        gp.add(locationDescriptionArea, 1, 1, 6, 4);
 
-        int startRow = 3;
+        gp.add(locationNpcLbl, 0, 6);
+        gp.add(locationNpcSelector, 1, 6);
+        gp.add(addNpcBtn, 2, 6);
+        gp.add(locationNpcsLV, 0, 7, 3, 7);
+
+        gp.add(locationBuildingLbl, 3, 6);
+        gp.add(locationBuildingSelector, 4, 6);
+        gp.add(addBuildingBtn, 5, 6);
+        gp.add(locationBuildingsLV, 3, 7, 3, 7);
+
+        gp.add(saveLocationBtn, 0, 14);
+        gp.add(clearLocationFormBtn, 1, 14);
+
+        int startRow = 0;
+        int col = 7;
         for (Direction dir : Direction.values()) {
-            gp.add(locationNeighborIdLbls[dir.ordinal()], 2, startRow);
-            gp.add(locationNeighborIdFlds[dir.ordinal()], 3, startRow);
-            gp.add(locationNeighborSelectors[dir.ordinal()], 4, startRow);
-            gp.add(locationNeighborSelectorBtns[dir.ordinal()], 5, startRow);
+            gp.add(locationNeighborIdLbls[dir.ordinal()], col, startRow);
+            gp.add(locationNeighborSelectors[dir.ordinal()], col + 1, startRow);
+            gp.add(locationNeighborSelectorClearBtns[dir.ordinal()], col + 2, startRow);
 
             startRow++;
         }

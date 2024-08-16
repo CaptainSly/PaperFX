@@ -16,6 +16,7 @@ public class Location implements Serializable {
 
 	private final String[] locationNeighbors;
 	private final List<String> locationBuildingIds;
+	private final List<String> locationActionIds;
 
 	private LocationState locationState;
 
@@ -25,6 +26,7 @@ public class Location implements Serializable {
 
 		locationNeighbors = new String[4];
 		locationBuildingIds = new ArrayList<>();
+		locationActionIds = new ArrayList<>();
 	}
 
 	public void update() {
@@ -56,6 +58,14 @@ public class Location implements Serializable {
 
 	public List<String> getLocationBuildingIds() {
 		return locationBuildingIds;
+	}
+
+	public List<String> getLocationActionIds() {
+		return locationActionIds;
+	}
+
+	public void setActionIds(List<String> locationActionIds) {
+		this.locationActionIds.addAll(locationActionIds);
 	}
 
 	public void setBuildingIds(List<String> locationBuildingIds) {

@@ -68,10 +68,7 @@ public class MainMenuScreen extends PaperScreen {
 
             File f = fc.showOpenDialog(paperFX.getPrimaryStage().getOwner());
             if (f != null) {
-                World saveGameWorld = SaveSystem.loadPlayerFile(f.getPath());
-
-                Paper.PAPER_WORLD_PROPERTY.set(saveGameWorld);
-                Paper.CALENDAR = saveGameWorld.getCalendar();
+                SaveSystem.loadPlayerFile(f.getPath());
                 ((GameScreen) paperFX.getScreens().get("game")).startGameLoop();
                 paperFX.swapScreens("game");
             }

@@ -15,6 +15,7 @@ import io.azraein.inkfx.dialog.PluginSelectionResult;
 import io.azraein.inkfx.screens.PaperEditorScreen;
 import io.azraein.inkfx.screens.PluginContentEditorScreen;
 import io.azraein.inkfx.screens.PluginMetadataScreen;
+import io.azraein.paperfx.system.Action;
 import io.azraein.paperfx.system.Utils;
 import io.azraein.paperfx.system.actors.Npc;
 import io.azraein.paperfx.system.actors.classes.ActorClass;
@@ -69,6 +70,7 @@ public class InkFX extends Application {
 	private final ObservableMap<String, Building> observableBuildingRegistry = FXCollections.observableHashMap();
 	private final ObservableMap<String, Location> observableLocationRegistry = FXCollections.observableHashMap();
 	private final ObservableMap<String, Quest> observableQuestRegistry = FXCollections.observableHashMap();
+	private final ObservableMap<String, Action> observableActionRegistry = FXCollections.observableHashMap();
 
 	public static final String PLUGIN_METADATA_SCREEN = "pluginMetadata";
 	public static final String PLUGIN_CONTENT_EDITOR_SCREEN = "pluginContent";
@@ -282,6 +284,7 @@ public class InkFX extends Application {
 		this.getObservableLocationRegistry().putAll(database.getLocationRegistry());
 		this.getObservableQuestRegistry().putAll(database.getQuestRegistry());
 		this.getObservableLootlistRegistry().putAll(database.getLootlistRegistry());
+		this.getObservableActionRegistry().putAll(database.getActionRegistry());
 	}
 
 	public void clearDatabase() {
@@ -294,6 +297,7 @@ public class InkFX extends Application {
 		this.getObservableBuildingRegistry().clear();
 		this.getObservableQuestRegistry().clear();
 		this.getObservableLootlistRegistry().clear();
+		this.getObservableActionRegistry().clear();
 	}
 
 	public void swapScreens(String screenId) {
@@ -310,6 +314,10 @@ public class InkFX extends Application {
 
 	public ObjectProperty<PaperPlugin> currentPluginProperty() {
 		return currentPluginProperty;
+	}
+
+	public ObservableMap<String, Action> getObservableActionRegistry() {
+		return observableActionRegistry;
 	}
 
 	public ObservableMap<String, Object> getObservableGlobalRegistry() {

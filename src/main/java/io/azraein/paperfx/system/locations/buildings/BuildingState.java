@@ -13,8 +13,6 @@ public class BuildingState implements Serializable {
     private String buildingName;
     private String buildingDescription;
 
-    private String buildingScript;
-
     private List<String> buildingNpcs;
 
     public BuildingState(String buildingName, String buildingDescription) {
@@ -38,14 +36,6 @@ public class BuildingState implements Serializable {
 
     public void setBuildingDescription(String buildingDescription) {
         this.buildingDescription = buildingDescription;
-    }
-
-    public String getBuildingScript() {
-        return buildingScript;
-    }
-
-    public void setBuildingScript(String buildingScript) {
-        this.buildingScript = buildingScript;
     }
 
     public List<String> getBuildingNpcs() {

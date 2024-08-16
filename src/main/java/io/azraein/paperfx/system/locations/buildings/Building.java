@@ -1,6 +1,8 @@
 package io.azraein.paperfx.system.locations.buildings;
 
 import java.io.Serializable;
+import java.util.List;
+import java.util.ArrayList;
 
 import io.azraein.paperfx.system.Paper;
 import io.azraein.paperfx.system.actors.Npc;
@@ -13,11 +15,15 @@ public class Building implements Serializable {
 
     private BuildingType buildingType;
 
+    private final List<String> buildingActionIds;
+
     private BuildingState buildingState;
 
     public Building(String buildingId, String buildingName, String buildingDescription) {
         this.buildingId = buildingId;
         this.buildingState = new BuildingState(buildingName, buildingDescription);
+
+        buildingActionIds = new ArrayList<>();
     }
 
     public void update() {
@@ -35,6 +41,10 @@ public class Building implements Serializable {
         return buildingId;
     }
 
+    public List<String> getBuildingActionIds() {
+        return buildingActionIds;
+    }
+
     public BuildingState getBuildingState() {
         return buildingState;
     }
@@ -45,6 +55,10 @@ public class Building implements Serializable {
 
     public void setBuildingState(BuildingState buildingState) {
         this.buildingState = buildingState;
+    }
+
+    public void setBuildingActionIds(List<String> actionIds) {
+        buildingActionIds.addAll(actionIds);
     }
 
 }

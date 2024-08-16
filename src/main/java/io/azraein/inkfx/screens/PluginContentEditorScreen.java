@@ -1,10 +1,10 @@
 package io.azraein.inkfx.screens;
 
 import io.azraein.inkfx.InkFX;
-import io.azraein.inkfx.controls.tab.ItemGroupTab;
-import io.azraein.inkfx.controls.tab.LocationGroupTab;
-import io.azraein.inkfx.controls.tab.NpcGroupTab;
-import io.azraein.inkfx.controls.tab.QuestGroupTab;
+import io.azraein.inkfx.controls.tab.groups.ItemGroupTab;
+import io.azraein.inkfx.controls.tab.groups.LocationGroupTab;
+import io.azraein.inkfx.controls.tab.groups.NpcGroupTab;
+import io.azraein.inkfx.controls.tab.groups.QuestGroupTab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TabPane.TabDragPolicy;
 

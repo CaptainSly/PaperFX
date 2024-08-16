@@ -1,4 +1,4 @@
-package io.azraein.inkfx.controls.tab;
+package io.azraein.inkfx.controls.tab.groups;
 
 import io.azraein.inkfx.InkFX;
 import io.azraein.inkfx.controls.tab.itemTabs.ItemTab;
