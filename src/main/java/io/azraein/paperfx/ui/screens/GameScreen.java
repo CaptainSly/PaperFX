@@ -1,14 +1,9 @@
-package io.azraein.paperfx.screens;
+package io.azraein.paperfx.ui.screens;
 
 import java.io.File;
 import java.util.Optional;
 
 import io.azraein.paperfx.PaperFX;
-import io.azraein.paperfx.controls.LocationView;
-import io.azraein.paperfx.controls.PaperClock;
-import io.azraein.paperfx.controls.PlayerControls;
-import io.azraein.paperfx.controls.dialog.SavePlayerFileDialog;
-import io.azraein.paperfx.controls.dialog.player.PlayerJournalDialog;
 import io.azraein.paperfx.system.GameState;
 import io.azraein.paperfx.system.Paper;
 import io.azraein.paperfx.system.actors.Npc;
@@ -18,6 +13,11 @@ import io.azraein.paperfx.system.io.SaveSystem;
 import io.azraein.paperfx.system.io.plugins.PaperPlugin;
 import io.azraein.paperfx.system.locations.buildings.Building;
 import io.azraein.paperfx.system.world.World;
+import io.azraein.paperfx.ui.controls.LocationView;
+import io.azraein.paperfx.ui.controls.PaperClock;
+import io.azraein.paperfx.ui.controls.PlayerControls;
+import io.azraein.paperfx.ui.controls.dialog.SavePlayerFileDialog;
+import io.azraein.paperfx.ui.controls.dialog.player.PlayerJournalDialog;
 import javafx.animation.AnimationTimer;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;

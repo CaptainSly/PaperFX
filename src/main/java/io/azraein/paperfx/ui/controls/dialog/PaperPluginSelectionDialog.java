@@ -1,4 +1,4 @@
-package io.azraein.paperfx.controls.dialog;
+package io.azraein.paperfx.ui.controls.dialog;
 
 import java.io.File;
 import java.io.IOException;
@@ -8,9 +8,9 @@ import java.util.List;
 import org.tinylog.Logger;
 
 import io.azraein.inkfx.dialog.PluginSelectionResult;
-import io.azraein.paperfx.controls.cells.PaperPluginMetadataCell;
 import io.azraein.paperfx.system.io.SaveSystem;
 import io.azraein.paperfx.system.io.plugins.PaperPluginMetadata;
+import io.azraein.paperfx.ui.controls.cells.PaperPluginMetadataCell;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;

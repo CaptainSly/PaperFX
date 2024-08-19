@@ -33,7 +33,8 @@ public class Item implements Serializable {
 
 	public void onUse() {
 		if (!itemScript.isEmpty())
-			Paper.SE.runFunction(itemScript, "onUse", CoerceJavaToLua.coerce(Paper.PAPER_PLAYER_PROPERTY.get()));
+			Paper.SE.runFunction(itemScript, "onUse",
+					CoerceJavaToLua.coerce(Paper.PAPER_PLAYER_PROPERTY.get().getActorState()));
 	}
 
 	public String getItemId() {

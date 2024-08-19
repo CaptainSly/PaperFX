@@ -1,4 +1,4 @@
-package io.azraein.paperfx.controls.tabs;
+package io.azraein.paperfx.ui.controls.tabs;
 
 import io.azraein.paperfx.system.Paper;
 import io.azraein.paperfx.system.Utils;

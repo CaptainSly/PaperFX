@@ -1,4 +1,4 @@
-package io.azraein.paperfx.controls.tabs;
+package io.azraein.paperfx.ui.controls.tabs;
 
 import javafx.scene.control.Tab;
 

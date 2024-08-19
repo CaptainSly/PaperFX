@@ -24,6 +24,7 @@ import io.azraein.paperfx.system.exceptions.IncompatiblePluginVersionException;
 import io.azraein.paperfx.system.exceptions.PluginCorruptionException;
 import io.azraein.paperfx.system.inventory.items.Item;
 import io.azraein.paperfx.system.inventory.items.Lootlist;
+import io.azraein.paperfx.system.inventory.items.equipment.Equipment;
 import io.azraein.paperfx.system.io.Database;
 import io.azraein.paperfx.system.io.SaveSystem;
 import io.azraein.paperfx.system.io.plugins.PaperPlugin;
@@ -63,6 +64,7 @@ public class InkFX extends Application {
 	// Everything gets loaded here, but nothing gets saved.
 	private final ObservableMap<String, Object> observableGlobalRegistry = FXCollections.observableHashMap();
 	private final ObservableMap<String, Item> observableItemRegistry = FXCollections.observableHashMap();
+	private final ObservableMap<String, Equipment> observableEquipmentRegistry = FXCollections.observableHashMap();
 	private final ObservableMap<String, Lootlist> observableLootlistRegistry = FXCollections.observableHashMap();
 	private final ObservableMap<String, ActorRace> observableActorRaceRegistry = FXCollections.observableHashMap();
 	private final ObservableMap<String, ActorClass> observableActorClassRegistry = FXCollections.observableHashMap();
@@ -285,6 +287,7 @@ public class InkFX extends Application {
 		this.getObservableQuestRegistry().putAll(database.getQuestRegistry());
 		this.getObservableLootlistRegistry().putAll(database.getLootlistRegistry());
 		this.getObservableActionRegistry().putAll(database.getActionRegistry());
+		this.getObservableEquipmentRegistry().putAll(database.getEquipmentRegistry());
 	}
 
 	public void clearDatabase() {
@@ -298,6 +301,7 @@ public class InkFX extends Application {
 		this.getObservableQuestRegistry().clear();
 		this.getObservableLootlistRegistry().clear();
 		this.getObservableActionRegistry().clear();
+		this.getObservableEquipmentRegistry().clear();
 	}
 
 	public void swapScreens(String screenId) {
@@ -312,8 +316,13 @@ public class InkFX extends Application {
 		return primaryStage;
 	}
 
+
 	public ObjectProperty<PaperPlugin> currentPluginProperty() {
 		return currentPluginProperty;
+	}
+
+	public ObservableMap<String, Equipment> getObservableEquipmentRegistry() {
+		return observableEquipmentRegistry;
 	}
 
 	public ObservableMap<String, Action> getObservableActionRegistry() {

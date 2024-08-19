@@ -1,4 +1,4 @@
-package io.azraein.paperfx.controls;
+package io.azraein.paperfx.ui.controls;
 
 import io.azraein.paperfx.system.world.Calendar;
 import javafx.scene.control.Menu;

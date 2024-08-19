@@ -1,13 +1,13 @@
-package io.azraein.paperfx.controls.dialog.player;
+package io.azraein.paperfx.ui.controls.dialog.player;
 
-import io.azraein.paperfx.controls.tabs.InventoryTab;
-import io.azraein.paperfx.controls.tabs.PlayerStatsTab;
-import io.azraein.paperfx.controls.tabs.QuestLogTab;
-import io.azraein.paperfx.screens.GameScreen;
 import io.azraein.paperfx.system.GameState;
 import io.azraein.paperfx.system.Paper;
 import io.azraein.paperfx.system.Utils;
 import io.azraein.paperfx.system.actors.Player;
+import io.azraein.paperfx.ui.controls.tabs.InventoryTab;
+import io.azraein.paperfx.ui.controls.tabs.PlayerStatsTab;
+import io.azraein.paperfx.ui.controls.tabs.QuestLogTab;
+import io.azraein.paperfx.ui.screens.GameScreen;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.TabPane;

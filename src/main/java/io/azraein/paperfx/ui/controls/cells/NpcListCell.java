@@ -1,4 +1,4 @@
-package io.azraein.paperfx.controls.cells;
+package io.azraein.paperfx.ui.controls.cells;
 
 import io.azraein.paperfx.system.actors.ActorState;
 import io.azraein.paperfx.system.actors.Npc;

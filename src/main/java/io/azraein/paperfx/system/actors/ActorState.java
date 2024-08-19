@@ -12,6 +12,8 @@ import io.azraein.paperfx.system.actors.stats.Attribute;
 import io.azraein.paperfx.system.actors.stats.Skill;
 import io.azraein.paperfx.system.actors.stats.Stat;
 import io.azraein.paperfx.system.inventory.Inventory;
+import io.azraein.paperfx.system.inventory.items.equipment.Equipment;
+import io.azraein.paperfx.system.inventory.items.equipment.EquipmentSlot;
 
 // TODO: Stat Implementation still needs work
 public class ActorState implements Serializable {
@@ -40,6 +42,8 @@ public class ActorState implements Serializable {
 	private Stat<Attribute>[] actorAttributes;
 	private Stat<Skill>[] actorSkills;
 
+	private String[] equipmentSlots;
+
 	// Actor Inventory
 	private Inventory actorInventory;
 	private double actorCarryWeight;
@@ -64,6 +68,8 @@ public class ActorState implements Serializable {
 
 		initializeAttributes();
 		initializeSkills();
+
+		equipmentSlots = new String[EquipmentSlot.values().length];
 
 		actorCarryWeight = actorAttributes[Attribute.STRENGTH.ordinal()].getLevel() * 5;
 		actorCurrentHp = actorMaxHp = (actorAttributes[Attribute.CONSTITUTION.ordinal()].getLevel() * 2);
@@ -171,6 +177,14 @@ public class ActorState implements Serializable {
 		return actorCurrentMp;
 	}
 
+	public Equipment getEquipment(EquipmentSlot slot) {
+		return Paper.DATABASE.getEquipment(equipmentSlots[slot.ordinal()]);
+	}
+
+	public String[] getEquipmentSlots() {
+		return equipmentSlots;
+	}
+
 	public Stat<Attribute>[] getActorAttributes() {
 		return actorAttributes;
 	}
@@ -201,6 +215,10 @@ public class ActorState implements Serializable {
 
 	public Inventory getActorInventory() {
 		return actorInventory;
+	}
+
+	public void setActorEquipment(Equipment equipment, EquipmentSlot slot) {
+		equipmentSlots[slot.ordinal()] = equipment.getEquipmentId();
 	}
 
 	public void setActorName(String actorName) {

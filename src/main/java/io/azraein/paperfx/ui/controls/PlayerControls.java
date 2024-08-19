@@ -1,7 +1,7 @@
-package io.azraein.paperfx.controls;
+package io.azraein.paperfx.ui.controls;
 
-import io.azraein.paperfx.screens.GameScreen;
 import io.azraein.paperfx.system.Utils;
+import io.azraein.paperfx.ui.screens.GameScreen;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tooltip;

@@ -1,4 +1,4 @@
-package io.azraein.paperfx.controls.dialog;
+package io.azraein.paperfx.ui.controls.dialog;
 
 import java.util.Optional;
 

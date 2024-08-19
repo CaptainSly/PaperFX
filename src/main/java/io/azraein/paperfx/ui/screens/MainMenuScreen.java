@@ -1,4 +1,4 @@
-package io.azraein.paperfx.screens;
+package io.azraein.paperfx.ui.screens;
 
 import java.io.File;
 

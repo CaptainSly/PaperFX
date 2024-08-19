@@ -1,7 +1,7 @@
-package io.azraein.paperfx.controls.cells;
+package io.azraein.paperfx.ui.controls.cells;
 
-import io.azraein.paperfx.controls.dialog.PaperPluginSelectionDialog;
 import io.azraein.paperfx.system.io.plugins.PaperPluginMetadata;
+import io.azraein.paperfx.ui.controls.dialog.PaperPluginSelectionDialog;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.control.CheckBox;

@@ -11,6 +11,7 @@ import io.azraein.paperfx.system.actors.classes.ActorClass;
 import io.azraein.paperfx.system.actors.classes.ActorRace;
 import io.azraein.paperfx.system.inventory.items.Item;
 import io.azraein.paperfx.system.inventory.items.Lootlist;
+import io.azraein.paperfx.system.inventory.items.equipment.Equipment;
 import io.azraein.paperfx.system.locations.Location;
 import io.azraein.paperfx.system.locations.buildings.Building;
 import io.azraein.paperfx.system.quest.Quest;
@@ -21,6 +22,7 @@ public class Database implements Serializable {
 
 	private Map<String, Object> globalRegistry = new HashMap<>();
 	private Map<String, Item> itemRegistry = new HashMap<>();
+	private Map<String, Equipment> equipmentRegistry = new HashMap<>();
 	private Map<String, Lootlist> lootlistRegistry = new HashMap<>();
 	private Map<String, ActorRace> actorRaceRegistry = new HashMap<>();
 	private Map<String, ActorClass> actorClassRegistry = new HashMap<>();
@@ -29,6 +31,14 @@ public class Database implements Serializable {
 	private Map<String, Location> locationRegistry = new HashMap<>();
 	private Map<String, Quest> questRegistry = new HashMap<>();
 	private Map<String, Action> actionRegistry = new HashMap<>();
+
+	public void addEquipment(Equipment equipment) {
+		equipmentRegistry.put(equipment.getEquipmentId(), equipment);
+	}
+
+	public Equipment getEquipment(String equipmentId) {
+		return equipmentRegistry.get(equipmentId);
+	}
 
 	public void addAction(Action action) {
 		actionRegistry.put(action.getActionId(), action);
@@ -127,11 +137,16 @@ public class Database implements Serializable {
 		this.getQuestRegistry().putAll(database.getQuestRegistry());
 		this.getLootlistRegistry().putAll(database.getLootlistRegistry());
 		this.getActionRegistry().putAll(database.getActionRegistry());
+		this.getEquipmentRegistry().putAll(database.getEquipmentRegistry());
 	}
 
 	public void mergeDatabase(Database... databases) {
 		for (Database database : databases)
 			mergeDatabase(database);
+	}
+
+	public Map<String, Equipment> getEquipmentRegistry() {
+		return equipmentRegistry;
 	}
 
 	public Map<String, Action> getActionRegistry() {

@@ -1,14 +1,14 @@
-package io.azraein.paperfx.controls;
+package io.azraein.paperfx.ui.controls;
 
 import io.azraein.paperfx.PaperFX;
-import io.azraein.paperfx.controls.cells.ActionListCell;
-import io.azraein.paperfx.controls.cells.BuildingListCell;
-import io.azraein.paperfx.controls.cells.NpcListCell;
 import io.azraein.paperfx.system.Action;
 import io.azraein.paperfx.system.Paper;
 import io.azraein.paperfx.system.actors.Npc;
 import io.azraein.paperfx.system.locations.Location;
 import io.azraein.paperfx.system.locations.buildings.Building;
+import io.azraein.paperfx.ui.controls.cells.ActionListCell;
+import io.azraein.paperfx.ui.controls.cells.BuildingListCell;
+import io.azraein.paperfx.ui.controls.cells.NpcListCell;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;

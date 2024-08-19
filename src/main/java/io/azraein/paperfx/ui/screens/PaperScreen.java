@@ -1,4 +1,4 @@
-package io.azraein.paperfx.screens;
+package io.azraein.paperfx.ui.screens;
 
 import io.azraein.paperfx.PaperFX;
 import javafx.scene.Node;
