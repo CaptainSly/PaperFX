@@ -27,8 +27,18 @@ The document can be viewed [here](technical_documents/Editor%20Documentation.md)
 
 ## How to play a game using Paper
 
-WIP
+When launching Paper for the first time, we recommend putting the Jar (Both 'Engine' and Editor) in a subfolder first. When Paper/Ink are ran for the first time, they check to see if a folder named "paper" is next to the executable, if it isn't, it creates the folder, along with all it's subfolders and then runs. 
 
+To run Paper, it requires at the very least two things to be present inside your paper/data folder. 
+
+* paper/data/pluginName.pepm
+* paper/data/scripts/pluginNameMainScript.lua**
+
+**The plugin main script should be named whatever the plugin author called it when creating the plugin.
+
+When you first launch Paper with the files in place, you'll be asked to choose your plugins. Selecting them with checkbox then clicking okay, will add them to lists, so they can be sorted and then loaded. If you have multiple Main Plugin Files and they all have a script file attached, the last Main Plugin to be loaded will have it's script take effect. This is done on purpose to ensure compatibility and to allow other plugins to modify and overhaul others. 
+
+Once the plugin is loaded you'll be presented with the Main Menu Screen, and from there you can start a new game, or load a previous save. 
 
 ## Technical Documents
 
@@ -48,4 +58,3 @@ A [Script Tutorial](technical_documents/ScriptingTutorial.md) of sorts. I'll try
 * JavaFX
 * TinyLog2
 * LuaJ 3.0.1 (Needs to be swapped for a reliable fork)
-* Gluon RichTextArea

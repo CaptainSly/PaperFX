@@ -4,12 +4,12 @@ import java.io.File;
 import java.util.Optional;
 
 import io.azraein.paperfx.PaperFX;
-import io.azraein.paperfx.controls.LocationMover;
 import io.azraein.paperfx.controls.LocationView;
 import io.azraein.paperfx.controls.PaperClock;
 import io.azraein.paperfx.controls.PlayerControls;
 import io.azraein.paperfx.controls.dialog.SavePlayerFileDialog;
 import io.azraein.paperfx.controls.dialog.player.PlayerJournalDialog;
+import io.azraein.paperfx.system.GameState;
 import io.azraein.paperfx.system.Paper;
 import io.azraein.paperfx.system.actors.Npc;
 import io.azraein.paperfx.system.exceptions.IncompatibleSaveVersionException;
@@ -19,22 +19,20 @@ import io.azraein.paperfx.system.io.plugins.PaperPlugin;
 import io.azraein.paperfx.system.locations.buildings.Building;
 import io.azraein.paperfx.system.world.World;
 import javafx.animation.AnimationTimer;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Insets;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
-
-// TODO: Implement Game Screen State Machine
 
 public class GameScreen extends PaperScreen {
 
     // Paper Nodes
     private LocationView locationView;
-    private LocationMover locationMover;
     private PaperClock paperClock;
     private PlayerControls playerControls;
 
@@ -43,6 +41,7 @@ public class GameScreen extends PaperScreen {
     private SavePlayerFileDialog spfd;
 
     // Paper System Stuff
+    private final ObjectProperty<GameState> currentGameStateProperty = new SimpleObjectProperty<>(GameState.RUNNING);
 
     // Game Loop
     private final AnimationTimer gameLoop;
@@ -61,7 +60,6 @@ public class GameScreen extends PaperScreen {
 
     public void init() {
         locationView = new LocationView(paperFX);
-        locationMover = new LocationMover();
         paperClock = new PaperClock();
         playerControls = new PlayerControls(this);
 
@@ -96,20 +94,17 @@ public class GameScreen extends PaperScreen {
 
             if (newValue != null) {
                 Paper.PAPER_WORLD_PROPERTY.get().setPlayer(newValue);
-                playerJournalDialog = new PlayerJournalDialog();
+                playerJournalDialog = new PlayerJournalDialog(this);
                 spfd = new SavePlayerFileDialog();
             }
 
         });
-        // #endregion
 
-        HBox playerControlsContainer = new HBox();
-        playerControlsContainer.setPadding(new Insets(15));
-        playerControlsContainer.getChildren().addAll(locationMover, playerControls);
+        // #endregion
 
         VBox mainContainer = new VBox();
         mainContainer.setPadding(new Insets(15));
-        mainContainer.getChildren().addAll(locationView, playerControlsContainer);
+        mainContainer.getChildren().addAll(locationView, playerControls);
 
         // #region - Menu Bar
         MenuBar gameScreenMenuBar = new MenuBar();
@@ -164,11 +159,15 @@ public class GameScreen extends PaperScreen {
 
                 frameCount++;
                 if (currentTime - lastFPSCheck >= 1e9) {
+                    String title = "PaperFX - "
+                            + ((PaperPlugin) Paper.PPL.getLoadedPlugins().values().toArray()[0]).getMetadata()
+                                    .getPluginId()
+                            + " FPS: " + fps + " STATE: " + currentGameStateProperty.get().name();
+
                     fps = frameCount;
                     frameCount = 0;
                     lastFPSCheck = currentTime;
-                    paperFX.setTitle("PaperFX - " + ((PaperPlugin) Paper.PPL.getLoadedPlugins().values().toArray()[0])
-                            .getMetadata().getPluginId() + " FPS: " + fps);
+                    paperFX.setTitle(title);
                 }
 
                 lastFrameTime = currentTime;
@@ -177,12 +176,24 @@ public class GameScreen extends PaperScreen {
     }
 
     private void update(float delta) {
-        // Update the PaperClock MenuItem to keep it up to date.
-        paperClock.update(Paper.PAPER_WORLD_PROPERTY.get().getCalendar());
 
-        Paper.PAPER_WORLD_PROPERTY.get().update(delta);
-        Paper.PAPER_LOCATION_PROPERTY.get().update();
+        switch (currentGameStateProperty.get()) {
+        case RUNNING -> {
+            // Update the PaperClock MenuItem to keep it up to date.
+            paperClock.update(Paper.PAPER_WORLD_PROPERTY.get().getCalendar());
 
+            Paper.PAPER_WORLD_PROPERTY.get().update(delta);
+            Paper.PAPER_LOCATION_PROPERTY.get().update();
+        }
+        case PAUSED -> {
+
+        }
+        case COMBAT -> {
+            // Update the PaperClock MenuItem to keep it up to date.
+            paperClock.update(Paper.PAPER_WORLD_PROPERTY.get().getCalendar());
+
+        }
+        }
     }
 
     public void startGameLoop() {
@@ -197,6 +208,10 @@ public class GameScreen extends PaperScreen {
 
     public PlayerJournalDialog getPlayerJournalDialog() {
         return playerJournalDialog;
+    }
+
+    public ObjectProperty<GameState> currentGameStateProperty() {
+        return currentGameStateProperty;
     }
 
 }

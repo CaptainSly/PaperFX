@@ -1,18 +1,14 @@
 package io.azraein.paperfx.screens;
 
 import java.io.File;
-import java.util.Map.Entry;
 
 import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 
 import io.azraein.paperfx.PaperFX;
 import io.azraein.paperfx.system.Paper;
-import io.azraein.paperfx.system.actors.ActorState;
 import io.azraein.paperfx.system.exceptions.IncompatibleSaveVersionException;
 import io.azraein.paperfx.system.exceptions.SaveCorruptionException;
 import io.azraein.paperfx.system.io.SaveSystem;
-import io.azraein.paperfx.system.locations.LocationState;
-import io.azraein.paperfx.system.locations.buildings.BuildingState;
 import io.azraein.paperfx.system.world.World;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;

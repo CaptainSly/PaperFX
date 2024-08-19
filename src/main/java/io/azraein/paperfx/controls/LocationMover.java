@@ -6,6 +6,7 @@ import io.azraein.paperfx.system.Paper;
 import io.azraein.paperfx.system.Utils;
 import io.azraein.paperfx.system.locations.Direction;
 import io.azraein.paperfx.system.locations.Location;
+import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
@@ -18,6 +19,7 @@ public class LocationMover extends Region {
     Button[] locationBtns = new Button[4];
 
     public LocationMover() {
+        setPadding(new Insets(15));
 
         for (Direction dir : Direction.values()) {
             String dirLetter = dir.name().substring(0, 1);

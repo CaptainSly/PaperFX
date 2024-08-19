@@ -3,6 +3,8 @@ package io.azraein.paperfx.controls.dialog.player;
 import io.azraein.paperfx.controls.tabs.InventoryTab;
 import io.azraein.paperfx.controls.tabs.PlayerStatsTab;
 import io.azraein.paperfx.controls.tabs.QuestLogTab;
+import io.azraein.paperfx.screens.GameScreen;
+import io.azraein.paperfx.system.GameState;
 import io.azraein.paperfx.system.Paper;
 import io.azraein.paperfx.system.Utils;
 import io.azraein.paperfx.system.actors.Player;
@@ -18,7 +20,10 @@ public class PlayerJournalDialog extends Dialog<String> {
     private QuestLogTab playerQuestLog = new QuestLogTab();
     private InventoryTab playerInventoryTab = new InventoryTab();
 
-    public PlayerJournalDialog() {
+    private GameScreen gameScreen;
+
+    public PlayerJournalDialog(GameScreen gameScreen) {
+        this.gameScreen = gameScreen;
         Player player = Paper.PAPER_WORLD_PROPERTY.get().getPlayer();
 
         String title = player.getActorState().getActorName() + "'s Journal";
@@ -33,11 +38,14 @@ public class PlayerJournalDialog extends Dialog<String> {
         getDialogPane().setContent(journalTabs);
         getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
 
+        setOnCloseRequest(event -> {
+            gameScreen.currentGameStateProperty().set(GameState.RUNNING);
+        });
+
         Stage stage = (Stage) this.getDialogPane().getScene().getWindow();
 
         // Add a custom icon.
         stage.getIcons().add(new Image(Utils.getFileFromResources("journal.png")));
-
     }
 
     public void showJournal() {
@@ -45,6 +53,7 @@ public class PlayerJournalDialog extends Dialog<String> {
         playerQuestLog.updateTab();
         playerInventoryTab.updateTab();
 
+        gameScreen.currentGameStateProperty().set(GameState.PAUSED);
         show();
     }
 

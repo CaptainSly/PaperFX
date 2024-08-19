@@ -13,6 +13,8 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 
+// TODO: Continue working on the implementation
+
 public class InventoryTab extends JournalTab {
 
     private ListView<ItemSlot> inventoryLV;
