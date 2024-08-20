@@ -127,4 +127,4 @@ gradle-app.setting
 *.hprof
 
 ### Paper ###
-paper/*
+paper_data/*

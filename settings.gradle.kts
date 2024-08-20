@@ -11,3 +11,7 @@ plugins {
 }
 
 rootProject.name = "PaperFX"
+
+include("ink")
+include("pen")
+include("paper")
