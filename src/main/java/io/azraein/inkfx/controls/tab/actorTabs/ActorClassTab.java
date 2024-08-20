@@ -38,6 +38,7 @@ public class ActorClassTab extends PaperEditorTab {
 			actorClassBaseSkillLbls[skill.ordinal()] = new Label(Utils.toNormalCase(skill.name()) + " Bonus");
 			actorClassBaseSkillsSpinners[skill.ordinal()] = new Spinner<>(5, 10, 5);
 			actorClassBaseSkillsSpinners[skill.ordinal()].setMaxWidth(80);
+			actorClassBaseSkillsSpinners[skill.ordinal()].setEditable(true);
 		}
 
 		Label actorClassFavoredAttributes = new Label("Class Favorite Attributes");

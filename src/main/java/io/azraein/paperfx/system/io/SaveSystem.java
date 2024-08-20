@@ -34,6 +34,7 @@ public class SaveSystem {
 
 	public static Gson SAVE_GSON;
 
+	// Paper File Format Information
 	public static final String PAPER_PLUGIN_FILE_IDENTIFIER = "PEPF";
 	public static final String PAPER_PLUGIN_FILE_VERSION = "1.0";
 	public static final String PAPER_PLUGIN_MAIN_FILE_EXTENSION = ".pepm";
@@ -43,14 +44,24 @@ public class SaveSystem {
 	public static final String PAPER_SAVE_FILE_VERSION = "1.0";
 	public static final String PAPER_SAVE_FILE_EXTENSION = ".pesf";
 
+	// Paper Folders
 	public static final String PAPER_FOLDER = "paper/";
 	public static final String PAPER_DATA_FOLDER = PAPER_FOLDER + "data/";
 	public static final String PAPER_SCRIPT_FOLDER = PAPER_DATA_FOLDER + "scripts/";
+	public static final String PAPER_GFX_FOLDER = PAPER_DATA_FOLDER + "gfx/";
+	public static final String PAPER_AUDIO_FOLDER = PAPER_DATA_FOLDER + "audio/";
 	public static final String PAPER_SAVE_FOLDER = PAPER_FOLDER + "saves/";
 
-	public static final String[] PAPER_DATA_FOLDERS = { "data/", "data/gfx/", "data/scripts/", "saves/", "logs", };
+	public static final String[] PAPER_DATA_FOLDERS = {
+			// Data Folders
+			"data/", "data/audio/", "data/gfx/", "data/scripts/",
+			// Internal Paper Folders
+			"saves/", "logs",
+			// To be continued
+	};
 
 	public static final String PAPER_AUTOSAVE_NAME = "paper_autosave_";
+
 	private static int autoSaveCounter = 0;
 
 	static {

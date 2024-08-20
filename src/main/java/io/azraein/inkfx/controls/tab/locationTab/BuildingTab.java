@@ -21,8 +21,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.util.StringConverter;
 
-// TODO: Actions
-
 public class BuildingTab extends PaperEditorTab {
 
     private TextField buildingIdFld, buildingNameFld;
@@ -312,9 +310,10 @@ public class BuildingTab extends PaperEditorTab {
         });
 
         Button addNpcBtn = new Button("Add Npc");
-        addNpcBtn.setOnAction(event -> {
-            buildingNpcsLV.getItems().add(buildingNpcSelectorBox.getValue());
-        });
+        addNpcBtn.setOnAction(event -> buildingNpcsLV.getItems().add(buildingNpcSelectorBox.getValue()));
+
+        Button addActionBtn = new Button("Add Action");
+        addActionBtn.setOnAction(event -> buildingActionsLV.getItems().add(buildingActionSelector.getValue()));
 
         GridPane gp = new GridPane(10, 10);
         gp.setPadding(new Insets(15));
@@ -330,13 +329,17 @@ public class BuildingTab extends PaperEditorTab {
         gp.add(new Label("Building Npcs"), 0, 5);
         gp.add(buildingNpcsLV, 0, 6, 2, 6);
 
+        gp.add(new Label("Building Actions"), 3, 5);
+        gp.add(buildingActionsLV, 3, 6, 2, 6);
+
         gp.add(buildingNpcSelectorBox, 0, 12);
         gp.add(addNpcBtn, 1, 12);
 
+        gp.add(buildingActionSelector, 3, 12);
+        gp.add(addActionBtn, 4, 12);
+
         gp.add(saveBuildingBtn, 0, 13);
         gp.add(clearFormBtn, 1, 13);
-
-        // TODO: Add the Action stuff
 
         content.setLeft(dbBuildingView);
         content.setCenter(gp);

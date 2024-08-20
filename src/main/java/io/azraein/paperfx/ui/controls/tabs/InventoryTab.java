@@ -18,11 +18,13 @@ import javafx.scene.layout.GridPane;
 public class InventoryTab extends JournalTab {
 
     private ListView<ItemSlot> inventoryLV;
+    private Label playerCarryWeight;
 
     public InventoryTab() {
         super("Inventory");
 
         Label itemNameLbl = new Label("Item: ");
+        playerCarryWeight = new Label("Carry Weight: ");
 
         TextArea itemDescriptionArea = new TextArea();
         itemDescriptionArea.setEditable(false);
@@ -56,14 +58,15 @@ public class InventoryTab extends JournalTab {
                 itemNameLbl.setText("Item: ");
                 itemDescriptionArea.setText(newValue.getItem().getItemDescription());
             }
-        
+
         });
 
         GridPane gp = new GridPane(10, 10);
         gp.setPadding(new Insets(15));
-        gp.add(itemNameLbl, 0, 0);
-        gp.add(new Label("Description:"), 0, 1);
-        gp.add(itemDescriptionArea, 0, 2);
+        gp.add(playerCarryWeight, 0, 0);
+        gp.add(itemNameLbl, 0, 1);
+        gp.add(new Label("Description:"), 0, 2);
+        gp.add(itemDescriptionArea, 0, 3);
 
         BorderPane bp = new BorderPane();
         bp.setPadding(new Insets(15));
@@ -77,6 +80,9 @@ public class InventoryTab extends JournalTab {
     public void updateTab() {
         ActorState playerState = Paper.PAPER_PLAYER_PROPERTY.get().getActorState();
 
+        double currentInvWeight = playerState.getActorInventory().getInventoryWeight();
+        playerCarryWeight.setText("Carry Weight: " + currentInvWeight + "/" + playerState.getActorCarryWeight());
+        
         inventoryLV.getItems().clear();
         inventoryLV.getItems().addAll(playerState.getActorInventory().getItemSlots());
     }

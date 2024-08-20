@@ -6,7 +6,7 @@ import javafx.scene.control.Menu;
 public class PaperClock extends Menu {
 
     public void update(Calendar calendar) {
-        setText(calendar.getDateAsString() + ", " + calendar.getTimeAsString());
+        this.setText(calendar.getDateAsString() + ", " + calendar.getTimeAsString());
     }
 
 }

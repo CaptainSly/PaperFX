@@ -6,6 +6,14 @@ Ultimately learn how to use FXML, and Switch everything to it. Make designing th
 
 Think about using Iternationalization (i18n)
 
+Think about swapping to a Gradle Multi-project setup.
+- Ink - The Editor
+- Pen - Core Library
+- Paper - The "Engine"
+
+Think about swapping around Pen and Ink's names. As the Core library would make more sense to be called Ink and the Editor called Pen. That way using Ink (core), you can use Pen (editor) to write on Paper ("engine")
+
+Refactor EVERY Class so the code is more cleaner and more readable. Try to setup a coding style and stick to it. 
 
 #### Paper
 

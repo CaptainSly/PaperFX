@@ -32,11 +32,6 @@ import javafx.scene.layout.VBox;
 
 // TODO: If Player selects a plugin that requires dependencies, disable the OK Button until they're selected, currently you can load the databases without them, and that would most likely break a few things.
 
-/**
- * Pair<List<PaperPluginMetadata>, Pair<List<String>, PaperPluginMetadata>> The
- * returns are as followed in order selectedPlugins selectedPluginPaths
- * activePluginMetadata
- */
 public class PluginSelectionDialog extends Dialog<PluginSelectionResult> {
 
 	private ListView<PaperPluginMetadata> loadablePluginList;

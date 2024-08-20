@@ -19,11 +19,11 @@ public class Item implements Serializable {
 	private String itemImage;
 	private String itemScript;
 
-	private String itemType;
+	private ItemType itemType;
 
 	private double itemWeight;
 
-	public Item(String itemId, String itemType, String itemName, String itemDescription) {
+	public Item(String itemId, ItemType itemType, String itemName, String itemDescription) {
 		this.itemId = itemId;
 		this.itemName = itemName;
 		this.itemDescription = itemDescription;
@@ -49,7 +49,7 @@ public class Item implements Serializable {
 		return itemDescription;
 	}
 
-	public String getItemType() {
+	public ItemType getItemType() {
 		return itemType;
 	}
 
@@ -71,6 +71,10 @@ public class Item implements Serializable {
 
 	public void setItemImage(String itemImage) {
 		this.itemImage = itemImage;
+	}
+
+	public void setItemScript(String itemScript) {
+		this.itemScript = itemScript;
 	}
 
 }

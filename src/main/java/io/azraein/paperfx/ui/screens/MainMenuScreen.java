@@ -10,6 +10,7 @@ import io.azraein.paperfx.system.exceptions.IncompatibleSaveVersionException;
 import io.azraein.paperfx.system.exceptions.SaveCorruptionException;
 import io.azraein.paperfx.system.io.SaveSystem;
 import io.azraein.paperfx.system.world.World;
+import io.azraein.paperfx.ui.controls.dialog.EasterEggDialog;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
@@ -49,6 +50,12 @@ public class MainMenuScreen extends PaperScreen {
         Paper.CALENDAR = world.getCalendar();
         Paper.SE.setPaperGlobal("calendar", CoerceJavaToLua.coerce(Paper.CALENDAR));
         Paper.SE.runFunction(Paper.PPL.getPluginMainScript(), "onNewGame");
+
+        if (Paper.PAPER_PLAYER_PROPERTY.get().getActorState().getActorName().contains("Cage")
+                || Paper.PAPER_PLAYER_PROPERTY.get().getActorState().getActorName().contains("cage")) {
+            new EasterEggDialog().show();
+        }
+
         ((GameScreen) paperFX.getScreens().get("game")).startGameLoop();
         paperFX.swapScreens("game");
     }

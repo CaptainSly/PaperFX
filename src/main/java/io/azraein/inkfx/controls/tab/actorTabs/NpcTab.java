@@ -7,7 +7,6 @@ import io.azraein.inkfx.controls.converters.ActorClassStringConverter;
 import io.azraein.inkfx.controls.converters.ActorRaceStringConverter;
 import io.azraein.inkfx.controls.tab.PaperEditorTab;
 import io.azraein.paperfx.system.Utils;
-import io.azraein.paperfx.system.actors.Actor;
 import io.azraein.paperfx.system.actors.ActorState;
 import io.azraein.paperfx.system.actors.Npc;
 import io.azraein.paperfx.system.actors.classes.ActorClass;
@@ -15,6 +14,7 @@ import io.azraein.paperfx.system.actors.classes.ActorRace;
 import io.azraein.paperfx.system.actors.stats.Attribute;
 import io.azraein.paperfx.system.actors.stats.Skill;
 import io.azraein.paperfx.system.io.Database;
+import io.azraein.paperfx.ui.controls.dialog.EasterEggDialog;
 import javafx.collections.MapChangeListener.Change;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
@@ -238,11 +238,15 @@ public class NpcTab extends PaperEditorTab {
         npcActorAttributeSpinners = new Spinner[Attribute.values().length];
         npcActorSkillSpinners = new Spinner[Skill.values().length];
 
-        for (Attribute attr : Attribute.values())
+        for (Attribute attr : Attribute.values()) {
             npcActorAttributeSpinners[attr.ordinal()] = new Spinner<>(0, 100, 1);
+            npcActorAttributeSpinners[attr.ordinal()].setEditable(true);
+        }
 
-        for (Skill skill : Skill.values())
+        for (Skill skill : Skill.values()) {
             npcActorSkillSpinners[skill.ordinal()] = new Spinner<>(0, 100, 1);
+            npcActorSkillSpinners[skill.ordinal()].setEditable(true);
+        }
 
         Label npcActorIdLbl = new Label("Npc Id");
         Label npcActorNameLbl = new Label("Npc Name");

@@ -349,6 +349,7 @@ public class LocationTab extends PaperEditorTab {
 
         Button addActionBtn = new Button("Add Action");
         addActionBtn.setOnAction(event -> {
+            locationActionsLV.getItems().add(locationActionSelector.getValue());
         });
 
         Label[] locationNeighborIdLbls = new Label[4];
@@ -414,10 +415,14 @@ public class LocationTab extends PaperEditorTab {
                 }
             }
 
-            // TODO: Actions and Creatures once they're implemented
+            // TODO: Creatures once they're implemented
 
             for (Building building : locationBuildingsLV.getItems()) {
                 location.getLocationBuildingIds().add(building.getBuildingId());
+            }
+
+            for (Action action : locationActionsLV.getItems()) {
+                location.getLocationActionIds().add(action.getActionId());
             }
 
             inkFX.currentPluginProperty().get().getPluginDatabase().addLocation(location);
@@ -474,6 +479,7 @@ public class LocationTab extends PaperEditorTab {
         Label locationDescriptionLbl = new Label("Location Description");
         Label locationNpcLbl = new Label("Location Npcs");
         Label locationBuildingLbl = new Label("Location Buildings");
+        Label locationActionLbl = new Label("Location Actions");
 
         GridPane gp = new GridPane(10, 10);
         gp.setPadding(new Insets(15));
@@ -493,6 +499,11 @@ public class LocationTab extends PaperEditorTab {
         gp.add(locationBuildingSelector, 4, 6);
         gp.add(addBuildingBtn, 5, 6);
         gp.add(locationBuildingsLV, 3, 7, 3, 7);
+
+        gp.add(locationActionLbl, 6, 6);
+        gp.add(locationActionSelector, 7, 6);
+        gp.add(addActionBtn, 8, 6);
+        gp.add(locationActionsLV, 6, 7, 3, 7);
 
         gp.add(saveLocationBtn, 0, 14);
         gp.add(clearLocationFormBtn, 1, 14);
