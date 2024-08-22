@@ -1,4 +1,4 @@
-package io.azraein.penfx.dialog;
+package io.azraein.penfx.controls.dialog;
 
 import io.azraein.penfx.PenFX;
 import javafx.scene.control.Alert;

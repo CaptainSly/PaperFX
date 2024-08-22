@@ -10,7 +10,6 @@ import java.util.Optional;
 import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 import org.tinylog.Logger;
 
-import io.azraein.inkfx.dialog.PluginSelectionResult;
 import io.azraein.inkfx.system.Paper;
 import io.azraein.inkfx.system.Utils;
 import io.azraein.inkfx.system.io.Database;
@@ -19,8 +18,9 @@ import io.azraein.inkfx.system.io.SaveSystem;
 import io.azraein.inkfx.system.io.plugins.PaperPluginLoader;
 import io.azraein.inkfx.system.io.plugins.PaperPluginMetadata;
 import io.azraein.inkfx.system.io.scripting.ScriptEngine;
-import io.azraein.paperfx.ui.controls.dialog.CharacterCreationDialog;
 import io.azraein.paperfx.ui.controls.dialog.PaperPluginSelectionDialog;
+import io.azraein.paperfx.ui.controls.dialog.player.CharacterCreationDialog;
+import io.azraein.paperfx.ui.controls.dialog.player.PluginSelectionResult;
 import io.azraein.paperfx.ui.screens.GameScreen;
 import io.azraein.paperfx.ui.screens.MainMenuScreen;
 import io.azraein.paperfx.ui.screens.PaperScreen;
@@ -41,9 +41,7 @@ public class PaperFX extends Application {
 	@Override
 	public void init() throws Exception {
 		super.init();
-
-		new Paper();
-
+		
 		// Check the Paper Working Directory, then instantiate the Plugin Loader.
 		SaveSystem.checkFileSystem();
 		Paper.PPL = new PaperPluginLoader();
@@ -58,8 +56,8 @@ public class PaperFX extends Application {
 		paperScreens.put("game", new GameScreen(this));
 
 		// Create the Default Globals
-		Paper.DATABASE.addGlobal("currentQuestId", "");
-		Paper.DATABASE.addGlobal("currentQuestStage", "");
+		Paper.DATABASE.addGlobal("playerName", "");
+		Paper.DATABASE.addGlobal("currentLocation", "");
 
 		// Initialize Scripting Engine last.
 		Paper.SE = new ScriptEngine();

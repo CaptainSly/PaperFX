@@ -9,8 +9,6 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import org.tinylog.Logger;
 
-import io.azraein.inkfx.dialog.PluginSelectionDialog;
-import io.azraein.inkfx.dialog.PluginSelectionResult;
 import io.azraein.inkfx.system.Action;
 import io.azraein.inkfx.system.Utils;
 import io.azraein.inkfx.system.actors.Npc;
@@ -29,7 +27,9 @@ import io.azraein.inkfx.system.io.plugins.PaperPluginMetadata;
 import io.azraein.inkfx.system.locations.Location;
 import io.azraein.inkfx.system.locations.buildings.Building;
 import io.azraein.inkfx.system.quest.Quest;
-import io.azraein.penfx.dialog.AboutAlert;
+import io.azraein.penfx.controls.cells.PluginSelectionResult;
+import io.azraein.penfx.controls.dialog.AboutAlert;
+import io.azraein.penfx.controls.dialog.PluginSelectionDialog;
 import io.azraein.penfx.screens.PaperEditorScreen;
 import io.azraein.penfx.screens.PluginContentEditorScreen;
 import io.azraein.penfx.screens.PluginMetadataScreen;

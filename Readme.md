@@ -16,14 +16,15 @@ Someway somehow I've taken inspiration from the following titles when I build ea
 
 One of the main focuses for PaperFX is to provide a way for people to play Textbased "Open World" RPGs. Paper will allow the user to load Plugin files (*.pepm or *.pepf) to play games, similar to the way The Elder Scrolls and Fallout allow modding, though without the need to pay attention to your load order. 
 
+## Project Structure
 
-## How to build
+PaperFX is separated into a gradle multiproject. PaperFX is the over all main "project" and it has 3 sub-projects that comprise it
+* Ink - The substance that fills Paper and Pen and allows the two to actually work. It's the core 'engine' and most if not all of the non-ui code. It holds all the code for most basic game data objects
+* Pen - The editor, what was previously called Ink, now swapped to Pen, allows you to create Plugin for Paper to run. 
+* Paper - The program that takes what Ink offers, and what was created with Pen to provide an game experience. It's the main UI for the 'engine' and is what the PLAYER will mostly use and provides the main game loop.
 
-Run the Gradle Tasks - inkFX-FatJar and paperFX-FatJar respectively for each program. Run them through a console using java -jar *.jar. Will update when a better option is present. 
+With it broken up in to 3 major projects, both Pen and Paper build and include Ink as a dependency. 
 
-## How to use the Editor
-A work in progress document is being made as the features and functionality are added. 
-The document can be viewed [here](technical_documents/Editor%20Documentation.md)
 
 ## How to play a game using Paper
 
@@ -57,4 +58,5 @@ A [Script Tutorial](technical_documents/ScriptingTutorial.md) of sorts. I'll try
 * ZStd
 * JavaFX
 * TinyLog2
+* ControlsFX
 * LuaJ 3.0.1 (Needs to be swapped for a reliable fork)

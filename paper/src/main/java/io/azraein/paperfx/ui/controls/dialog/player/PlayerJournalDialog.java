@@ -1,9 +1,12 @@
 package io.azraein.paperfx.ui.controls.dialog.player;
 
+import org.tinylog.Logger;
+
 import io.azraein.inkfx.system.GameState;
 import io.azraein.inkfx.system.Paper;
 import io.azraein.inkfx.system.Utils;
 import io.azraein.inkfx.system.actors.Player;
+import io.azraein.inkfx.system.actors.dialogue.DialogueParser;
 import io.azraein.paperfx.ui.controls.tabs.InventoryTab;
 import io.azraein.paperfx.ui.controls.tabs.PlayerStatsTab;
 import io.azraein.paperfx.ui.controls.tabs.QuestLogTab;

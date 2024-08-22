@@ -32,6 +32,7 @@ public class LocationMover extends Region {
                 String neighborId = Paper.PAPER_LOCATION_PROPERTY.get().getLocationNeighbors()[dir.ordinal()];
                 Location neighbor = Paper.DATABASE.getLocation(neighborId);
                 Paper.PAPER_LOCATION_PROPERTY.set(neighbor);
+                Paper.DATABASE.addGlobal("currentLocationName", neighbor.getLocationState().getLocationName());
             });
         }
 

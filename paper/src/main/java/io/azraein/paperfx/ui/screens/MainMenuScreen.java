@@ -56,6 +56,9 @@ public class MainMenuScreen extends PaperScreen {
             new EasterEggDialog().show();
         }
 
+        // Set any default system globals
+        Paper.DATABASE.addGlobal("playerName", world.getPlayer().getActorState().getActorName());
+
         ((GameScreen) paperFX.getScreens().get("game")).startGameLoop();
         paperFX.swapScreens("game");
     }

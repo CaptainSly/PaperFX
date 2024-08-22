@@ -1,4 +1,4 @@
-package io.azraein.paperfx.ui.controls.dialog;
+package io.azraein.paperfx.ui.controls.dialog.player;
 
 import java.util.Optional;
 
@@ -186,6 +186,7 @@ public class CharacterCreationDialog extends Dialog<Player> {
 
         if (player.isPresent()) {
             Player p = player.get();
+            Paper.DATABASE.addGlobal("playerName", p.getActorState().getActorName());
             Paper.PAPER_PLAYER_PROPERTY.set(p);
         } else {
             Logger.debug("FUCK, Can't load player");

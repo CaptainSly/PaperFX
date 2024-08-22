@@ -1,6 +1,7 @@
 package io.azraein.inkfx.system;
 
 import io.azraein.inkfx.system.actors.Player;
+import io.azraein.inkfx.system.actors.dialogue.DialogueParser;
 import io.azraein.inkfx.system.io.Database;
 import io.azraein.inkfx.system.io.PaperIni;
 import io.azraein.inkfx.system.io.plugins.PaperPluginLoader;
@@ -26,6 +27,8 @@ public class Paper {
     public static ScriptEngine SE;
 
     public static PaperIni INI;
+
+    public static DialogueParser DP;
 
 
     // Global Properties

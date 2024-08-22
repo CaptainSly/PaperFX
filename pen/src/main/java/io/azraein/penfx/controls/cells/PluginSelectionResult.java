@@ -1,4 +1,4 @@
-package io.azraein.inkfx.dialog;
+package io.azraein.penfx.controls.cells;
 
 import java.util.List;
 

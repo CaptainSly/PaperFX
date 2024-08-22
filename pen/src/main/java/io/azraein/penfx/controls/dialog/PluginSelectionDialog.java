@@ -1,4 +1,4 @@
-package io.azraein.inkfx.dialog;
+package io.azraein.penfx.controls.dialog;
 
 import java.io.File;
 import java.io.IOException;
@@ -7,9 +7,10 @@ import java.util.List;
 
 import org.tinylog.Logger;
 
-import io.azraein.inkfx.cells.EditorPluginMetadataCell;
 import io.azraein.inkfx.system.io.SaveSystem;
 import io.azraein.inkfx.system.io.plugins.PaperPluginMetadata;
+import io.azraein.penfx.controls.cells.EditorPluginMetadataCell;
+import io.azraein.penfx.controls.cells.PluginSelectionResult;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;

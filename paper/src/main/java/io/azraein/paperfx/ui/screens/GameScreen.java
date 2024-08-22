@@ -3,9 +3,12 @@ package io.azraein.paperfx.ui.screens;
 import java.io.File;
 import java.util.Optional;
 
+import org.tinylog.Logger;
+
 import io.azraein.inkfx.system.GameState;
 import io.azraein.inkfx.system.Paper;
 import io.azraein.inkfx.system.actors.Npc;
+import io.azraein.inkfx.system.actors.dialogue.DialogueParser;
 import io.azraein.inkfx.system.exceptions.IncompatibleSaveVersionException;
 import io.azraein.inkfx.system.exceptions.SaveCorruptionException;
 import io.azraein.inkfx.system.io.SaveSystem;
@@ -16,8 +19,8 @@ import io.azraein.paperfx.PaperFX;
 import io.azraein.paperfx.ui.controls.LocationView;
 import io.azraein.paperfx.ui.controls.PaperClock;
 import io.azraein.paperfx.ui.controls.PlayerControls;
-import io.azraein.paperfx.ui.controls.dialog.SavePlayerFileDialog;
 import io.azraein.paperfx.ui.controls.dialog.player.PlayerJournalDialog;
+import io.azraein.paperfx.ui.controls.dialog.player.SavePlayerFileDialog;
 import javafx.animation.AnimationTimer;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;

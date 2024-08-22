@@ -7,10 +7,10 @@ import java.util.List;
 
 import org.tinylog.Logger;
 
-import io.azraein.inkfx.dialog.PluginSelectionResult;
 import io.azraein.inkfx.system.io.SaveSystem;
 import io.azraein.inkfx.system.io.plugins.PaperPluginMetadata;
 import io.azraein.paperfx.ui.controls.cells.PaperPluginMetadataCell;
+import io.azraein.paperfx.ui.controls.dialog.player.PluginSelectionResult;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;

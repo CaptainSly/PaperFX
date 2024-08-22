@@ -5,7 +5,7 @@ import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.lib.TwoArgFunction;
 import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 
-import io.azraein.inkfx.InkFX;
+import io.azraein.inkfx.system.Ink;
 import io.azraein.inkfx.system.Paper;
 import io.azraein.inkfx.system.io.scripting.lib.PaperUtilFunctions.PaperLuaLocationSetter;
 import io.azraein.inkfx.system.io.scripting.lib.PaperUtilFunctions.PaperLuaSetCalendarDate;
@@ -21,7 +21,7 @@ public class PaperLib extends TwoArgFunction {
     public LuaValue call(LuaValue mod, LuaValue env) {
         // Create the Paper Table
         paperTable = new LuaTable();
-        paperTable.set("_VERSION", InkFX.VERSION);
+        paperTable.set("_VERSION", Ink.VERSION);
         paperTable.set("database", CoerceJavaToLua.coerce(Paper.DATABASE));
         paperTable.set("ppl", CoerceJavaToLua.coerce(Paper.PPL));
         paperTable.set("ini", CoerceJavaToLua.coerce(Paper.INI));

@@ -22,6 +22,9 @@ dependencies {
     // ZStd - Compression
     implementation("com.github.luben:zstd-jni:1.5.6-3")
         
+    // ControlsFX
+    implementation("org.controlsfx:controlsfx:11.2.1")
+    
     // Gson
     implementation("com.google.code.gson:gson:2.10.1")
 
