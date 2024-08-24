@@ -43,13 +43,13 @@ Once the plugin is loaded you'll be presented with the Main Menu Screen, and fro
 
 ## Technical Documents
 
-A [markdown document](technical_documents/LuaSimpleClass.md) that describes the Lua Simple Class implementation. 
+A [markdown document](technical_documents/scripting/LuaSimpleClass.md) that describes the Lua Simple Class implementation. 
 
 A [doc](technical_documents/File%20Formats.txt) that describes the File Formats used by both Paper and Ink.
 
 A [TODO](technical_documents/todolist.md) list detailing what I want to tackle for a myriad of different topics. 
 
-A [Script Tutorial](technical_documents/ScriptingTutorial.md) of sorts. I'll try to write it as I fill out the engine. 
+A [Script Tutorial](technical_documents/scripting/ScriptingTutorial.md) of sorts. I'll try to write it as I fill out the engine. 
 
 
 ## Used Libraries

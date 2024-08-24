@@ -3,12 +3,9 @@ package io.azraein.paperfx.ui.screens;
 import java.io.File;
 import java.util.Optional;
 
-import org.tinylog.Logger;
-
 import io.azraein.inkfx.system.GameState;
 import io.azraein.inkfx.system.Paper;
 import io.azraein.inkfx.system.actors.Npc;
-import io.azraein.inkfx.system.actors.dialogue.DialogueParser;
 import io.azraein.inkfx.system.exceptions.IncompatibleSaveVersionException;
 import io.azraein.inkfx.system.exceptions.SaveCorruptionException;
 import io.azraein.inkfx.system.io.SaveSystem;

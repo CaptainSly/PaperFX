@@ -12,6 +12,7 @@ import org.tinylog.Logger;
 
 import io.azraein.inkfx.system.Paper;
 import io.azraein.inkfx.system.Utils;
+import io.azraein.inkfx.system.actors.dialogue.DialogueParser;
 import io.azraein.inkfx.system.io.Database;
 import io.azraein.inkfx.system.io.PaperIni;
 import io.azraein.inkfx.system.io.SaveSystem;
@@ -41,7 +42,7 @@ public class PaperFX extends Application {
 	@Override
 	public void init() throws Exception {
 		super.init();
-		
+
 		// Check the Paper Working Directory, then instantiate the Plugin Loader.
 		SaveSystem.checkFileSystem();
 		Paper.PPL = new PaperPluginLoader();
@@ -49,6 +50,7 @@ public class PaperFX extends Application {
 		// Initialize the Ini and Create the base Database.
 		Paper.INI = new PaperIni();
 		Paper.DATABASE = new Database();
+		Paper.DP = new DialogueParser();
 
 		// Create the Screens HashMap and throw in the default screens
 		paperScreens = new HashMap<>();
@@ -56,8 +58,11 @@ public class PaperFX extends Application {
 		paperScreens.put("game", new GameScreen(this));
 
 		// Create the Default Globals
-		Paper.DATABASE.addGlobal("playerName", "");
+		Paper.DATABASE.addGlobal("playerName", "Phil Collins");
+		Paper.DATABASE.addGlobal("playerLevel", 10);
 		Paper.DATABASE.addGlobal("currentLocation", "");
+
+		Paper.DATABASE.addGlobal("hasAmulet", false);
 
 		// Initialize Scripting Engine last.
 		Paper.SE = new ScriptEngine();
