@@ -1,7 +1,5 @@
 package io.azraein.paperfx.ui.controls.dialog.player;
 
-import org.tinylog.Logger;
-
 import io.azraein.inkfx.system.GameState;
 import io.azraein.inkfx.system.Paper;
 import io.azraein.inkfx.system.Utils;
@@ -31,20 +29,6 @@ public class PlayerJournalDialog extends Dialog<String> {
         String title = player.getActorState().getActorName() + "'s Journal";
         setTitle(title);
         setResizable(true);
-
-        String dialogueTest = """
-                NPC -> "Welcome, $playerName! Are you ready to begin your adventure?"
-
-                IF $hasAmulet THEN
-                    NPC -> "I see you have the amulet. You're prepared!"
-                ELSEIF ($playerLevel > 5) THEN
-                    NPC -> "You're a seasoned adventurer, but you should find the amulet."
-                ELSE
-                    NPC -> "You need to be better prepared. Find the amulet first."
-                END
-                                        """;
-
-        Logger.debug(Paper.DP.parse(dialogueTest));
 
         TabPane journalTabs = new TabPane();
         journalTabs.getTabs().add(playerStatsTab);

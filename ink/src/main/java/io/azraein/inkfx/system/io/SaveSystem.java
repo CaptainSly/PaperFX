@@ -54,7 +54,7 @@ public class SaveSystem {
 
 	public static final String[] PAPER_DATA_FOLDERS = {
 			// Data Folders
-			"data/", "data/audio/", "data/gfx/", "data/scripts/",
+			"data/", "data/audio/", "data/audio/sfx/", "data/audio/music/", "data/gfx/", "data/scripts/",
 			// Internal Paper Folders
 			"saves/", "logs",
 			// To be continued

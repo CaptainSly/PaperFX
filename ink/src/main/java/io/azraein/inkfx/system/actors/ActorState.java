@@ -2,8 +2,6 @@ package io.azraein.inkfx.system.actors;
 
 import java.io.Serializable;
 
-import org.tinylog.Logger;
-
 import io.azraein.inkfx.system.Paper;
 import io.azraein.inkfx.system.Utils;
 import io.azraein.inkfx.system.actors.classes.ActorClass;
@@ -102,7 +100,6 @@ public class ActorState implements Serializable {
 			stat.addXp(Utils.getTotalXPForLevel(stat, totalLevel));
 
 			actorSkills[skill.ordinal()] = stat;
-			Logger.debug(skill.name() + " is " + actorSkills[skill.ordinal()].getLevel());
 		}
 	}
 

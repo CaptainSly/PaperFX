@@ -16,6 +16,7 @@ import io.azraein.paperfx.PaperFX;
 import io.azraein.paperfx.ui.controls.LocationView;
 import io.azraein.paperfx.ui.controls.PaperClock;
 import io.azraein.paperfx.ui.controls.PlayerControls;
+import io.azraein.paperfx.ui.controls.dialog.OptionsDialog;
 import io.azraein.paperfx.ui.controls.dialog.player.PlayerJournalDialog;
 import io.azraein.paperfx.ui.controls.dialog.player.SavePlayerFileDialog;
 import javafx.animation.AnimationTimer;
@@ -119,6 +120,7 @@ public class GameScreen extends PaperScreen {
             }
 
         });
+
         MenuItem loadGame = new MenuItem("Load Game");
         loadGame.setOnAction(event -> {
             FileChooser fc = new FileChooser();
@@ -138,7 +140,16 @@ public class GameScreen extends PaperScreen {
             }
 
         });
-        fileMenu.getItems().addAll(saveGame, loadGame);
+
+        MenuItem options = new MenuItem("Options");
+        options.setOnAction(event -> {
+            currentGameStateProperty.set(GameState.PAUSED);
+            OptionsDialog optionDialog = new OptionsDialog(this);
+            optionDialog.showAndWait();
+
+        });
+
+        fileMenu.getItems().addAll(saveGame, loadGame, options);
         gameScreenMenuBar.getMenus().addAll(fileMenu, paperClock);
         // #endregion
 

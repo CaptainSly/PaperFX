@@ -55,6 +55,11 @@ public class Utils {
 		return Math.round(number * scale) / scale;
 	}
 
+	public static double formatToDecimalPlace(int place, double number) {
+		double scale = Math.pow(10, place);
+		return Math.round(number * scale) / scale;
+	}
+
 	public static float getCalendarUpdateInterval(int minutesPerDay) {
 		float updateInterval = (float) ((minutesPerDay * 60) / 24) / 60;
 		return Utils.formatToDecimalPlace(2, updateInterval);

@@ -14,6 +14,9 @@ public class Location implements Serializable {
 
 	private final String locationId;
 
+	private String locationMusicId;
+	private String locationAmbienceId;
+
 	private final String[] locationNeighbors;
 	private final List<String> locationBuildingIds;
 	private final List<String> locationActionIds;
@@ -23,6 +26,9 @@ public class Location implements Serializable {
 	public Location(String locationId, String locationName, String locationDescription) {
 		this.locationId = locationId;
 		locationState = new LocationState(locationName, locationDescription);
+
+		locationMusicId = "";
+		locationAmbienceId = "";
 
 		locationNeighbors = new String[4];
 		locationBuildingIds = new ArrayList<>();
@@ -48,6 +54,14 @@ public class Location implements Serializable {
 		return locationId;
 	}
 
+	public String getLocationMusicId() {
+		return locationMusicId;
+	}
+
+	public String getLocationAmbienceId() {
+		return locationAmbienceId;
+	}
+
 	public LocationState getLocationState() {
 		return locationState;
 	}
@@ -62,6 +76,14 @@ public class Location implements Serializable {
 
 	public List<String> getLocationActionIds() {
 		return locationActionIds;
+	}
+
+	public void setLocationAmbienceId(String ambienceId) {
+		this.locationAmbienceId = ambienceId;
+	}
+
+	public void setLocationMusicId(String musicId) {
+		this.locationMusicId = musicId;
 	}
 
 	public void setActionIds(List<String> locationActionIds) {

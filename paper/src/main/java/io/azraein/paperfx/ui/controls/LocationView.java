@@ -93,6 +93,13 @@ public class LocationView extends Region {
             locationActions.getItems().add(action);
         }
 
+        if (location.getLocationMusicId() != null)
+            if (!location.getLocationMusicId().isEmpty())
+                Paper.AUDIO.addMusicTrack(location.getLocationMusicId());
+
+        if (location.getLocationAmbienceId() != null)
+            if (!location.getLocationAmbienceId().isEmpty())
+                Paper.AUDIO.playAmbience(location.getLocationAmbienceId());
     }
 
 }

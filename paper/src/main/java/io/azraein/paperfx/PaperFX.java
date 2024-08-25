@@ -10,12 +10,14 @@ import java.util.Optional;
 import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 import org.tinylog.Logger;
 
+import io.azraein.inkfx.system.Options;
 import io.azraein.inkfx.system.Paper;
 import io.azraein.inkfx.system.Utils;
 import io.azraein.inkfx.system.actors.dialogue.DialogueParser;
 import io.azraein.inkfx.system.io.Database;
 import io.azraein.inkfx.system.io.PaperIni;
 import io.azraein.inkfx.system.io.SaveSystem;
+import io.azraein.inkfx.system.io.audio.AudioManager;
 import io.azraein.inkfx.system.io.plugins.PaperPluginLoader;
 import io.azraein.inkfx.system.io.plugins.PaperPluginMetadata;
 import io.azraein.inkfx.system.io.scripting.ScriptEngine;
@@ -52,6 +54,8 @@ public class PaperFX extends Application {
 		Paper.DATABASE = new Database();
 		Paper.DP = new DialogueParser();
 
+		Paper.AUDIO = new AudioManager();
+
 		// Create the Screens HashMap and throw in the default screens
 		paperScreens = new HashMap<>();
 		paperScreens.put("mainMenu", new MainMenuScreen(this));
@@ -59,14 +63,13 @@ public class PaperFX extends Application {
 
 		// Create the Default Globals
 		Paper.DATABASE.addGlobal("playerName", "Phil Collins");
-		Paper.DATABASE.addGlobal("playerLevel", 10);
+		Paper.DATABASE.addGlobal("playerLevel", 1);
 		Paper.DATABASE.addGlobal("currentLocation", "");
 
 		Paper.DATABASE.addGlobal("hasAmulet", false);
 
 		// Initialize Scripting Engine last.
 		Paper.SE = new ScriptEngine();
-
 	}
 
 	@Override
@@ -81,8 +84,16 @@ public class PaperFX extends Application {
 		for (PaperScreen screen : paperScreens.values())
 			screen.init();
 
+		// Do Ini Stuff
+		Options.doAutoSave = Paper.INI.getBoolean(PaperIni.SYSTEM_SECTION, PaperIni.SYSTEM_DO_AUTO_SAVE);
+		Options.autoSaveDuration = Paper.INI.getInt(PaperIni.SYSTEM_SECTION, PaperIni.SYSTEM_AUTO_SAVE_DURATION);
+		Options.maxAutoSaves = Paper.INI.getInt(PaperIni.SYSTEM_SECTION, PaperIni.SYSTEM_MAX_AUTO_SAVES);
+		Options.defaultMusicVolume = Paper.INI.getDouble(PaperIni.SYSTEM_SECTION, PaperIni.SYSTEM_DEFAULT_MUSIC_VOLUME);
+		Options.defaultAmbienceVolume = Paper.INI.getDouble(PaperIni.SYSTEM_SECTION,
+				PaperIni.SYSTEM_DEFAULT_AMBIENCE_VOLUME);
+		Options.defaultSFXVolume = Paper.INI.getDouble(PaperIni.SYSTEM_SECTION, PaperIni.SYSTEM_DEFAULT_SFX_VOLUME);
+
 		// Check to see if the INI contains a list of loadable plugins
-		// #region Default Plugin Loading
 		if (Paper.INI.getSelectedPluginsList().isEmpty()) {
 			PaperPluginSelectionDialog ppsd = new PaperPluginSelectionDialog();
 			Optional<PluginSelectionResult> plugins = ppsd.showAndWait();
@@ -112,13 +123,10 @@ public class PaperFX extends Application {
 
 			Paper.DATABASE.mergeDatabase(Paper.PPL.loadPlugins(pluginPaths));
 		}
-		// #endregion
 
 		primaryStage.show();
 
 		Paper.SE.setPaperGlobal("characterCreation", CoerceJavaToLua.coerce(new CharacterCreationDialog()));
-
-		// Run Plugin Script Initialization
 		Paper.SE.runFunction(Paper.PPL.getPluginMainScript(), "onInit");
 
 		// If the Main Script pushed any global variables, we'll finally copy those into

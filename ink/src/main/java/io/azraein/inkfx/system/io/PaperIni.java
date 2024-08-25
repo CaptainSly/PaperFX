@@ -28,6 +28,10 @@ public class PaperIni {
 	public static final String SYSTEM_MAX_AUTO_SAVES = "iMaxAutoSaves";
 	public static final String SYSTEM_DO_AUTO_SAVE = "bDoAutoSave";
 
+	public static final String SYSTEM_DEFAULT_MUSIC_VOLUME = "dDefaultMusicVolume";
+	public static final String SYSTEM_DEFAULT_AMBIENCE_VOLUME = "dDefaultAmbienceVolume";
+	public static final String SYSTEM_DEFAULT_SFX_VOLUME = "dDefaultSFXVolume";
+
 	// Plugin Loader
 	public static final String PPL_SELECTED_PLUGINS = "slLoadedPlugins";
 
@@ -45,6 +49,10 @@ public class PaperIni {
 				put(SYSTEM_SECTION, SYSTEM_MAX_AUTO_SAVES, Options.maxAutoSaves);
 				put(SYSTEM_SECTION, SYSTEM_DO_AUTO_SAVE, Options.doAutoSave);
 
+				put(SYSTEM_SECTION, SYSTEM_DEFAULT_MUSIC_VOLUME, Options.defaultMusicVolume);
+				put(SYSTEM_SECTION, SYSTEM_DEFAULT_AMBIENCE_VOLUME, Options.defaultAmbienceVolume);
+				put(SYSTEM_SECTION, SYSTEM_DEFAULT_SFX_VOLUME, Options.defaultSFXVolume);
+
 				ini.store();
 			}
 		} catch (IOException e) {
@@ -61,6 +69,22 @@ public class PaperIni {
 	public void put(String section, String key, Object value) throws IOException {
 		ini.put(section, key, value);
 		ini.store();
+	}
+
+	public String getString(String section, String key) {
+		return ini.get(section, key, String.class);
+	}
+
+	public boolean getBoolean(String section, String key) {
+		return ini.get(section, key, Boolean.class);
+	}
+
+	public int getInt(String section, String key) {
+		return ini.get(section, key, Integer.class);
+	}
+
+	public Double getDouble(String section, String key) {
+		return ini.get(section, key, Double.class);
 	}
 
 	public void updateSelectedPluginsList(List<String> selectedPlugins) throws IOException {

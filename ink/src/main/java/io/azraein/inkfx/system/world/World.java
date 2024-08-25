@@ -50,10 +50,12 @@ public class World implements Serializable {
             lastClockUpdate = 0;
         }
 
-        lastAutoSaveUpdate += delta;
-        if (Options.doAutoSave && lastAutoSaveUpdate >= Utils.getAutoSaveInterval(Options.autoSaveDuration)) {
-            SaveSystem.autoSave();
-            lastAutoSaveUpdate = 0;
+        if (Options.doAutoSave) {
+            lastAutoSaveUpdate += delta;
+            if (lastAutoSaveUpdate >= Utils.getAutoSaveInterval(Options.autoSaveDuration)) {
+                SaveSystem.autoSave();
+                lastAutoSaveUpdate = 0;
+            }
         }
 
         if (player != null)
