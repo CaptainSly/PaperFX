@@ -8,6 +8,9 @@ import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 import io.azraein.inkfx.system.Ink;
 import io.azraein.inkfx.system.Paper;
 import io.azraein.inkfx.system.io.scripting.lib.PaperUtilFunctions.PaperLuaLocationSetter;
+import io.azraein.inkfx.system.io.scripting.lib.PaperUtilFunctions.PaperLuaPlayAmbienceTrack;
+import io.azraein.inkfx.system.io.scripting.lib.PaperUtilFunctions.PaperLuaPlayMusicTrack;
+import io.azraein.inkfx.system.io.scripting.lib.PaperUtilFunctions.PaperLuaPlaySoundEffect;
 import io.azraein.inkfx.system.io.scripting.lib.PaperUtilFunctions.PaperLuaSetCalendarDate;
 import io.azraein.inkfx.system.io.scripting.lib.PaperUtilFunctions.PaperLuaSetCalendarDaysMonths;
 import io.azraein.inkfx.system.io.scripting.lib.PaperUtilFunctions.PaperLuaSetCalendarTime;
@@ -37,6 +40,11 @@ public class PaperLib extends TwoArgFunction {
         paperTable.set("setCalendarYear", new PaperLuaSetCalendarYear());
         paperTable.set("setCalendarTime", new PaperLuaSetCalendarTime());
         paperTable.set("setCalendarDate", new PaperLuaSetCalendarDate());
+
+        // Audio Helper Methods (functions)
+        paperTable.set("playMusic", new PaperLuaPlayMusicTrack());
+        paperTable.set("playAmbience", new PaperLuaPlayAmbienceTrack());
+        paperTable.set("playSoundEffect", new PaperLuaPlaySoundEffect());
 
         // Set Globals
         setGlobal(env, "paper", paperTable);

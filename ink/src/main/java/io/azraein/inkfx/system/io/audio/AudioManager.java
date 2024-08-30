@@ -1,10 +1,12 @@
 package io.azraein.inkfx.system.io.audio;
 
 import java.io.File;
+import java.net.URISyntaxException;
 import java.util.LinkedList;
 import java.util.Queue;
 
 import io.azraein.inkfx.system.Options;
+import io.azraein.inkfx.system.Utils;
 import io.azraein.inkfx.system.io.SaveSystem;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -29,6 +31,15 @@ public class AudioManager {
     public void addMusicTrack(String mediaName) {
         Media media = new Media(new File(SaveSystem.PAPER_AUDIO_FOLDER + "music/" + mediaName).toURI().toString());
         musicQueue.add(media);
+    }
+
+    public void addMusicTrackInternal(String mediaName) {
+        try {
+            Media media = new Media(Utils.getFileURIFromResources(mediaName).toString());
+            musicQueue.add(media);
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
     }
 
     public void setMusicVolume(double volume) {
@@ -80,6 +91,22 @@ public class AudioManager {
         ambiencePlayer.play();
     }
 
+    public void playAmbienceInternal(String mediaName) {
+        if (ambiencePlayer != null) {
+            ambiencePlayer.stop();
+            ambiencePlayer.dispose();
+        }
+        try {
+            Media media = new Media(Utils.getFileURIFromResources(mediaName).toString());
+            ambiencePlayer = new MediaPlayer(media);
+            ambiencePlayer.setVolume(Options.defaultAmbienceVolume);
+            ambiencePlayer.setCycleCount(MediaPlayer.INDEFINITE); // Loop ambiance
+            ambiencePlayer.play();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void setAmbienceVolume(double volume) {
         if (ambiencePlayer != null) {
             ambiencePlayer.setVolume(volume);
@@ -104,6 +131,22 @@ public class AudioManager {
             sfxPlayer.stop();
             sfxPlayer.dispose();
         });
+    }
+
+    public void playSoundEffectInternal(String mediaName) {
+        try {
+            Media sfx = new Media(Utils.getFileURIFromResources(mediaName).toString());
+            MediaPlayer sfxPlayer = new MediaPlayer(sfx);
+            sfxPlayer.setVolume(Options.defaultSFXVolume);
+            sfxPlayer.play();
+
+            sfxPlayer.setOnEndOfMedia(() -> {
+                sfxPlayer.stop();
+                sfxPlayer.dispose();
+            });
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
     }
 
     // General Control

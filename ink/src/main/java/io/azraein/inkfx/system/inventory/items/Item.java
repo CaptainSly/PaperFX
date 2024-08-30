@@ -5,6 +5,7 @@ import java.io.Serializable;
 import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 
 import io.azraein.inkfx.system.Paper;
+import io.azraein.inkfx.system.actors.ActorState;
 
 // TODO: Items need heavy ass help
 
@@ -31,10 +32,9 @@ public class Item implements Serializable {
 		this.itemType = itemType;
 	}
 
-	public void onUse() {
+	public void onUse(ActorState actorState) {
 		if (!itemScript.isEmpty())
-			Paper.SE.runFunction(itemScript, "onUse",
-					CoerceJavaToLua.coerce(Paper.PAPER_PLAYER_PROPERTY.get().getActorState()));
+			Paper.SE.runFunction(itemScript, "onUse", CoerceJavaToLua.coerce(actorState));
 	}
 
 	public String getItemId() {

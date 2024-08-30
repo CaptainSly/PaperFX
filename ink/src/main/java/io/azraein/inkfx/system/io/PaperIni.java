@@ -42,7 +42,18 @@ public class PaperIni {
 				ini = new Ini(iniFile);
 			} else {
 				ini = new Ini();
-				ini.setComment("PaperFX INI - Contains Options for both the Game Engine and the Game Editor");
+				ini.setComment(
+				"PaperFX INI - Contains Options for both the Game Engine and the Game Editor\n" +
+				"#-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-\n"	+
+				"#|				~KEY~			   |\n" +
+				"#| i - Integer					   |\n" +
+				"#| b - Boolean					   |\n" + 
+				"#| s - String 					   |\n" + 
+				"#| f - Float 					   |\n" + 
+				"#| d - Double					   |\n" +
+				"#| sl - String List 			   |\n" +
+				"#-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-\n"	
+				);
 				ini.setFile(iniFile);
 
 				put(SYSTEM_SECTION, SYSTEM_AUTO_SAVE_DURATION, Options.autoSaveDuration);

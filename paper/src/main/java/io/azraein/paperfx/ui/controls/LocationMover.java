@@ -31,9 +31,10 @@ public class LocationMover extends Region {
             locationBtns[dir.ordinal()].setOnAction(event -> {
                 String neighborId = Paper.PAPER_LOCATION_PROPERTY.get().getLocationNeighbors()[dir.ordinal()];
                 Location neighbor = Paper.DATABASE.getLocation(neighborId);
-                Paper.AUDIO.playSoundEffect("location_transition_sfx.mp3");
                 Paper.PAPER_LOCATION_PROPERTY.set(neighbor);
-                Paper.DATABASE.addGlobal("currentLocationName", neighbor.getLocationState().getLocationName());
+
+                Paper.AUDIO.playSoundEffectInternal("location_transition_sfx.mp3");
+                Paper.DATABASE.setGlobal("currentLocationName", neighbor.getLocationState().getLocationName());
             });
         }
 

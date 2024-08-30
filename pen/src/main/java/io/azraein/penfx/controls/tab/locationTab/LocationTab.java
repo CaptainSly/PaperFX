@@ -1,11 +1,14 @@
 package io.azraein.penfx.controls.tab.locationTab;
 
+import java.io.File;
+
 import org.tinylog.Logger;
 
 import io.azraein.inkfx.system.Action;
 import io.azraein.inkfx.system.Utils;
 import io.azraein.inkfx.system.actors.Npc;
 import io.azraein.inkfx.system.io.Database;
+import io.azraein.inkfx.system.io.SaveSystem;
 import io.azraein.inkfx.system.locations.Direction;
 import io.azraein.inkfx.system.locations.Location;
 import io.azraein.inkfx.system.locations.buildings.Building;
@@ -23,6 +26,8 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.util.StringConverter;
 
 @SuppressWarnings("unchecked")
@@ -328,6 +333,25 @@ public class LocationTab extends PaperEditorTab {
         });
         locationNpcSelector.getSelectionModel().select(0);
 
+        Label locationScriptLbl = new Label("Location Script");
+        TextField locationScriptFld = new TextField();
+        locationScriptFld.setEditable(false);
+
+        Button setLocationScriptBtn = new Button("Set Script");
+        setLocationScriptBtn.setOnAction(event -> {
+            FileChooser fc = new FileChooser();
+            fc.getExtensionFilters().add(new ExtensionFilter("Lua Script", "*.lua"));
+            fc.setInitialDirectory(new File(SaveSystem.PAPER_SCRIPT_FOLDER));
+
+            File scriptFile = fc.showOpenDialog(penFX.getPrimaryStage().getOwner());
+            locationScriptFld.setText(scriptFile.getName());
+        });
+
+        Button clearScriptBtn = new Button("Clear");
+        clearScriptBtn.setOnAction(event -> {
+            locationScriptFld.setText("");
+        });
+
         Button addBuildingBtn = new Button("Add Building");
         addBuildingBtn.setOnAction(event -> {
             Building building = locationBuildingSelector.getValue();
@@ -414,6 +438,8 @@ public class LocationTab extends PaperEditorTab {
                     location.setNeighborLocation(dir, neighbor);
                 }
             }
+
+            location.setLocationScript(locationScriptFld.getText());
 
             // TODO: Creatures once they're implemented
 
@@ -507,6 +533,11 @@ public class LocationTab extends PaperEditorTab {
 
         gp.add(saveLocationBtn, 0, 14);
         gp.add(clearLocationFormBtn, 1, 14);
+
+        gp.add(locationScriptLbl, 7, 4);
+        gp.add(locationScriptFld, 8, 4);
+        gp.add(setLocationScriptBtn, 9, 4);
+        gp.add(clearScriptBtn, 10, 4);
 
         int startRow = 0;
         int col = 7;

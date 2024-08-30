@@ -115,7 +115,7 @@ public class SaveSystem {
 			worldOutputStream.flush();
 			worldOutputStream.close();
 		} catch (IOException e) {
-
+			e.printStackTrace();
 		}
 	}
 

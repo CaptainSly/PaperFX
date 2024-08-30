@@ -1,6 +1,8 @@
 package io.azraein.inkfx.system;
 
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import io.azraein.inkfx.system.actors.ActorState;
 import io.azraein.inkfx.system.actors.stats.Stat;
@@ -10,6 +12,11 @@ public class Utils {
 	public static InputStream getFileFromResources(String fileName) {
 		ClassLoader classloader = Thread.currentThread().getContextClassLoader();
 		return classloader.getResourceAsStream(fileName);
+	}
+
+	public static URI getFileURIFromResources(String fileName) throws URISyntaxException {
+		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+		return classLoader.getResource(fileName).toURI();
 	}
 
 	public static String toNormalCase(String input) {

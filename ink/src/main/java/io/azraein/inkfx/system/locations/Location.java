@@ -21,18 +21,31 @@ public class Location implements Serializable {
 	private final List<String> locationBuildingIds;
 	private final List<String> locationActionIds;
 
+	private String locationScript;
+
 	private LocationState locationState;
 
 	public Location(String locationId, String locationName, String locationDescription) {
 		this.locationId = locationId;
 		locationState = new LocationState(locationName, locationDescription);
 
+		locationScript = "";
 		locationMusicId = "";
 		locationAmbienceId = "";
 
 		locationNeighbors = new String[4];
 		locationBuildingIds = new ArrayList<>();
 		locationActionIds = new ArrayList<>();
+	}
+
+	public void onVisit() {
+		if (!locationScript.isEmpty())
+			Paper.SE.runFunction(locationScript, "onVisit");
+	}
+
+	public void onLeave() {
+		if (!locationScript.isEmpty())
+			Paper.SE.runFunction(locationScript, "onLeave");
 	}
 
 	public void update() {
@@ -62,6 +75,10 @@ public class Location implements Serializable {
 		return locationAmbienceId;
 	}
 
+	public String getLocationScript() {
+		return locationScript;
+	}
+
 	public LocationState getLocationState() {
 		return locationState;
 	}
@@ -76,6 +93,10 @@ public class Location implements Serializable {
 
 	public List<String> getLocationActionIds() {
 		return locationActionIds;
+	}
+
+	public void setLocationScript(String script) {
+		this.locationScript = script;
 	}
 
 	public void setLocationAmbienceId(String ambienceId) {

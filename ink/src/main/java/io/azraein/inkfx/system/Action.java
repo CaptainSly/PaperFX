@@ -12,6 +12,12 @@ public class Action implements Serializable {
 
     private String actionScript;
 
+    private boolean isRepeated = false;
+
+    private int actionDelay = 0;
+
+    private transient float lastActionUpdate = 0;
+
     public Action(String actionId, String actionName, String actionDescription, String actionScript) {
         this.actionId = actionId;
         this.actionName = actionName;
@@ -21,6 +27,16 @@ public class Action implements Serializable {
 
     public void onAction() {
         Paper.SE.runFunction(actionScript, "onAction");
+    }
+
+    public void onRepeatedAction(float delta) {
+
+        lastActionUpdate++;
+        if (lastActionUpdate >= actionDelay) {
+            Paper.SE.runFunction(actionScript, "onRepeatedAction");
+            lastActionUpdate = 0;
+        }
+
     }
 
     public String getActionId() {

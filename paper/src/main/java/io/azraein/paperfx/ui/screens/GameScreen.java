@@ -67,11 +67,14 @@ public class GameScreen extends PaperScreen {
         // #region Listeners
         Paper.PAPER_LOCATION_PROPERTY.addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
-                World world = Paper.PAPER_WORLD_PROPERTY.get();
                 locationView.setLocation(newValue);
+                World world = Paper.PAPER_WORLD_PROPERTY.get();
                 world.setCurrentLocationId(newValue.getLocationId());
 
+                newValue.onVisit();
+                
                 if (oldValue != null) {
+                    oldValue.onLeave();
                     // Throw the Old Location's State into the Worlds
                     world.addLocationState(oldValue);
 

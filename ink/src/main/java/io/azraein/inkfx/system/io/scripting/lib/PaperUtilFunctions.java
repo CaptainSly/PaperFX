@@ -88,4 +88,37 @@ public class PaperUtilFunctions {
 
     }
 
+    // Audio
+
+    public static class PaperLuaPlayMusicTrack extends OneArgFunction {
+
+        @Override
+        public LuaValue call(LuaValue arg) {
+            Paper.AUDIO.addMusicTrack(arg.tojstring());
+            Paper.AUDIO.playNextMusicTrack();
+            return NIL;
+        }
+
+    }
+
+    public static class PaperLuaPlayAmbienceTrack extends OneArgFunction {
+
+        @Override
+        public LuaValue call(LuaValue arg) {
+            Paper.AUDIO.playAmbience(arg.tojstring());
+            return NIL;
+        }
+
+    }
+
+    public static class PaperLuaPlaySoundEffect extends OneArgFunction {
+
+        @Override
+        public LuaValue call(LuaValue arg) {
+            Paper.AUDIO.playSoundEffect(arg.tojstring());
+            return NIL;
+        }
+        
+    }
+
 }

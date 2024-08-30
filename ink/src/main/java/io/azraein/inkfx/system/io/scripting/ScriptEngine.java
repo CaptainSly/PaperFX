@@ -11,9 +11,7 @@ import org.luaj.vm2.lib.PackageLib;
 import org.luaj.vm2.lib.StringLib;
 import org.luaj.vm2.lib.TableLib;
 import org.luaj.vm2.lib.jse.JseBaseLib;
-import org.luaj.vm2.lib.jse.JseIoLib;
 import org.luaj.vm2.lib.jse.JseMathLib;
-import org.luaj.vm2.lib.jse.JseOsLib;
 import org.luaj.vm2.lib.jse.LuajavaLib;
 import org.tinylog.Logger;
 
@@ -27,9 +25,6 @@ public class ScriptEngine {
     private PaperLib paperLib;
 
     public ScriptEngine() {
-
-        // TODO Probably Sandbox the Scripting Engine.
-
         paperLib = new PaperLib();
 
         paperGlobals.load(new JseBaseLib());
@@ -39,8 +34,6 @@ public class ScriptEngine {
         paperGlobals.load(new StringLib());
         paperGlobals.load(new CoroutineLib());
         paperGlobals.load(new JseMathLib());
-        paperGlobals.load(new JseIoLib());
-        paperGlobals.load(new JseOsLib());
         paperGlobals.load(new LuajavaLib());
         paperGlobals.load(paperLib);
         LoadState.install(paperGlobals);
