@@ -1,10 +1,9 @@
 package io.azraein.inkfx.system;
 
 import io.azraein.inkfx.system.actors.Player;
-import io.azraein.inkfx.system.actors.dialogue.DialogueParser;
+import io.azraein.inkfx.system.audio.AudioManager;
 import io.azraein.inkfx.system.io.Database;
 import io.azraein.inkfx.system.io.PaperIni;
-import io.azraein.inkfx.system.io.audio.AudioManager;
 import io.azraein.inkfx.system.io.plugins.PaperPluginLoader;
 import io.azraein.inkfx.system.io.scripting.ScriptEngine;
 import io.azraein.inkfx.system.locations.Location;
@@ -29,10 +28,7 @@ public class Paper {
 
     public static PaperIni INI;
 
-    public static DialogueParser DP;
-
     public static AudioManager AUDIO;
-
 
     // Global Properties
 

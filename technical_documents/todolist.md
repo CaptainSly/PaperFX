@@ -24,10 +24,9 @@ Refactor EVERY Class so the code is more cleaner and more readable. Try to setup
 
 
 #### Pen
+~~Maybe swap the Lists in PenFX, for a EditorDatabase class? Makes the main PenFX class a little cluttered.~~
 
 [] Go through each class inside the Pen project and change any inkFX argument to penFX. 
-
-Maybe swap the Lists in PenFX, for a EditorDatabase class? Makes the main PenFX class a little cluttered. 
 
 [] Add "Test from Paper" to the Editor
 
@@ -35,7 +34,9 @@ Maybe swap the Lists in PenFX, for a EditorDatabase class? Makes the main PenFX 
 
 [] Add Validation to the Save Object buttons on each of the tabs. Tighten up each tab in the editor, make any record change mark the tab as dirty. 
 
-[] Get Started on the Lootlist, Quest Editor
+[] Get Started on the Lootlist, Dialogue Topic, Quest Editor
+
+[] Come up with a new Design for each editor tab. It's hideous for one, and for two it's extremely crowded. 
 
 #### Ink
 

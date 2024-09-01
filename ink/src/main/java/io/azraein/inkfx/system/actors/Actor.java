@@ -17,13 +17,17 @@ public abstract class Actor implements Serializable {
 		this.actorId = actorId;
 		this.actorType = actorType;
 		actorState = new ActorState(actorName, actorClass, actorRace);
+		initActor();
 	}
 
 	public Actor(String actorId, String actorType, ActorState actorState) {
 		this.actorId = actorId;
 		this.actorType = actorType;
 		this.actorState = actorState;
+		initActor();
 	}
+
+	public abstract void initActor();
 
 	public abstract void updateActor();
 

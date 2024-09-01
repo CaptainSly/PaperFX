@@ -1,4 +1,4 @@
-package io.azraein.inkfx.system.io.audio;
+package io.azraein.inkfx.system.audio;
 
 import java.io.File;
 import java.net.URISyntaxException;
@@ -23,6 +23,8 @@ public class AudioManager {
     private Queue<Media> musicQueue;
 
     public static final int FADEOUT_TIMER = 10; // Seconds
+
+    // TODO: Playlist of sorts
 
     public AudioManager() {
         musicQueue = new LinkedList<>();

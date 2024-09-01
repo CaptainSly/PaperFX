@@ -52,17 +52,22 @@ public class ScriptEngine {
     }
 
     public LuaValue runScript(String scriptName) {
-        Logger.debug("Running Lua Script: " + scriptName);
-        return getPaperGlobals().loadfile(SaveSystem.PAPER_SCRIPT_FOLDER + scriptName).call();
+        if (!scriptName.contains(".lua"))
+            scriptName += ".lua";
+        return getPaperGlobals().get("dofile").call(LuaValue.valueOf(SaveSystem.PAPER_SCRIPT_FOLDER + scriptName));
     }
 
     public Varargs runFunction(String scriptName, String functionName) {
+        if (!scriptName.contains(".lua"))
+            scriptName += ".lua";
         getPaperGlobals().get("dofile").call(LuaValue.valueOf(SaveSystem.PAPER_SCRIPT_FOLDER + scriptName));
         LuaValue function = getPaperGlobals().get(functionName);
         return function.call();
     }
 
     public Varargs runFunction(String scriptName, String functionName, LuaValue... arguments) {
+        if (!scriptName.contains(".lua"))
+            scriptName += ".lua";
         getPaperGlobals().get("dofile").call(LuaValue.valueOf(SaveSystem.PAPER_SCRIPT_FOLDER + scriptName));
         LuaValue function = getPaperGlobals().get(functionName);
         return function.invoke(arguments);

@@ -9,6 +9,7 @@ import io.azraein.inkfx.system.Paper;
 import io.azraein.inkfx.system.actors.Npc;
 import io.azraein.inkfx.system.actors.classes.ActorClass;
 import io.azraein.inkfx.system.actors.classes.ActorRace;
+import io.azraein.inkfx.system.actors.dialogue.Topic;
 import io.azraein.inkfx.system.inventory.items.Item;
 import io.azraein.inkfx.system.inventory.items.Lootlist;
 import io.azraein.inkfx.system.inventory.items.equipment.Equipment;
@@ -31,6 +32,15 @@ public class Database implements Serializable {
 	private Map<String, Location> locationRegistry = new HashMap<>();
 	private Map<String, Quest> questRegistry = new HashMap<>();
 	private Map<String, Action> actionRegistry = new HashMap<>();
+	private Map<String, Topic> topicRegistry = new HashMap<>();
+
+	public void addTopic(Topic topic) {
+		topicRegistry.put(topic.getTopicId(), topic);
+	}
+
+	public Topic getTopic(String topicId) {
+		return topicRegistry.get(topicId);
+	}
 
 	public void addEquipment(Equipment equipment) {
 		equipmentRegistry.put(equipment.getEquipmentId(), equipment);
@@ -138,6 +148,7 @@ public class Database implements Serializable {
 		this.getLootlistRegistry().putAll(database.getLootlistRegistry());
 		this.getActionRegistry().putAll(database.getActionRegistry());
 		this.getEquipmentRegistry().putAll(database.getEquipmentRegistry());
+		this.getTopicRegistry().putAll(database.getTopicRegistry());
 	}
 
 	public void mergeDatabase(Database... databases) {
@@ -151,6 +162,10 @@ public class Database implements Serializable {
 
 	public Map<String, Action> getActionRegistry() {
 		return actionRegistry;
+	}
+
+	public Map<String, Topic> getTopicRegistry() {
+		return topicRegistry;
 	}
 
 	public Map<String, Location> getLocationRegistry() {
@@ -192,7 +207,8 @@ public class Database implements Serializable {
 	public int getDatabaseSize() {
 		return getGlobalRegistry().size() + getItemRegistry().size() + getActorClassRegistry().size()
 				+ getActorRaceRegistry().size() + getNpcRegistry().size() + getBuildingRegistry().size()
-				+ getLocationRegistry().size() + getQuestRegistry().size() + getLootlistRegistry().size();
+				+ getLocationRegistry().size() + getTopicRegistry().size() + getQuestRegistry().size()
+				+ getLootlistRegistry().size();
 	}
 
 }

@@ -13,11 +13,10 @@ import org.tinylog.Logger;
 import io.azraein.inkfx.system.Options;
 import io.azraein.inkfx.system.Paper;
 import io.azraein.inkfx.system.Utils;
-import io.azraein.inkfx.system.actors.dialogue.DialogueParser;
+import io.azraein.inkfx.system.audio.AudioManager;
 import io.azraein.inkfx.system.io.Database;
 import io.azraein.inkfx.system.io.PaperIni;
 import io.azraein.inkfx.system.io.SaveSystem;
-import io.azraein.inkfx.system.io.audio.AudioManager;
 import io.azraein.inkfx.system.io.plugins.PaperPluginLoader;
 import io.azraein.inkfx.system.io.plugins.PaperPluginMetadata;
 import io.azraein.inkfx.system.io.scripting.ScriptEngine;
@@ -52,7 +51,6 @@ public class PaperFX extends Application {
 		// Initialize the Ini and Create the base Database.
 		Paper.INI = new PaperIni();
 		Paper.DATABASE = new Database();
-		Paper.DP = new DialogueParser();
 
 		Paper.AUDIO = new AudioManager();
 
@@ -70,6 +68,8 @@ public class PaperFX extends Application {
 
 		// Initialize Scripting Engine last.
 		Paper.SE = new ScriptEngine();
+
+		
 	}
 
 	@Override

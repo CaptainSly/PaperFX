@@ -16,9 +16,12 @@ public class Player extends Actor {
 
 	public Player(String actorName, ActorClass charClass, ActorRace charRace) {
 		super("PLAYER_ACTOR", "player", actorName, charClass, charRace);
+	}
+
+	@Override
+	public void initActor() {
 		playerQuestLog = new ArrayList<>();
 		playerCompletedQuests = new ArrayList<>();
-
 	}
 
 	@Override

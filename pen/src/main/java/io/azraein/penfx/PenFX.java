@@ -14,12 +14,14 @@ import io.azraein.inkfx.system.Utils;
 import io.azraein.inkfx.system.actors.Npc;
 import io.azraein.inkfx.system.actors.classes.ActorClass;
 import io.azraein.inkfx.system.actors.classes.ActorRace;
+import io.azraein.inkfx.system.actors.dialogue.Topic;
 import io.azraein.inkfx.system.exceptions.IncompatiblePluginVersionException;
 import io.azraein.inkfx.system.exceptions.PluginCorruptionException;
 import io.azraein.inkfx.system.inventory.items.Item;
 import io.azraein.inkfx.system.inventory.items.Lootlist;
 import io.azraein.inkfx.system.inventory.items.equipment.Equipment;
 import io.azraein.inkfx.system.io.Database;
+import io.azraein.inkfx.system.io.ObservableDatabase;
 import io.azraein.inkfx.system.io.SaveSystem;
 import io.azraein.inkfx.system.io.plugins.PaperPlugin;
 import io.azraein.inkfx.system.io.plugins.PaperPluginLoader;
@@ -36,7 +38,6 @@ import io.azraein.penfx.screens.PluginMetadataScreen;
 import javafx.application.Application;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -62,17 +63,7 @@ public class PenFX extends Application {
 	private final ObjectProperty<PaperPlugin> currentPluginProperty = new SimpleObjectProperty<>(null);
 
 	// Everything gets loaded here, but nothing gets saved.
-	private final ObservableMap<String, Object> observableGlobalRegistry = FXCollections.observableHashMap();
-	private final ObservableMap<String, Item> observableItemRegistry = FXCollections.observableHashMap();
-	private final ObservableMap<String, Equipment> observableEquipmentRegistry = FXCollections.observableHashMap();
-	private final ObservableMap<String, Lootlist> observableLootlistRegistry = FXCollections.observableHashMap();
-	private final ObservableMap<String, ActorRace> observableActorRaceRegistry = FXCollections.observableHashMap();
-	private final ObservableMap<String, ActorClass> observableActorClassRegistry = FXCollections.observableHashMap();
-	private final ObservableMap<String, Npc> observableNpcRegistry = FXCollections.observableHashMap();
-	private final ObservableMap<String, Building> observableBuildingRegistry = FXCollections.observableHashMap();
-	private final ObservableMap<String, Location> observableLocationRegistry = FXCollections.observableHashMap();
-	private final ObservableMap<String, Quest> observableQuestRegistry = FXCollections.observableHashMap();
-	private final ObservableMap<String, Action> observableActionRegistry = FXCollections.observableHashMap();
+	private ObservableDatabase observableDatabase;
 
 	public static final String PLUGIN_METADATA_SCREEN = "pluginMetadata";
 	public static final String PLUGIN_CONTENT_EDITOR_SCREEN = "pluginContent";
@@ -81,6 +72,7 @@ public class PenFX extends Application {
 	public void init() throws Exception {
 		super.init();
 		ppl = new PaperPluginLoader();
+		observableDatabase = new ObservableDatabase();
 	}
 
 	@Override
@@ -277,31 +269,11 @@ public class PenFX extends Application {
 	}
 
 	public void mergeDatabase(Database database) {
-		this.getObservableGlobalRegistry().putAll(database.getGlobalRegistry());
-		this.getObservableItemRegistry().putAll(database.getItemRegistry());
-		this.getObservableActorClassRegistry().putAll(database.getActorClassRegistry());
-		this.getObservableActorRaceRegistry().putAll(database.getActorRaceRegistry());
-		this.getObservableNpcRegistry().putAll(database.getNpcRegistry());
-		this.getObservableBuildingRegistry().putAll(database.getBuildingRegistry());
-		this.getObservableLocationRegistry().putAll(database.getLocationRegistry());
-		this.getObservableQuestRegistry().putAll(database.getQuestRegistry());
-		this.getObservableLootlistRegistry().putAll(database.getLootlistRegistry());
-		this.getObservableActionRegistry().putAll(database.getActionRegistry());
-		this.getObservableEquipmentRegistry().putAll(database.getEquipmentRegistry());
+		observableDatabase.mergeDatabase(database);
 	}
 
 	public void clearDatabase() {
-		this.getObservableGlobalRegistry().clear();
-		this.getObservableItemRegistry().clear();
-		this.getObservableActorClassRegistry().clear();
-		this.getObservableActorRaceRegistry().clear();
-		this.getObservableNpcRegistry().clear();
-		this.getObservableLocationRegistry().clear();
-		this.getObservableBuildingRegistry().clear();
-		this.getObservableQuestRegistry().clear();
-		this.getObservableLootlistRegistry().clear();
-		this.getObservableActionRegistry().clear();
-		this.getObservableEquipmentRegistry().clear();
+		observableDatabase.clearDatabase();
 	}
 
 	public void swapScreens(String screenId) {
@@ -316,53 +288,56 @@ public class PenFX extends Application {
 		return primaryStage;
 	}
 
-
 	public ObjectProperty<PaperPlugin> currentPluginProperty() {
 		return currentPluginProperty;
 	}
 
 	public ObservableMap<String, Equipment> getObservableEquipmentRegistry() {
-		return observableEquipmentRegistry;
+		return observableDatabase.getObservableEquipmentRegistry();
 	}
 
 	public ObservableMap<String, Action> getObservableActionRegistry() {
-		return observableActionRegistry;
+		return observableDatabase.getObservableActionRegistry();
+	}
+
+	public ObservableMap<String, Topic> getObservableTopicRegistry() {
+		return observableDatabase.getObservableTopicRegistry();
 	}
 
 	public ObservableMap<String, Object> getObservableGlobalRegistry() {
-		return observableGlobalRegistry;
+		return observableDatabase.getObservableGlobalRegistry();
 	}
 
 	public ObservableMap<String, Quest> getObservableQuestRegistry() {
-		return observableQuestRegistry;
+		return observableDatabase.getObservableQuestRegistry();
 	}
 
 	public ObservableMap<String, Building> getObservableBuildingRegistry() {
-		return observableBuildingRegistry;
+		return observableDatabase.getObservableBuildingRegistry();
 	}
 
 	public ObservableMap<String, Item> getObservableItemRegistry() {
-		return observableItemRegistry;
+		return observableDatabase.getObservableItemRegistry();
 	}
 
 	public ObservableMap<String, Lootlist> getObservableLootlistRegistry() {
-		return observableLootlistRegistry;
+		return observableDatabase.getObservableLootlistRegistry();
 	}
 
 	public ObservableMap<String, ActorRace> getObservableActorRaceRegistry() {
-		return observableActorRaceRegistry;
+		return observableDatabase.getObservableActorRaceRegistry();
 	}
 
 	public ObservableMap<String, ActorClass> getObservableActorClassRegistry() {
-		return observableActorClassRegistry;
+		return observableDatabase.getObservableActorClassRegistry();
 	}
 
 	public ObservableMap<String, Npc> getObservableNpcRegistry() {
-		return observableNpcRegistry;
+		return observableDatabase.getObservableNpcRegistry();
 	}
 
 	public ObservableMap<String, Location> getObservableLocationRegistry() {
-		return observableLocationRegistry;
+		return observableDatabase.getObservableLocationRegistry();
 	}
 
 }

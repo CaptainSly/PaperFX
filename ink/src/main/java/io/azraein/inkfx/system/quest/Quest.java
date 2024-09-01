@@ -2,6 +2,10 @@ package io.azraein.inkfx.system.quest;
 
 import java.io.Serializable;
 
+import org.luaj.vm2.lib.jse.CoerceJavaToLua;
+
+import io.azraein.inkfx.system.Paper;
+
 // TODO: Finish working on the Quest Implementation
 
 public class Quest implements Serializable {
@@ -16,12 +20,23 @@ public class Quest implements Serializable {
 
     private int questStage;
 
+    private boolean isQuestComplete;
+
     public Quest(String questId, String questName, String questDescription) {
         this.questId = questId;
         this.questName = questName;
         this.questDescription = questDescription;
 
         questStage = 0;
+        isQuestComplete = false;
+    }
+
+    public void onQuestStart() {
+        if (questScript != null) {
+            if (!questScript.isEmpty()) {
+                Paper.SE.runFunction(questScript, "onQuestStart", CoerceJavaToLua.coerce(this));
+            }
+        }
     }
 
     public String getQuestId() {
@@ -40,6 +55,10 @@ public class Quest implements Serializable {
         return questScript;
     }
 
+    public boolean isQuestComplete() {
+        return isQuestComplete;
+    }
+
     public int getQuestStage() {
         return questStage;
     }
@@ -50,6 +69,10 @@ public class Quest implements Serializable {
 
     public void setQuestStage(int questStage) {
         this.questStage = questStage;
+    }
+
+    public void setQuestComplete(boolean isComplete) {
+        this.isQuestComplete = isComplete;
     }
 
 }
