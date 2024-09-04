@@ -1,5 +1,9 @@
 package io.azraein.inkfx.system;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -17,6 +21,22 @@ public class Utils {
 	public static URI getFileURIFromResources(String fileName) throws URISyntaxException {
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 		return classLoader.getResource(fileName).toURI();
+	}
+
+	public static String getFileAsString(String fileName) {
+		try (BufferedReader br = new BufferedReader(new FileReader(new File(fileName)))) {
+			StringBuilder sb = new StringBuilder();
+
+			String curLine;
+			while ((curLine = br.readLine()) != null)
+				sb.append(curLine).append("\n");
+
+			return sb.toString();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return null;
 	}
 
 	public static String toNormalCase(String input) {

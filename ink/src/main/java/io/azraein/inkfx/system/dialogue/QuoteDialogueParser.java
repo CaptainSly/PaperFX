@@ -1,26 +1,32 @@
 package io.azraein.inkfx.system.dialogue;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 
 import io.azraein.inkfx.system.Paper;
+import io.azraein.inkfx.system.exceptions.MissingFunctionException;
 
 public class QuoteDialogueParser {
 
     private String quoteScript;
     private int currentLineNumber;
+    private int previousLineNumber;
 
     private String[] scriptLines;
 
     private Map<String, QuoteBlock> functionMap;
+    private Map<String, QuoteChoice> choiceMap;
 
     private DialogueReciever dialogueReciever;
 
     public static enum QuoteCommand {
         FUNC, CHOICE, IF, ELSE, ELSEIF, THEN, END, AND, OR, NOT, NPC, GIVE_ITEM, START_QUEST, ADV_QUEST, SCRIPT,
-        PLAY_SOUND, GOTO,;
+        PLAY_SOUND, GOTO, SHOW;
 
         public int getCmdNameLength() {
             return this.name().length();
@@ -33,10 +39,16 @@ public class QuoteDialogueParser {
         this.dialogueReciever = dialogueReciever;
 
         functionMap = new HashMap<>();
+        choiceMap = new HashMap<>();
 
         scriptLines = this.quoteScript.split("\n");
 
-        firstPass();
+        try {
+            firstPass();
+            secondPass();
+        } catch (MissingFunctionException e) {
+            e.printStackTrace();
+        }
 
         currentLineNumber = 0;
     }
@@ -44,30 +56,52 @@ public class QuoteDialogueParser {
     public void executeScript() {
         boolean inFunctionBlock = false;
 
-        int previousLineNumber = 0;
-
         while (currentLineNumber < scriptLines.length) {
             String currentLine = scriptLines[currentLineNumber].trim();
 
-            if (isQuoteCommand(currentLine, QuoteCommand.NPC)) {
+            if (currentLine.startsWith("#")) {
+                currentLineNumber++;
+                continue;
+
+            } else if (isQuoteCommand(currentLine, QuoteCommand.NPC)) {
                 String dialouge = getArgument(currentLine, QuoteCommand.NPC);
                 dialouge = dialouge.replace("\"", "");
+                dialouge = replaceVariables(dialouge);
                 dialogueReciever.printDialogue(dialouge);
+
             } else if (isQuoteCommand(currentLine, QuoteCommand.GOTO)) {
                 // Set the previousLineNumber to the currentLineNumber+1 to avoid recursively
                 // going back
                 previousLineNumber = currentLineNumber++;
-                String funcName = getArgument(currentLine, QuoteCommand.GOTO);
-                currentLineNumber = functionMap.get(funcName).startLineNumber();
-                inFunctionBlock = true;
+
+                String gotoBlockName = getArgument(currentLine, QuoteCommand.GOTO);
+
+                if (functionMap.containsKey(gotoBlockName)) {
+                    currentLineNumber = functionMap.get(gotoBlockName).startLineNumber();
+                    inFunctionBlock = true;
+                }
+
                 continue;
+
+            } else if (isQuoteCommand(currentLine, QuoteCommand.SHOW)) {
+                String choiceBlockName = getArgument(currentLine, QuoteCommand.SHOW);
+
+                if (choiceMap.containsKey(choiceBlockName)) {
+                    QuoteChoice qChoice = choiceMap.get(choiceBlockName);
+                    int selectedChoiceIdx = dialogueReciever.showChoices(qChoice.getChoiceOptions());
+
+                    String selectedFunc = (String) qChoice.getChoiceOptions().values().toArray()[selectedChoiceIdx];
+                    if (functionMap.containsKey(selectedFunc))
+                        currentLineNumber = functionMap.get(selectedFunc).startLineNumber();
+
+                    continue;
+                }
+
             } else if (isQuoteCommand(currentLine, QuoteCommand.SCRIPT)) {
                 String scriptCmdLine = getArgument(currentLine, QuoteCommand.SCRIPT);
                 String[] scriptArgs = scriptCmdLine.split(" ");
 
-                if (scriptArgs.length > 2) {
-                    // Supports scriptId and ONE argument for now. The argument can be a global
-                    // variable
+                if (scriptArgs.length >= 2) {
                     String scriptId = scriptArgs[0];
                     String scriptFunc = scriptArgs[1];
                     Object scriptArg = retrieveVariable(scriptArgs[2]);
@@ -82,16 +116,18 @@ public class QuoteDialogueParser {
                     // Skip over this and set the current line to the end of the function
                     String funcName = getArgument(currentLine, QuoteCommand.FUNC);
                     currentLineNumber = functionMap.get(funcName).closingLineNumber();
-                }
-
-            } else if (isQuoteCommand(currentLine, QuoteCommand.END)) {
-                if (!inFunctionBlock) {
                     continue;
                 }
 
-                currentLineNumber = previousLineNumber;
+            } else if (isQuoteCommand(currentLine, QuoteCommand.END)) {
+
+                if (inFunctionBlock) {
+                    currentLineNumber = previousLineNumber;
+                    previousLineNumber = 0;
+                    inFunctionBlock = false;
+                }
+
                 previousLineNumber = 0;
-                inFunctionBlock = false;
             }
 
             currentLineNumber++;
@@ -99,44 +135,107 @@ public class QuoteDialogueParser {
 
     }
 
-    private void firstPass() {
+    private void firstPass() throws MissingFunctionException {
 
         boolean inFunctionBlock = false;
 
         // Function Stuff
-        String functionName = "";
-        int startLine = 0;
-        int endLine = 0;
+        String functionBlockName = "";
+        int functionStartLine = 0;
+        int functionEndLine = 0;
 
-        // Replace Variables inside NPC calls and map functions to line numbers
         while (currentLineNumber < scriptLines.length) {
             String currentLine = scriptLines[currentLineNumber].trim();
 
-            if (currentLine.startsWith(QuoteCommand.NPC.name())) {
+            if (isQuoteCommand(currentLine, QuoteCommand.NPC)) {
                 String npcDialogue = replaceVariables(
                         currentLine.substring(QuoteCommand.NPC.getCmdNameLength()).trim());
                 scriptLines[currentLineNumber] = QuoteCommand.NPC.name() + " " + npcDialogue;
-            } else if (currentLine.startsWith(QuoteCommand.FUNC.name())) {
+            } else if (isQuoteCommand(currentLine, QuoteCommand.FUNC)) {
                 inFunctionBlock = true;
-                startLine = currentLineNumber++;
-                functionName = currentLine.substring(QuoteCommand.FUNC.getCmdNameLength()).trim();
+                functionStartLine = currentLineNumber++;
+                functionBlockName = getArgument(currentLine, QuoteCommand.FUNC);
 
-            } else if (currentLine.startsWith(QuoteCommand.END.name())) {
+            } else if (isQuoteCommand(currentLine, QuoteCommand.CHOICE)) {
+                String choiceName = getArgument(currentLine, QuoteCommand.CHOICE);
+                int choiceStartLine = currentLineNumber;
+                int choiceEndLine = currentLineNumber++;
+
+                LinkedHashMap<String, String> choiceOptions = new LinkedHashMap<>();
+                while (choiceEndLine < scriptLines.length) {
+
+                    String curChoiceLine = scriptLines[choiceEndLine].trim();
+
+                    if (isQuoteCommand(curChoiceLine, QuoteCommand.END))
+                        break;
+                    else if (isQuoteCommand(curChoiceLine, QuoteCommand.CHOICE)) {
+                        choiceEndLine++;
+                        continue;
+                    } else {
+                        Pattern pattern = Pattern.compile("\"([^\"]*)\",\\s*(\\w+)");
+                        Matcher matcher = pattern.matcher(curChoiceLine);
+
+                        if (matcher.find()) {
+                            String choiceLbl = matcher.group(1);
+                            String choiceFunc = matcher.group(2);
+
+                            choiceOptions.put(choiceLbl, choiceFunc);
+                        }
+
+                    }
+
+                    choiceEndLine++;
+                }
+
+                QuoteBlock qCBlock = new QuoteBlock(choiceStartLine, choiceEndLine);
+                QuoteChoice qChoice = new QuoteChoice(choiceName, qCBlock);
+                qChoice.setChoiceOptions(choiceOptions);
+
+                choiceMap.put(choiceName, qChoice);
+
+            } else if (isQuoteCommand(currentLine, QuoteCommand.END)) {
 
                 if (inFunctionBlock) {
-                    endLine = currentLineNumber;
-                    QuoteBlock qFunc = new QuoteBlock(startLine, endLine);
+                    functionEndLine = currentLineNumber;
+                    QuoteBlock qFunc = new QuoteBlock(functionStartLine, functionEndLine);
 
-                    functionMap.put(functionName, qFunc);
-                    functionName = "";
+                    functionMap.put(functionBlockName, qFunc);
+                    functionBlockName = "";
                     inFunctionBlock = false;
                 }
 
             }
+
             currentLineNumber++;
         }
 
         currentLineNumber = 0;
+    }
+
+    private void secondPass() throws MissingFunctionException {
+
+        // Validation Pass
+
+        while (currentLineNumber < scriptLines.length) {
+            String currentLine = scriptLines[currentLineNumber].trim();
+
+            if (isQuoteCommand(currentLine, QuoteCommand.GOTO)) {
+                String gotoBlockName = getArgument(currentLine, QuoteCommand.GOTO);
+                if (!functionMap.containsKey(gotoBlockName)) {
+                    throw new MissingFunctionException("GOTO on line: " + (currentLineNumber + 1)
+                            + " references missing function: " + gotoBlockName);
+                }
+            } else if (isQuoteCommand(currentLine, QuoteCommand.SHOW)) {
+                String showBlockName = getArgument(currentLine, QuoteCommand.SHOW);
+                if (!choiceMap.containsKey(showBlockName)) {
+                    throw new MissingFunctionException("SHOW on line: " + (currentLineNumber + 1)
+                            + " references missing choice block: " + showBlockName);
+                }
+            }
+
+            currentLineNumber++;
+        }
+
     }
 
     private String replaceVariables(String text) {
@@ -170,7 +269,7 @@ public class QuoteDialogueParser {
             return Paper.DATABASE.getGlobal(variableKey);
         }
 
-        return null;
+        return variable;
     }
 
     private String getArgument(String text, QuoteCommand command) {

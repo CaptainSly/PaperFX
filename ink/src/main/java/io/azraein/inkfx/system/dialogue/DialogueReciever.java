@@ -1,11 +1,11 @@
 package io.azraein.inkfx.system.dialogue;
 
-import java.util.List;
+import java.util.Map;
 
 public interface DialogueReciever {
 
     public void printDialogue(String dialogue);
 
-    public void showChoices(List<String> choices);
+    public int showChoices(Map<String, String> choices);
 
 }
