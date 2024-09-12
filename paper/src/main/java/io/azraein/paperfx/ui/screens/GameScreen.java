@@ -6,8 +6,8 @@ import java.util.Optional;
 import io.azraein.inkfx.system.GameState;
 import io.azraein.inkfx.system.Paper;
 import io.azraein.inkfx.system.actors.Npc;
-import io.azraein.inkfx.system.exceptions.IncompatibleSaveVersionException;
-import io.azraein.inkfx.system.exceptions.SaveCorruptionException;
+import io.azraein.inkfx.system.exceptions.system.IncompatibleSaveVersionException;
+import io.azraein.inkfx.system.exceptions.system.SaveCorruptionException;
 import io.azraein.inkfx.system.io.SaveSystem;
 import io.azraein.inkfx.system.io.plugins.PaperPlugin;
 import io.azraein.inkfx.system.locations.buildings.Building;
@@ -72,7 +72,7 @@ public class GameScreen extends PaperScreen {
                 world.setCurrentLocationId(newValue.getLocationId());
 
                 newValue.onVisit();
-                
+
                 if (oldValue != null) {
                     oldValue.onLeave();
                     // Throw the Old Location's State into the Worlds

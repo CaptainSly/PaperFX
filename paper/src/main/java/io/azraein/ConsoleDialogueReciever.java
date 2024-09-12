@@ -3,28 +3,39 @@ package io.azraein;
 import java.util.Map;
 import java.util.Scanner;
 
+import org.tinylog.Logger;
+
 import io.azraein.inkfx.system.Paper;
 import io.azraein.inkfx.system.Utils;
-import io.azraein.inkfx.system.dialogue.DialogueReciever;
+import io.azraein.inkfx.system.dialogue.DialogueReceiver;
 import io.azraein.inkfx.system.dialogue.QuoteDialogueParser;
 import io.azraein.inkfx.system.io.Database;
 import io.azraein.inkfx.system.io.SaveSystem;
 
-public class ConsoleDialogueReciever implements DialogueReciever {
+public class ConsoleDialogueReciever implements DialogueReceiver {
 
     public static Scanner scanner;
 
     public static void main(String[] args) {
+        Logger.debug("Quack");
         scanner = new Scanner(System.in);
-
+        
         Paper.DATABASE = new Database();
         Paper.DATABASE.addGlobal("playerName", "Phil Collins");
-
+        Paper.DATABASE.addGlobal("hasAmulet", false);
+        Logger.debug("Quack");
+        
         ConsoleDialogueReciever cdr = new ConsoleDialogueReciever();
         String dialogue = Utils.getFileAsString(SaveSystem.PAPER_FOLDER + "testDialogue.peqf");
-
+        Logger.debug("Quack");
+        
         QuoteDialogueParser qdp = new QuoteDialogueParser(dialogue, cdr);
-        qdp.executeScript();
+        
+        Logger.debug("Quack");
+        while (qdp.getCurrentLineNumber() < qdp.getScriptLines().length) {
+            qdp.step();
+        }
+        Logger.debug("Quack");
 
         scanner.close();
     }

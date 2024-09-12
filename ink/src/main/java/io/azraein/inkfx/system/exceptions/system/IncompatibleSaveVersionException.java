@@ -1,6 +1,6 @@
-package io.azraein.inkfx.system.exceptions;
+package io.azraein.inkfx.system.exceptions.system;
 
-public class IncompatibleSaveVersionException extends Exception {
+public class IncompatibleSaveVersionException extends RuntimeException {
 
 	private static final long serialVersionUID = -1207853456337167075L;
 

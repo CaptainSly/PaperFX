@@ -6,8 +6,8 @@ import java.io.File;
 import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 
 import io.azraein.inkfx.system.Paper;
-import io.azraein.inkfx.system.exceptions.IncompatibleSaveVersionException;
-import io.azraein.inkfx.system.exceptions.SaveCorruptionException;
+import io.azraein.inkfx.system.exceptions.system.IncompatibleSaveVersionException;
+import io.azraein.inkfx.system.exceptions.system.SaveCorruptionException;
 import io.azraein.inkfx.system.io.SaveSystem;
 import io.azraein.inkfx.system.world.World;
 import io.azraein.paperfx.PaperFX;

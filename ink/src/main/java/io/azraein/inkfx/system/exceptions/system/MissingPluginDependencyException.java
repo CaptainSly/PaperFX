@@ -1,6 +1,6 @@
-package io.azraein.inkfx.system.exceptions;
+package io.azraein.inkfx.system.exceptions.system;
 
-public class MissingPluginDependencyException extends Exception {
+public class MissingPluginDependencyException extends RuntimeException {
 
 	private static final long serialVersionUID = -4330242787511639296L;
 

@@ -1,6 +1,6 @@
-package io.azraein.inkfx.system.exceptions;
+package io.azraein.inkfx.system.exceptions.quote;
 
-public class MissingFunctionException extends Exception {
+public class MissingFunctionException extends RuntimeException {
 
     private static final long serialVersionUID = -6376036345636477272L;
 

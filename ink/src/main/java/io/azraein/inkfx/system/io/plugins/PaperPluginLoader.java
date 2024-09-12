@@ -11,9 +11,9 @@ import java.util.Set;
 
 import org.tinylog.Logger;
 
-import io.azraein.inkfx.system.exceptions.IncompatiblePluginVersionException;
-import io.azraein.inkfx.system.exceptions.MissingPluginDependencyException;
-import io.azraein.inkfx.system.exceptions.PluginCorruptionException;
+import io.azraein.inkfx.system.exceptions.system.IncompatiblePluginVersionException;
+import io.azraein.inkfx.system.exceptions.system.MissingPluginDependencyException;
+import io.azraein.inkfx.system.exceptions.system.PluginCorruptionException;
 import io.azraein.inkfx.system.io.Database;
 import io.azraein.inkfx.system.io.SaveSystem;
 

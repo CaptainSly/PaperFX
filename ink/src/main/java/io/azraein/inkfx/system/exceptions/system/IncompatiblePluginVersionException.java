@@ -1,6 +1,6 @@
-package io.azraein.inkfx.system.exceptions;
+package io.azraein.inkfx.system.exceptions.system;
 
-public class IncompatiblePluginVersionException extends Exception {
+public class IncompatiblePluginVersionException extends RuntimeException {
 
 	private static final long serialVersionUID = -6376036345636477272L;
 
